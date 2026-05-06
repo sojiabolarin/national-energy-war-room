@@ -1,11 +1,22 @@
 import { Router, type IRouter } from "express";
-import { HealthCheckResponse } from "@workspace/api-zod";
+import prisma from "../lib/prisma.js";
+import { logger } from "../lib/logger.js";
 
 const router: IRouter = Router();
 
-router.get("/healthz", (_req, res) => {
-  const data = HealthCheckResponse.parse({ status: "ok" });
-  res.json(data);
+router.get("/healthz", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({
+      status: "ok",
+      db: "connected",
+      workers: ["sla-tracker", "escalation-worker", "stats-refresher"],
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    logger.error({ err }, "Health check DB failed");
+    res.status(503).json({ status: "degraded", db: "disconnected", error: "Database connection failed" });
+  }
 });
 
 export default router;

@@ -1,0 +1,752 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  MINISTER
+  MINISTRY_STAFF
+  NERC_VIEWER
+  DISCO_AGENT
+  CITIZEN
+  ADMIN
+}
+
+enum OrgType {
+  GENCO
+  DISCO
+  TCN
+  NBET
+  NERC
+  NMDPRA
+  NGIC
+  REA
+  FMP
+  FGN_POWER_CO
+  NDPHC
+  OTHER
+}
+
+enum PlantType {
+  GAS_OCGT
+  GAS_CCGT
+  GAS_STEAM
+  HYDRO
+  SOLAR
+  WIND
+  COAL
+  IPP
+  NIPP
+}
+
+enum PlantStatus {
+  OPERATING
+  PARTIAL
+  MAINTENANCE
+  OUT
+  CONSTRAINED
+}
+
+enum VoltageKv {
+  KV_330
+  KV_132
+}
+
+enum LineStatus {
+  ACTIVE
+  OUT
+  MAINTENANCE
+  CONSTRAINED
+}
+
+enum BadgeStatus {
+  GOOD
+  WARN
+  BAD
+}
+
+enum PipelineStatus {
+  OPERATIONAL
+  CONSTRUCTION
+  PROPOSED
+}
+
+enum ProjectCategory {
+  GENERATION
+  TRANSMISSION
+  GAS_INFRA
+  DRE
+  DISTRIBUTION
+  OTHER
+}
+
+enum MiniGridProgramme {
+  NEP
+  DARES
+  OTHER
+}
+
+enum PaymentStatus {
+  PAID
+  PARTIAL
+  UNPAID
+  DEFAULT
+}
+
+enum AlertSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  INFO
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum ComplaintSource {
+  WEB
+  WHATSAPP
+  NERC_PORTAL
+  FORUM_OFFICE
+  IN_PERSON
+  EMAIL
+  IMPORT
+}
+
+enum ComplaintCategory {
+  METERING
+  BILLING
+  ESTIMATED_BILLING
+  SUPPLY_INTERRUPTION
+  VOLTAGE
+  ELECTROCUTION
+  INFRASTRUCTURE_DAMAGE
+  CONNECTION_DELAY
+  DISCONNECTION
+  REFUND
+  ENERGY_THEFT_REPORT
+  OTHER
+}
+
+enum ComplaintStatus {
+  FILED
+  IN_REVIEW
+  IN_PROGRESS
+  ESCALATED
+  RESOLVED
+  CLOSED
+  REJECTED
+}
+
+enum ComplaintSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ComplaintEventType {
+  CREATED
+  STATUS_CHANGE
+  ASSIGNED
+  ESCALATED
+  NOTE_ADDED
+  ATTACHMENT_ADDED
+  SLA_BREACHED
+  RESOLVED
+  REOPENED
+  CITIZEN_RESPONDED
+}
+
+enum StakeholderRole {
+  OPERATOR
+  REGULATOR
+  COUNTERPART
+  FUNDING_PARTNER
+  AUTHORITY
+}
+
+enum ValueChainStatus {
+  G
+  A
+  R
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  passwordHash   String
+  role           UserRole  @default(CITIZEN)
+  fullName       String
+  organisationId String?
+  phone          String?
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organisation        Organisation?        @relation(fields: [organisationId], references: [id])
+  auditLogs           AuditLog[]
+  alerts              Alert[]              @relation("AlertAssignee")
+  notifications       Notification[]
+  complaintAssignments ComplaintAssignment[] @relation("AssignedTo")
+  complaintEvents     ComplaintEvent[]
+  refreshTokens       RefreshToken[]
+
+  @@index([email])
+  @@index([role])
+  @@index([organisationId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+model Organisation {
+  id        String    @id @default(uuid())
+  name      String
+  type      OrgType
+  parentId  String?
+  website   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  parent        Organisation?  @relation("OrgHierarchy", fields: [parentId], references: [id])
+  children      Organisation[] @relation("OrgHierarchy")
+  users         User[]
+  plants        Plant[]
+  substations   Substation[]
+  discos        DisCo[]
+  miniGrids     MiniGrid[]
+  projects      CapitalProject[]
+  stakeholders  Stakeholder[]
+  gencoAllocs   GencoAllocation[]
+
+  @@index([type])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  entity     String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Plant {
+  id                String      @id @default(uuid())
+  name              String
+  type              PlantType
+  installedMw       Decimal     @db.Decimal(10, 2)
+  availableMw       Decimal     @db.Decimal(10, 2)
+  actualMw          Decimal     @db.Decimal(10, 2)
+  state             String
+  latitude          Decimal?    @db.Decimal(10, 7)
+  longitude         Decimal?    @db.Decimal(10, 7)
+  status            PlantStatus @default(OPERATING)
+  gencoOrgId        String?
+  commissioningDate DateTime?
+  paf               Decimal?    @db.Decimal(5, 2)
+  notes             String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  createdBy         String?
+  updatedBy         String?
+
+  genco              Organisation?       @relation(fields: [gencoOrgId], references: [id])
+  units              PlantUnit[]
+  diversionOpps      DiversionOpportunity[]
+  gencoAllocations   GencoAllocation[]
+
+  @@index([status])
+  @@index([type])
+  @@index([gencoOrgId])
+}
+
+model PlantUnit {
+  id              String   @id @default(uuid())
+  plantId         String
+  unitName        String
+  capacityMw      Decimal  @db.Decimal(10, 2)
+  currentOutputMw Decimal  @db.Decimal(10, 2)
+  status          String
+  fuelStatus      String?
+  lastTripAt      DateTime?
+  lastTripCause   String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  plant Plant @relation(fields: [plantId], references: [id], onDelete: Cascade)
+
+  @@index([plantId])
+}
+
+model Substation {
+  id               String   @id @default(uuid())
+  name             String
+  voltageClass     String
+  capacityMva      Decimal  @db.Decimal(10, 2)
+  transformerConfig String?
+  circuitCount     Int?
+  latitude         Decimal? @db.Decimal(10, 7)
+  longitude        Decimal? @db.Decimal(10, 7)
+  state            String?
+  ownerOrgId       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  createdBy        String?
+  updatedBy        String?
+
+  ownerOrg         Organisation?         @relation(fields: [ownerOrgId], references: [id])
+  fromLines        TransmissionLine[]    @relation("FromSubstation")
+  toLines          TransmissionLine[]    @relation("ToSubstation")
+
+  @@index([ownerOrgId])
+}
+
+model TransmissionLine {
+  id                String     @id @default(uuid())
+  name              String
+  voltageKv         Int
+  lengthKm          Decimal?   @db.Decimal(10, 2)
+  capacityMva       Decimal?   @db.Decimal(10, 2)
+  fromSubstationId  String?
+  toSubstationId    String?
+  status            LineStatus @default(ACTIVE)
+  currentLoadingPct Decimal?   @db.Decimal(5, 2)
+  lossesPct         Decimal?   @db.Decimal(5, 2)
+  notes             String?
+  geometry          Json?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  createdBy         String?
+  updatedBy         String?
+
+  fromSubstation Substation? @relation("FromSubstation", fields: [fromSubstationId], references: [id])
+  toSubstation   Substation? @relation("ToSubstation", fields: [toSubstationId], references: [id])
+
+  @@index([status])
+  @@index([voltageKv])
+}
+
+model DisCo {
+  id                    String      @id @default(uuid())
+  name                  String      @unique
+  licenceNumber         String?
+  allocationPct         Decimal?    @db.Decimal(5, 2)
+  operatorOrgId         String?
+  registeredOffice      String?
+  latitude              Decimal?    @db.Decimal(10, 7)
+  longitude             Decimal?    @db.Decimal(10, 7)
+  atccLossPct           Decimal?    @db.Decimal(5, 2)
+  collectionEffPct      Decimal?    @db.Decimal(5, 2)
+  billingEffPct         Decimal?    @db.Decimal(5, 2)
+  meteringRatePct       Decimal?    @db.Decimal(5, 2)
+  hoursOfSupplyDaily    Decimal?    @db.Decimal(4, 1)
+  complaintsLastQuarter Int?
+  rank                  Int?
+  badge                 BadgeStatus @default(WARN)
+  enforcementStatus     String?
+  mytoTargetAtcc        Decimal?    @db.Decimal(5, 2)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  createdBy             String?
+  updatedBy             String?
+
+  operatorOrg       Organisation?       @relation(fields: [operatorOrgId], references: [id])
+  feeders           Feeder[]
+  settlements       SettlementInvoice[]
+  complaints        Complaint[]
+
+  @@index([badge])
+}
+
+model Feeder {
+  id             String   @id @default(uuid())
+  discoId        String
+  name           String
+  voltage        String?
+  customerCount  Int?
+  supplyHours    Decimal? @db.Decimal(4, 1)
+  energyBilledMm Decimal? @db.Decimal(12, 2)
+  atccLossPct    Decimal? @db.Decimal(5, 2)
+  profile        String?
+  securityRisk   Boolean  @default(false)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  disco      DisCo       @relation(fields: [discoId], references: [id], onDelete: Cascade)
+  complaints Complaint[]
+
+  @@index([discoId])
+}
+
+model GasPipeline {
+  id        String         @id @default(uuid())
+  name      String
+  capacity  String?
+  operator  String?
+  status    PipelineStatus @default(OPERATIONAL)
+  geometry  Json?
+  notes     String?
+  fromPoint String?
+  toPoint   String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  @@index([status])
+}
+
+model DiversionOpportunity {
+  id                String   @id @default(uuid())
+  plantId           String
+  tapPoint          String
+  tapLatitude       Decimal? @db.Decimal(10, 7)
+  tapLongitude      Decimal? @db.Decimal(10, 7)
+  lengthKm          Decimal? @db.Decimal(10, 2)
+  capacityRequired  Decimal? @db.Decimal(10, 2)
+  indicativeCapex   Decimal? @db.Decimal(15, 2)
+  note              String?
+  priority          Int      @default(3)
+  createdBy         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  plant Plant @relation(fields: [plantId], references: [id])
+
+  @@index([plantId])
+}
+
+model CapitalProject {
+  id           String          @id @default(uuid())
+  name         String
+  category     ProjectCategory
+  status       String
+  sponsorOrgId String?
+  latitude     Decimal?        @db.Decimal(10, 7)
+  longitude    Decimal?        @db.Decimal(10, 7)
+  timeline     String?
+  capexUsd     Decimal?        @db.Decimal(15, 2)
+  completionPct Decimal?       @db.Decimal(5, 2)
+  notes        String?
+  sourceRef    String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  createdBy    String?
+  updatedBy    String?
+
+  sponsorOrg Organisation? @relation(fields: [sponsorOrgId], references: [id])
+
+  @@index([category])
+  @@index([status])
+}
+
+model MiniGrid {
+  id            String            @id @default(uuid())
+  name          String
+  capacityKw    Decimal           @db.Decimal(10, 2)
+  beneficiaries Int?
+  latitude      Decimal?          @db.Decimal(10, 7)
+  longitude     Decimal?          @db.Decimal(10, 7)
+  operatorOrgId String?
+  programme     MiniGridProgramme @default(NEP)
+  status        String            @default("OPERATIONAL")
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  operatorOrg Organisation? @relation(fields: [operatorOrgId], references: [id])
+
+  @@index([programme])
+}
+
+model SettlementInvoice {
+  id                String   @id @default(uuid())
+  period            String
+  discoId           String
+  mooInvoiceNgn     Decimal? @db.Decimal(18, 2)
+  nbetInvoiceNgn    Decimal? @db.Decimal(18, 2)
+  drogAdjustedNgn   Decimal? @db.Decimal(18, 2)
+  remittedNgn       Decimal? @db.Decimal(18, 2)
+  remittancePct     Decimal? @db.Decimal(5, 2)
+  cumulativeDebtNgn Decimal? @db.Decimal(18, 2)
+  enforcementStatus String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  createdBy         String?
+  updatedBy         String?
+
+  disco         DisCo             @relation(fields: [discoId], references: [id])
+  gencoAllocs   GencoAllocation[]
+
+  @@index([period])
+  @@index([discoId])
+}
+
+model GencoAllocation {
+  id                  String        @id @default(uuid())
+  settlementInvoiceId String
+  gencoOrgId          String
+  plantId             String?
+  shareNgn            Decimal?      @db.Decimal(18, 2)
+  paymentStatus       PaymentStatus @default(UNPAID)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  invoice SettlementInvoice @relation(fields: [settlementInvoiceId], references: [id], onDelete: Cascade)
+  genco   Organisation      @relation(fields: [gencoOrgId], references: [id])
+  plant   Plant?            @relation(fields: [plantId], references: [id])
+
+  @@index([settlementInvoiceId])
+  @@index([gencoOrgId])
+}
+
+model GridMetric {
+  id             String   @id @default(uuid())
+  timestamp      DateTime @default(now())
+  frequencyHz    Decimal  @db.Decimal(6, 3)
+  upperVoltageKv Decimal? @db.Decimal(6, 2)
+  lowerVoltageKv Decimal? @db.Decimal(6, 2)
+  sentOutMwh     Decimal? @db.Decimal(10, 2)
+  demandMwh      Decimal? @db.Decimal(10, 2)
+
+  @@index([timestamp])
+}
+
+model Alert {
+  id               String        @id @default(uuid())
+  severity         AlertSeverity @default(MEDIUM)
+  category         String
+  title            String
+  message          String
+  sourceEntity     String?
+  sourceEntityId   String?
+  actionRequired   String?
+  status           AlertStatus   @default(OPEN)
+  assignedToUserId String?
+  resolvedAt       DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  assignedTo User? @relation("AlertAssignee", fields: [assignedToUserId], references: [id])
+
+  @@index([status])
+  @@index([severity])
+}
+
+model Complaint {
+  id                   String            @id @default(uuid())
+  ticketNumber         String            @unique
+  source               ComplaintSource   @default(WEB)
+  citizenName          String
+  citizenPhone         String
+  citizenEmail         String?
+  citizenNinEncrypted  String?
+  discoId              String
+  feederId             String?
+  category             ComplaintCategory
+  subCategory          String?
+  description          String
+  status               ComplaintStatus   @default(FILED)
+  severity             ComplaintSeverity @default(MEDIUM)
+  escalationLevel      Int               @default(1)
+  slaBreached          Boolean           @default(false)
+  slaBreachAt          DateTime?
+  location             String?
+  latitude             Decimal?          @db.Decimal(10, 7)
+  longitude            Decimal?          @db.Decimal(10, 7)
+  attachments          Json?
+  satisfactionScore    Int?
+  satisfactionFeedback String?
+  satisfactionToken    String?           @unique
+  resolvedAt           DateTime?
+  resolutionText       String?
+  assignedToUserId     String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  createdBy            String?
+  updatedBy            String?
+
+  disco       DisCo              @relation(fields: [discoId], references: [id])
+  feeder      Feeder?            @relation(fields: [feederId], references: [id])
+  events      ComplaintEvent[]
+  assignments ComplaintAssignment[]
+
+  @@index([ticketNumber])
+  @@index([status])
+  @@index([discoId])
+  @@index([category])
+  @@index([escalationLevel])
+  @@index([slaBreached])
+  @@index([createdAt])
+  @@index([satisfactionToken])
+}
+
+model ComplaintEvent {
+  id          String             @id @default(uuid())
+  complaintId String
+  eventType   ComplaintEventType
+  fromValue   String?
+  toValue     String?
+  actorUserId String?
+  notes       String?
+  createdAt   DateTime           @default(now())
+
+  complaint Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  actor     User?     @relation(fields: [actorUserId], references: [id])
+
+  @@index([complaintId])
+  @@index([createdAt])
+}
+
+model ComplaintAssignment {
+  id               String    @id @default(uuid())
+  complaintId      String
+  assignedToUserId String
+  assignedFromUserId String?
+  assignedAt       DateTime  @default(now())
+  dueAt            DateTime?
+  completedAt      DateTime?
+  notes            String?
+
+  complaint  Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  assignedTo User      @relation("AssignedTo", fields: [assignedToUserId], references: [id])
+
+  @@index([complaintId])
+  @@index([assignedToUserId])
+}
+
+model EscalationRule {
+  id           String   @id @default(uuid())
+  name         String
+  condition    Json
+  actionLevel  Int
+  notifyOrgId  String?
+  notifyRole   String?
+  isActive     Boolean  @default(true)
+  priority     Int      @default(5)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model ValueChainLink {
+  id                  String           @id @default(uuid())
+  key                 String           @unique
+  name                String
+  status              ValueChainStatus @default(G)
+  meta                String?
+  order               Int              @default(0)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  stakeholders        Stakeholder[]
+  authorityInstruments AuthorityInstrument[]
+  escalationSteps     EscalationStep[]
+
+  @@index([order])
+}
+
+model Stakeholder {
+  id                String          @id @default(uuid())
+  valueChainLinkId  String
+  role              StakeholderRole
+  title             String
+  organisationId    String?
+  description       String?
+  escalationOrder   Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
+  organisation   Organisation?  @relation(fields: [organisationId], references: [id])
+
+  @@index([valueChainLinkId])
+}
+
+model AuthorityInstrument {
+  id               String   @id @default(uuid())
+  valueChainLinkId String
+  name             String
+  citation         String?
+  description      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
+
+  @@index([valueChainLinkId])
+}
+
+model EscalationStep {
+  id               String   @id @default(uuid())
+  valueChainLinkId String
+  stepOrder        Int
+  who              String
+  whatRole         String?
+  instrument       String?
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
+
+  @@index([valueChainLinkId])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  kind      String
+  title     String
+  body      String?
+  payload   Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([readAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

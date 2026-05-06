@@ -1,0 +1,485 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-05-06",
+  "__export_source": "National Energy War Room API Collection v1",
+  "resources": [
+    {
+      "_type": "workspace",
+      "_id": "wr-api-ws",
+      "name": "National Energy War Room API",
+      "description": "Production-grade REST API for the Federal Ministry of Power, Nigeria"
+    },
+    {
+      "_type": "environment",
+      "_id": "wr-env-local",
+      "name": "Local Development",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "access_token": "",
+        "refresh_token": ""
+      }
+    },
+    {
+      "_type": "request_group",
+      "_id": "grp-health",
+      "name": "Health",
+      "parentId": "wr-api-ws"
+    },
+    {
+      "_type": "request",
+      "_id": "req-health",
+      "parentId": "grp-health",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "{{ _.base_url }}/healthz",
+      "description": "Returns server health, DB connectivity, and active workers"
+    },
+    {
+      "_type": "request_group",
+      "_id": "grp-auth",
+      "name": "Auth",
+      "parentId": "wr-api-ws"
+    },
+    {
+      "_type": "request",
+      "_id": "req-login",
+      "parentId": "grp-auth",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/login",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\":\"admin@warroom.gov.ng\",\"password\":\"Admin@WarRoom2025!\"}"
+      },
+      "description": "Login with email/password. Returns JWT access token (RS256, 15m) and refresh token."
+    },
+    {
+      "_type": "request",
+      "_id": "req-register",
+      "parentId": "grp-auth",
+      "name": "Register (Citizen)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/register",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\":\"citizen@example.ng\",\"password\":\"Secure@123\",\"fullName\":\"Test Citizen\",\"phone\":\"08012345678\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-refresh",
+      "parentId": "grp-auth",
+      "name": "Refresh Token",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/refresh",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"refreshToken\":\"{{ _.refresh_token }}\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-me",
+      "parentId": "grp-auth",
+      "name": "Current User (/me)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/auth/me",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-logout",
+      "parentId": "grp-auth",
+      "name": "Logout",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/auth/logout",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.access_token }}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"refreshToken\":\"{{ _.refresh_token }}\"}"
+      }
+    },
+    {
+      "_type": "request_group",
+      "_id": "grp-complaints-public",
+      "name": "Complaints (Public — Tier 1)",
+      "parentId": "wr-api-ws"
+    },
+    {
+      "_type": "request",
+      "_id": "req-file-complaint",
+      "parentId": "grp-complaints-public",
+      "name": "File a Complaint",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/complaints",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"citizenName\":\"Chukwuemeka Obi\",\"citizenPhone\":\"08012345678\",\"citizenEmail\":\"citizen@example.ng\",\"discoId\":\"<DISCO_UUID>\",\"category\":\"ESTIMATED_BILLING\",\"description\":\"I have been receiving estimated bills for 4 months without meter reading.\",\"location\":\"Agege, Lagos\",\"source\":\"WEB\"}"
+      },
+      "description": "Public endpoint — no auth required. Rate-limited to 60/min per IP. Returns WR-YYYYMMDD-NNNNNN ticket."
+    },
+    {
+      "_type": "request",
+      "_id": "req-track-complaint",
+      "parentId": "grp-complaints-public",
+      "name": "Track Complaint",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/complaints/track/WR-20250106-000001?phoneLast4=5678",
+      "description": "Last 4 digits of citizen phone required for verification"
+    },
+    {
+      "_type": "request",
+      "_id": "req-satisfaction",
+      "parentId": "grp-complaints-public",
+      "name": "Submit Satisfaction Score",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/complaints/<COMPLAINT_ID>/satisfaction",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"token\":\"<SATISFACTION_TOKEN>\",\"score\":4,\"feedback\":\"Issue was resolved after escalation.\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-whatsapp-webhook-get",
+      "parentId": "grp-complaints-public",
+      "name": "WhatsApp Webhook Verify (GET)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/complaints/whatsapp/webhook?hub.mode=subscribe&hub.verify_token=<WHATSAPP_VERIFY_TOKEN>&hub.challenge=123456"
+    },
+    {
+      "_type": "request_group",
+      "_id": "grp-sector",
+      "name": "Sector Intelligence (Tier 2 — Staff)",
+      "parentId": "wr-api-ws"
+    },
+    {
+      "_type": "request",
+      "_id": "req-kpis",
+      "parentId": "grp-sector",
+      "name": "Sector KPIs",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/kpis",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }],
+      "description": "Real-time sector KPIs: generation, losses, PAF, complaints. NERC Q1 2025."
+    },
+    {
+      "_type": "request",
+      "_id": "req-grid-live",
+      "parentId": "grp-sector",
+      "name": "Grid Live Snapshot",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/grid/live",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-sankey",
+      "parentId": "grp-sector",
+      "name": "Sankey Flow Data",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/sankey",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }],
+      "description": "Physical and financial flow data for Sankey diagrams"
+    },
+    {
+      "_type": "request",
+      "_id": "req-plants",
+      "parentId": "grp-sector",
+      "name": "Generation Plants",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/plants?page=1&pageSize=20",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-plant-detail",
+      "parentId": "grp-sector",
+      "name": "Plant Detail",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/plants/<PLANT_ID>",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-discos",
+      "parentId": "grp-sector",
+      "name": "DisCos",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/discos?page=1&pageSize=20&sort=atccLossPct",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-feeders",
+      "parentId": "grp-sector",
+      "name": "DisCo Feeders",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/discos/<DISCO_ID>/feeders",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-tx-lines",
+      "parentId": "grp-sector",
+      "name": "Transmission Lines",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/transmission/lines",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-substations",
+      "parentId": "grp-sector",
+      "name": "Substations",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/transmission/substations",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-gas-pipelines",
+      "parentId": "grp-sector",
+      "name": "Gas Pipelines",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/gas/pipelines",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-diversions",
+      "parentId": "grp-sector",
+      "name": "Gas Diversion Opportunities",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/gas/diversions",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-projects",
+      "parentId": "grp-sector",
+      "name": "Capital Projects",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/projects",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-minigrids",
+      "parentId": "grp-sector",
+      "name": "Mini-Grids",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/minigrids",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-settlement",
+      "parentId": "grp-sector",
+      "name": "Settlement Invoices (Q1 2025)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/settlement/invoices?period=2025-Q1",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-value-chain",
+      "parentId": "grp-sector",
+      "name": "Value Chain Links",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/value-chain",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-vc-link",
+      "parentId": "grp-sector",
+      "name": "Value Chain Link Detail (gas)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/value-chain/gas",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-alerts",
+      "parentId": "grp-sector",
+      "name": "Active Alerts",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/sector/alerts/active",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request_group",
+      "_id": "grp-admin",
+      "name": "Admin (Tier 3 — Ministry Staff+)",
+      "parentId": "wr-api-ws"
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-complaints",
+      "parentId": "grp-admin",
+      "name": "List Complaints (Admin)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/complaints?page=1&pageSize=20&status=ESCALATED&slaBreached=true",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-complaint-stats",
+      "parentId": "grp-admin",
+      "name": "Complaint Stats",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/complaints/stats",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-resolve",
+      "parentId": "grp-admin",
+      "name": "Resolve Complaint",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/admin/complaints/<COMPLAINT_ID>/resolve",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.access_token }}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"resolutionText\":\"DisCo technical team replaced defective meter. Customer has been contacted.\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-escalate",
+      "parentId": "grp-admin",
+      "name": "Manually Escalate Complaint",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/admin/complaints/<COMPLAINT_ID>/escalate",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.access_token }}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"reason\":\"DisCo has not responded within SLA window. Escalating to NERC.\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-assign",
+      "parentId": "grp-admin",
+      "name": "Assign Complaint",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/admin/complaints/<COMPLAINT_ID>/assign",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.access_token }}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"assignedToUserId\":\"<USER_UUID>\",\"notes\":\"Escalated to DisCo CCU Manager\",\"dueAt\":\"2026-05-10T17:00:00Z\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-users",
+      "parentId": "grp-admin",
+      "name": "List Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/users?page=1&pageSize=20",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-admin-create-user",
+      "parentId": "grp-admin",
+      "name": "Create Staff User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/admin/users",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.access_token }}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\":\"newstaff@power.gov.ng\",\"password\":\"Staff@2025\",\"fullName\":\"New Ministry Staff\",\"role\":\"MINISTRY_STAFF\",\"phone\":\"08099887766\"}"
+      }
+    },
+    {
+      "_type": "request",
+      "_id": "req-audit-log",
+      "parentId": "grp-admin",
+      "name": "Audit Log",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/audit-log?page=1&pageSize=20",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-import",
+      "parentId": "grp-admin",
+      "name": "Import NERC Quarterly CSV",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/v1/admin/imports/nerc-quarterly",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.access_token }}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"period\":\"2025-Q2\",\"data\":\"disco,remittancePct\\nEko,100\\nIkeja,98\\nAbuja,99\"}"
+      }
+    },
+    {
+      "_type": "request_group",
+      "_id": "grp-registry",
+      "name": "Registry CRUD (Admin — Tier 3)",
+      "parentId": "wr-api-ws"
+    },
+    {
+      "_type": "request",
+      "_id": "req-registry-plants",
+      "parentId": "grp-registry",
+      "name": "Registry: Plants",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/registry/plants",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-registry-discos",
+      "parentId": "grp-registry",
+      "name": "Registry: DisCos",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/registry/discos",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-registry-orgs",
+      "parentId": "grp-registry",
+      "name": "Registry: Organisations",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/registry/organisations",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    },
+    {
+      "_type": "request",
+      "_id": "req-registry-escalation-rules",
+      "parentId": "grp-registry",
+      "name": "Registry: Escalation Rules",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/v1/admin/registry/escalation-rules",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.access_token }}" }]
+    }
+  ]
+}

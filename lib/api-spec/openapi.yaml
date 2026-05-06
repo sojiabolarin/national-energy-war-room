@@ -1,22 +1,24 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: National Energy War Room — REST API
 servers:
-  - url: /api
-    description: Base API path
+  - url: /api/v1
+    description: API v1
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: complaints
+  - name: sector
+  - name: admin
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +26,736 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /api/v1/auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Staff/citizen login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /api/v1/auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Citizen self-registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Registered
+
+  /api/v1/auth/refresh:
+    post:
+      operationId: refreshToken
+      tags: [auth]
+      summary: Refresh access token
+      responses:
+        "200":
+          description: New tokens
+
+  /api/v1/auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      security:
+        - bearerAuth: []
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /api/v1/auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      security:
+        - bearerAuth: []
+      summary: Current user
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /api/v1/complaints:
+    post:
+      operationId: fileComplaint
+      tags: [complaints]
+      summary: File a new complaint (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileComplaintRequest"
+      responses:
+        "201":
+          description: Complaint filed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplaintFiledResponse"
+
+  /api/v1/complaints/track/{ticketNumber}:
+    get:
+      operationId: trackComplaint
+      tags: [complaints]
+      summary: Track complaint by ticket number (requires phone last-4)
+      parameters:
+        - name: ticketNumber
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: phoneLast4
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 4
+      responses:
+        "200":
+          description: Complaint details
+
+  /api/v1/sector/kpis:
+    get:
+      operationId: getSectorKpis
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      summary: Get sector KPIs (staff only)
+      responses:
+        "200":
+          description: KPI data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SectorKpis"
+
+  /api/v1/sector/grid/live:
+    get:
+      operationId: getGridLive
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      summary: Latest grid metric snapshot
+      responses:
+        "200":
+          description: Grid metric
+
+  /api/v1/sector/grid/stream:
+    get:
+      operationId: streamGrid
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      summary: SSE stream of live grid metrics
+      responses:
+        "200":
+          description: SSE stream
+
+  /api/v1/sector/sankey:
+    get:
+      operationId: getSankeyData
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      summary: Sankey diagram data (physical + financial flows)
+      responses:
+        "200":
+          description: Sankey flow data
+
+  /api/v1/sector/plants:
+    get:
+      operationId: getPlants
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      summary: List generation plants
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: Plants list
+
+  /api/v1/sector/plants/{id}:
+    get:
+      operationId: getPlant
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Plant detail
+
+  /api/v1/sector/plants/{id}/units:
+    get:
+      operationId: getPlantUnits
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Plant units
+
+  /api/v1/sector/transmission/lines:
+    get:
+      operationId: getTransmissionLines
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: Transmission lines
+
+  /api/v1/sector/transmission/substations:
+    get:
+      operationId: getSubstations
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Substations
+
+  /api/v1/sector/discos:
+    get:
+      operationId: getDiscos
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - name: sort
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: DisCo list
+
+  /api/v1/sector/discos/{id}:
+    get:
+      operationId: getDisco
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: DisCo detail
+
+  /api/v1/sector/discos/{id}/feeders:
+    get:
+      operationId: getDiscoFeeders
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Feeder list
+
+  /api/v1/sector/gas/pipelines:
+    get:
+      operationId: getGasPipelines
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Gas pipelines
+
+  /api/v1/sector/gas/diversions:
+    get:
+      operationId: getDiversionOpportunities
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Diversion opportunities
+
+  /api/v1/sector/projects:
+    get:
+      operationId: getCapitalProjects
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Capital projects
+
+  /api/v1/sector/minigrids:
+    get:
+      operationId: getMiniGrids
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Mini-grids
+
+  /api/v1/sector/settlement/invoices:
+    get:
+      operationId: getSettlementInvoices
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Settlement invoices
+
+  /api/v1/sector/value-chain:
+    get:
+      operationId: getValueChain
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Value chain links
+
+  /api/v1/sector/value-chain/{key}:
+    get:
+      operationId: getValueChainLink
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Value chain link detail
+
+  /api/v1/sector/alerts/active:
+    get:
+      operationId: getActiveAlerts
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Active alerts
+
+  /api/v1/sector/alerts/stream:
+    get:
+      operationId: streamAlerts
+      tags: [sector]
+      security:
+        - bearerAuth: []
+      summary: SSE stream of active alerts
+      responses:
+        "200":
+          description: SSE stream
+
+  /api/v1/admin/complaints:
+    get:
+      operationId: adminListComplaints
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: discoId
+          in: query
+          schema:
+            type: string
+        - name: severity
+          in: query
+          schema:
+            type: string
+        - name: escalationLevel
+          in: query
+          schema:
+            type: integer
+        - name: slaBreached
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Complaints list
+
+  /api/v1/admin/complaints/stats:
+    get:
+      operationId: getComplaintStats
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Complaint statistics
+
+  /api/v1/admin/complaints/{id}:
+    get:
+      operationId: adminGetComplaint
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Complaint detail
+    patch:
+      operationId: updateComplaint
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated complaint
+
+  /api/v1/admin/complaints/{id}/assign:
+    post:
+      operationId: assignComplaint
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Assigned
+
+  /api/v1/admin/complaints/{id}/escalate:
+    post:
+      operationId: escalateComplaint
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Escalated
+
+  /api/v1/admin/complaints/{id}/resolve:
+    post:
+      operationId: resolveComplaint
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Resolved
+
+  /api/v1/admin/complaints/{id}/reopen:
+    post:
+      operationId: reopenComplaint
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reopened
+
+  /api/v1/admin/audit-log:
+    get:
+      operationId: getAuditLog
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: Audit log entries
+
+  /api/v1/admin/imports/nerc-quarterly:
+    post:
+      operationId: importNercQuarterly
+      tags: [admin]
+      security:
+        - bearerAuth: []
+      summary: Import NERC quarterly CSV/JSON data
+      responses:
+        "200":
+          description: Import summary
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
+        db:
+          type: string
+        timestamp:
+          type: string
       required:
         - status
 
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    RegisterRequest:
+      type: object
+      required: [email, password, fullName, phone]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+        phone:
+          type: string
+        nin:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+            user:
+              $ref: "#/components/schemas/UserProfile"
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        fullName:
+          type: string
+        organisationId:
+          type: string
+
+    FileComplaintRequest:
+      type: object
+      required: [citizenName, citizenPhone, discoId, category, description]
+      properties:
+        citizenName:
+          type: string
+        citizenPhone:
+          type: string
+        citizenEmail:
+          type: string
+        discoId:
+          type: string
+        feederId:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+
+    ComplaintFiledResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            ticketNumber:
+              type: string
+            id:
+              type: string
+            status:
+              type: string
+            message:
+              type: string
+
+    SectorKpis:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            availableGenerationMw:
+              type: number
+            installedCapacityMw:
+              type: number
+            hourlyGenerationMwh:
+              type: number
+            atccLossPct:
+              type: number
+            meteringRatePct:
+              type: number
+            plantAvailabilityFactor:
+              type: number
+            openComplaints:
+              type: integer
+            frequencyHz:
+              type: number
+            source:
+              type: string
+
+    PaginatedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+            pageSize:
+              type: integer
+            total:
+              type: integer
+            totalPages:
+              type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
