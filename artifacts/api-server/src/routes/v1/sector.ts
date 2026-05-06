@@ -52,8 +52,25 @@ router.get("/kpis", async (_req: AuthenticatedRequest, res: Response) => {
 });
 
 router.get("/grid/live", async (req: AuthenticatedRequest, res: Response) => {
-  const metric = await prisma.gridMetric.findFirst({ orderBy: { timestamp: "desc" } });
-  res.json({ data: metric });
+  const acceptsSse = req.headers.accept?.includes("text/event-stream");
+  if (acceptsSse) {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+    const send = async () => {
+      try {
+        const metric = await prisma.gridMetric.findFirst({ orderBy: { timestamp: "desc" } });
+        res.write(`data: ${JSON.stringify(metric)}\n\n`);
+      } catch { /* ignore */ }
+    };
+    await send();
+    const interval = setInterval(send, 5000);
+    req.on("close", () => clearInterval(interval));
+  } else {
+    const metric = await prisma.gridMetric.findFirst({ orderBy: { timestamp: "desc" } });
+    res.json({ data: metric });
+  }
 });
 
 router.get("/grid/stream", async (req: AuthenticatedRequest, res: Response) => {
@@ -275,15 +292,36 @@ router.get("/value-chain/:key", async (req, res) => {
 });
 
 router.get("/alerts/active", async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const alerts = await prisma.alert.findMany({
-      where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
-      orderBy: [{ severity: "asc" }, { createdAt: "desc" }],
-      take: 50,
-    });
-    res.json({ data: alerts });
-  } catch (err) {
-    res.status(500).json({ error: { code: "INTERNAL_ERROR" } });
+  const acceptsSse = req.headers.accept?.includes("text/event-stream");
+  if (acceptsSse) {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+    const send = async () => {
+      try {
+        const alerts = await prisma.alert.findMany({
+          where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+          orderBy: [{ severity: "asc" }, { createdAt: "desc" }],
+          take: 20,
+        });
+        res.write(`data: ${JSON.stringify(alerts)}\n\n`);
+      } catch { /* ignore */ }
+    };
+    await send();
+    const interval = setInterval(send, 10000);
+    req.on("close", () => clearInterval(interval));
+  } else {
+    try {
+      const alerts = await prisma.alert.findMany({
+        where: { status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+        orderBy: [{ severity: "asc" }, { createdAt: "desc" }],
+        take: 50,
+      });
+      res.json({ data: alerts });
+    } catch (err) {
+      res.status(500).json({ error: { code: "INTERNAL_ERROR" } });
+    }
   }
 });
 

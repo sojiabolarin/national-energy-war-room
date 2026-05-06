@@ -53,7 +53,7 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-app.use(publicLimiter);
+// publicLimiter is applied per-route group (not globally) to avoid throttling authenticated staff
 
 app.use("/", router);
 

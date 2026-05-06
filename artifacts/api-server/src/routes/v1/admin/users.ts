@@ -55,12 +55,12 @@ router.get("/", async (req: AuthenticatedRequest, res: Response) => {
 
 router.post("/", validate(createUserSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const body = req.body as z.infer<typeof createUserSchema>;
-    const exists = await prisma.user.findUnique({ where: { email: body.email } });
+    const { password, ...bodyRest } = req.body as z.infer<typeof createUserSchema>;
+    const exists = await prisma.user.findUnique({ where: { email: bodyRest.email } });
     if (exists) { res.status(409).json({ error: { code: "EMAIL_TAKEN" } }); return; }
-    const passwordHash = await bcrypt.hash(body.password, 12);
+    const passwordHash = await bcrypt.hash(password, 12);
     const user = await prisma.user.create({
-      data: { ...body, passwordHash, password: undefined },
+      data: { ...bodyRest, passwordHash },
       select: { id: true, email: true, role: true, fullName: true, phone: true, organisationId: true, isActive: true },
     });
     await writeAuditLog(req.user!.sub, "CREATE", "User", user.id, null, user, req);
@@ -78,10 +78,10 @@ router.patch("/:id", validate(updateUserSchema), async (req: AuthenticatedReques
     const before = await prisma.user.findUnique({ where: { id }, select: { id: true, email: true, role: true, fullName: true, isActive: true } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
 
-    const data: Record<string, unknown> = { ...body };
+    const { password: _pw, ...restBody } = body;
+    const data: Record<string, unknown> = { ...restBody };
     if (body.password) {
       data["passwordHash"] = await bcrypt.hash(body.password, 12);
-      delete data["password"];
     }
 
     const updated = await prisma.user.update({
