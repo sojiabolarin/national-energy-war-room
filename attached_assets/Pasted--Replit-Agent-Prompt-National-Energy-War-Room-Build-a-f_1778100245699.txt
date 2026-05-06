@@ -1,0 +1,454 @@
+# Replit Agent Prompt — National Energy War Room
+
+**Build a full-stack platform consisting of (1) a public-facing operational dashboard, (2) an admin backend for the data managers, and (3) a REST API layer. Add a first-class Customer Complaints & Escalation module that runs through all three.**
+
+This is a procurement-grade system for the Federal Ministry of Power, Federal Republic of Nigeria. The product is the National Energy War Room. Build it for production reliability, not as a demo. Pay close attention to data integrity, role-based access, and audit trails — every action by an admin must be logged and attributable.
+
+---
+
+## 1. Stack & Project Setup
+
+- **Frontend:** React 18 with Vite, React Router v6, TanStack Query for server state, Zustand for local state, Recharts for charts, Leaflet (`react-leaflet`) for maps.
+- **Backend:** Node.js 20 + Express, Prisma ORM, PostgreSQL, Zod for request validation, jsonwebtoken for auth, bcrypt for password hashing, pino for structured logging.
+- **Real-time:** Server-Sent Events (SSE) for one-direction live updates (frequency, alerts, complaint counts). Do not use WebSockets unless requirements expand.
+- **Brand:** WestMetro Limited brand standard. **Arial only.** Colors: orange `#E85426`, dark `#1A1A1A`, body `#1C1C1C`, gray `#F4F4F4`. No navy, no gold, no other accent colors. Dark theme by default.
+- **Project layout:** Monorepo with `apps/web` (React frontend), `apps/admin` (admin frontend, separate React app), `apps/api` (Express backend), `packages/shared` (TypeScript types and Zod schemas). Use `pnpm` workspaces.
+- **Environment:** `.env` files per app. `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRY`, `PORT`, `CORS_ORIGINS`.
+
+Set up Replit so all three apps run concurrently in dev. Use `concurrently` package.
+
+---
+
+## 2. Data Model (Prisma schema)
+
+Define these entities. Use UUIDs for all IDs. Add `createdAt`, `updatedAt`, `createdBy`, `updatedBy` audit fields to every mutable entity.
+
+### Core entities
+
+- **User** — id, email (unique), passwordHash, role (enum: MINISTER, MINISTRY_STAFF, NERC_VIEWER, DISCO_AGENT, CITIZEN, ADMIN), fullName, organisationId (nullable), phone, createdAt, lastLoginAt, isActive.
+- **Organisation** — id, name, type (enum: GENCO, DISCO, TCN, NBET, NERC, NMDPRA, NGIC, REA, FMP, FGN_POWER_CO, NDPHC, OTHER), parentId (nullable, for divisions), website, createdAt.
+- **AuditLog** — id, userId, action (string), entity (string), entityId, before (JSONB), after (JSONB), ip, userAgent, createdAt. Auto-write on every mutation through middleware.
+
+### Power-sector entities
+
+- **Plant** — id, name, type (enum: GAS_OCGT, GAS_CCGT, GAS_STEAM, HYDRO, SOLAR, WIND, COAL, IPP, NIPP), installedMw (decimal), availableMw (decimal), actualMw (decimal), state, latitude, longitude, status (enum: OPERATING, PARTIAL, MAINTENANCE, OUT, CONSTRAINED), gencoOrgId (FK Organisation), commissioningDate, paf (decimal), notes, createdAt, updatedAt. One-to-many with PlantUnit.
+- **PlantUnit** — id, plantId, unitName, capacityMw, currentOutputMw, status, fuelStatus, lastTripAt, lastTripCause, notes.
+- **TransmissionLine** — id, name, voltageKv (enum: 330, 132), lengthKm, capacityMva, fromSubstationId, toSubstationId, status, currentLoadingPct, lossesPct, notes, geometry (JSONB array of [lat,lng] pairs).
+- **Substation** — id, name, voltageClass, capacityMva, transformerConfig, circuitCount, latitude, longitude, state, ownerOrgId.
+- **DisCo** — id, name (unique, e.g. "Eko"), licenceNumber, allocationPct, operatorOrgId, registeredOffice, latitude, longitude, atccLossPct, collectionEffPct, billingEffPct, meteringRatePct, hoursOfSupplyDaily, complaintsLastQuarter, rank, badge (enum: GOOD, WARN, BAD), enforcementStatus, mytoTargetAtcc.
+- **Feeder** — id, discoId, name, voltage, customerCount, supplyHours, energyBilledMm, atccLossPct, profile, securityRisk (boolean), notes.
+- **GasPipeline** — id, name, capacity, operator, status (enum: OPERATIONAL, CONSTRUCTION, PROPOSED), geometry (JSONB), notes, fromPoint, toPoint.
+- **DiversionOpportunity** — id, plantId, tapPoint, tapLatitude, tapLongitude, lengthKm, capacityRequired, indicativeCapex, note, priority (1-5), createdBy.
+- **CapitalProject** — id, name, category (enum: GENERATION, TRANSMISSION, GAS_INFRA, DRE, DISTRIBUTION, OTHER), status, sponsorOrgId, latitude, longitude, when (text, free-form timeline), capexUsd, completionPct, notes, sourceRef (URL or doc reference).
+- **MiniGrid** — id, name, capacityKw, beneficiaries, latitude, longitude, operatorOrgId, programme (enum: NEP, DARES, OTHER), status.
+
+### Settlement entities
+
+- **SettlementInvoice** — id, period (e.g. "2025-Q1" or "2025-04"), discoId, mooInvoiceNgn (decimal), nbetInvoiceNgn, drogAdjustedNgn, remittedNgn, remittancePct, cumulativeDebtNgn, enforcementStatus, notes.
+- **GencoAllocation** — id, settlementInvoiceId, gencoOrgId, plantId (nullable), shareNgn, paymentStatus (enum: PAID, PARTIAL, UNPAID, DEFAULT).
+
+### Operational entities
+
+- **GridMetric** — id, timestamp, frequencyHz (decimal), upperVoltageKv, lowerVoltageKv, sentOutMwh, demandMwh. Time-series, indexed on timestamp.
+- **Alert** — id, severity (enum: CRITICAL, HIGH, MEDIUM, INFO), category, title, message, sourceEntity, sourceEntityId, actionRequired, status (enum: OPEN, ACKNOWLEDGED, RESOLVED), assignedToUserId, resolvedAt, createdAt.
+
+### Customer Complaints & Escalation
+
+This is the **Customer Complaints & Escalation Module**. It must be a first-class subsystem, not an afterthought.
+
+- **Complaint** — id, ticketNumber (auto-generated, format `WR-YYYYMMDD-NNNNNN`), source (enum: WEB, WHATSAPP, NERC_PORTAL, FORUM_OFFICE, IN_PERSON, EMAIL, IMPORT), citizenName, citizenPhone, citizenEmail, citizenNin (nullable), discoId, feederId (nullable), category (enum: METERING, BILLING, ESTIMATED_BILLING, SUPPLY_INTERRUPTION, VOLTAGE, ELECTROCUTION, INFRASTRUCTURE_DAMAGE, CONNECTION_DELAY, DISCONNECTION, REFUND, ENERGY_THEFT_REPORT, OTHER), subCategory (string), description (text), location (text — address), latitude (nullable), longitude (nullable), severity (enum: LOW, MEDIUM, HIGH, CRITICAL), status (enum: FILED, TRIAGED, ASSIGNED, IN_PROGRESS, AWAITING_CITIZEN, ESCALATED, RESOLVED, CLOSED, REJECTED), escalationLevel (1-5, where 1 = DisCo CCU, 2 = DisCo MD, 3 = NERC CCU, 4 = NERC Forum Office, 5 = Ministerial), escalationReason, slaDueAt (computed from CPR 2023 windows), resolvedAt, resolvedBy, resolution (text), satisfactionScore (1-5, nullable), satisfactionFeedback, attachments (JSONB array), createdAt, updatedAt.
+- **ComplaintEvent** — id, complaintId, eventType (enum: CREATED, STATUS_CHANGE, ASSIGNED, ESCALATED, NOTE_ADDED, ATTACHMENT_ADDED, SLA_BREACHED, RESOLVED, REOPENED, CITIZEN_RESPONDED), fromValue, toValue, actorUserId (nullable for system events), notes, createdAt. Append-only; full audit trail.
+- **ComplaintAssignment** — id, complaintId, assignedToUserId, assignedFromUserId, assignedAt, dueAt, completedAt, notes.
+- **EscalationRule** — id, name, condition (JSONB — DSL describing when this rule fires; e.g. `{ "category": "ESTIMATED_BILLING", "ageHours": 72, "currentLevel": 1 }`), actionLevel (target escalationLevel), notifyOrgId, notifyRole, isActive, priority. Evaluated by a background worker every 5 minutes.
+
+### Stakeholder & Accountability
+
+- **ValueChainLink** — id, key (unique slug e.g. "gas", "gen", "tx"), name, status (G/A/R), meta (rich text/HTML), order. Eight links default: Gas Supply, Generation, Transmission, Distribution, Settlement, Customer & Metering, Off-Grid & DRE, Capital Projects.
+- **Stakeholder** — id, valueChainLinkId, role (enum: OPERATOR, REGULATOR, COUNTERPART, FUNDING_PARTNER, AUTHORITY), title (e.g. "MD/CEO, TCN") — **store role titles only, never personal names**. Names change with appointments and deprecate the data instantly. organisationId, description, escalationOrder.
+- **AuthorityInstrument** — id, valueChainLinkId, name (e.g. "Generation Licence", "MYTO 2025"), citation, description.
+- **EscalationStep** — id, valueChainLinkId, stepOrder, who (role title), whatRole, instrument, notes.
+
+### Notifications
+
+- **Notification** — id, userId, kind, title, body, payload (JSONB), readAt, createdAt.
+
+Run `prisma migrate dev` to generate. Seed with realistic Nigerian Q1 2025 NERC data (see Section 7).
+
+---
+
+## 3. API Layer (`apps/api`)
+
+REST + JSON, versioned at `/api/v1`. Express + Prisma + Zod. Every route validated through Zod schemas defined in `packages/shared`.
+
+### Conventions
+
+- All errors return `{ error: { code, message, details? } }` with appropriate HTTP status.
+- All list endpoints support `?page=`, `?pageSize=` (max 100), `?sort=`, `?filter[field]=value`. Return `{ data: [], pagination: { page, pageSize, total, totalPages } }`.
+- All mutations require auth and write an AuditLog row.
+- Idempotency: accept `Idempotency-Key` header on POSTs that create resources.
+- Rate limit: 100 req/min per IP for unauthenticated, 600 req/min for authenticated, 60 req/min for citizen complaints submission.
+
+### Auth
+
+- `POST /api/v1/auth/register` — citizens only (other roles created by admin). Body: email, phone, password, fullName, nin (optional). Returns user + JWT.
+- `POST /api/v1/auth/login` — email + password → JWT.
+- `POST /api/v1/auth/refresh` — refresh token.
+- `POST /api/v1/auth/logout` — invalidates refresh token.
+- `GET /api/v1/auth/me` — current user.
+- `POST /api/v1/auth/forgot-password` — sends reset link (stub email service).
+- `POST /api/v1/auth/reset-password` — completes reset.
+
+### Access tiers (three explicit tiers — apply consistently across all endpoints)
+
+The API has exactly three access tiers. Every endpoint must declare which tier it belongs to.
+
+**Tier 1 — Public, unauthenticated.** Only the citizen complaint flow lives here. Rate-limit aggressively (60 req/min per IP). All other public-facing endpoints removed from this tier.
+- `POST /api/v1/auth/register` (citizen self-registration only — sets role=CITIZEN)
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
+- `POST /api/v1/auth/forgot-password`
+- `POST /api/v1/auth/reset-password`
+- `POST /api/v1/complaints` (file a complaint — captures phone for verification)
+- `GET /api/v1/complaints/track/:ticketNumber` (requires phone last-4 verification)
+- `POST /api/v1/complaints/:id/citizen-response`
+- `POST /api/v1/complaints/:id/satisfaction` (token-protected one-tap link)
+- `POST /api/v1/complaints/whatsapp/webhook` (Meta signature verification)
+- `GET /healthz`
+
+**Tier 2 — Authenticated staff (any non-CITIZEN role).** All sector dashboard data is here. The war room is RESTRICTED — staff only.
+- `GET /api/v1/sector/kpis`
+- `GET /api/v1/sector/grid/live` and SSE stream
+- `GET /api/v1/sector/sankey`
+- `GET /api/v1/plants`, `/:id`, `/:id/units`
+- `GET /api/v1/transmission/lines`, `/:id`, `/substations`
+- `GET /api/v1/discos`, `/:id`, `/:id/feeders`
+- `GET /api/v1/gas/pipelines`, `/diversions`
+- `GET /api/v1/projects`
+- `GET /api/v1/minigrids`
+- `GET /api/v1/settlement/invoices?period=`
+- `GET /api/v1/value-chain`, `/:key`
+- `GET /api/v1/alerts/active` and SSE stream
+- `GET /api/v1/auth/me`
+- `POST /api/v1/auth/logout`
+
+**Tier 3 — Authenticated staff with elevated role.** Mutations and admin views, role-gated per route:
+- `MINISTRY_STAFF`+ — read all complaints, all registry CRUD, settlement entry, alerts CRUD.
+- `NERC_VIEWER` — read all complaints + read all registry. No mutations.
+- `DISCO_AGENT` — read & update only complaints scoped to their `organisationId` (DisCo). No registry access.
+- `ADMIN` — full system, including user management, audit log, escalation rules, system settings.
+
+Every Tier 3 endpoint validates role per request via middleware and writes an AuditLog row.
+
+If a citizen-role user (CITIZEN) hits a Tier 2 or Tier 3 endpoint, return 403 with `{ error: { code: "STAFF_ONLY" } }`.
+
+The dashboard frontend (`apps/web`) and admin frontend (`apps/admin`) both require login before rendering any non-public route. There are NO unauthenticated routes in the dashboard frontend other than `/complaints/file`, `/complaints/track`, `/complaints/satisfaction/:token`, and `/login`.
+
+### Tier 3 — Admin & complaints management endpoints (role-gated)
+
+Sector data CRUD (Tier 3):
+- CRUD endpoints for Plant, PlantUnit, TransmissionLine, Substation, DisCo, Feeder, GasPipeline, DiversionOpportunity, CapitalProject, MiniGrid, SettlementInvoice, GencoAllocation, GridMetric, Alert, ValueChainLink, Stakeholder, AuthorityInstrument, EscalationStep, EscalationRule, User, Organisation. Standard REST: GET list, GET one, POST, PATCH, DELETE (soft-delete where applicable).
+- `POST /api/v1/admin/imports/nerc-quarterly` — accept a CSV/JSON of NERC quarterly figures, validate, upsert. Return import summary with row counts and any rejection reasons.
+- `GET /api/v1/admin/audit-log` — ADMIN only. Paginated.
+
+Complaints management (Tier 3):
+- `GET /api/v1/admin/complaints` — paginated, filter by status/category/disco/severity/escalationLevel/dateRange. DISCO_AGENT sees only complaints for their DisCo (organisationId match).
+- `GET /api/v1/admin/complaints/:id` — full detail with events.
+- `PATCH /api/v1/admin/complaints/:id` — update status, category, severity, assignedTo, notes. Append ComplaintEvent.
+- `POST /api/v1/admin/complaints/:id/assign` — assign to a user.
+- `POST /api/v1/admin/complaints/:id/escalate` — bump escalationLevel; auto-route per EscalationRule. Append ComplaintEvent with reason.
+- `POST /api/v1/admin/complaints/:id/resolve` — resolve with resolution text. Trigger satisfaction survey (SMS/WhatsApp stub).
+- `POST /api/v1/admin/complaints/:id/reopen` — reopen with reason.
+- `GET /api/v1/admin/complaints/stats` — dashboard counts: open by category, escalation pyramid, SLA breach count, average resolution time, satisfaction score average.
+
+- `GET /api/v1/admin/complaints` — paginated, filter by status/category/disco/severity/escalationLevel/dateRange. DISCO_AGENT sees only complaints for their DisCo.
+- `GET /api/v1/admin/complaints/:id` — full detail with events.
+- `PATCH /api/v1/admin/complaints/:id` — update status, category, severity, assignedTo, notes. Append ComplaintEvent.
+- `POST /api/v1/admin/complaints/:id/assign` — assign to a user.
+- `POST /api/v1/admin/complaints/:id/escalate` — bump escalationLevel; auto-route per EscalationRule. Append ComplaintEvent with reason.
+- `POST /api/v1/admin/complaints/:id/resolve` — resolve with resolution text. Trigger satisfaction survey (SMS/WhatsApp stub).
+- `POST /api/v1/admin/complaints/:id/reopen` — reopen with reason.
+- `GET /api/v1/admin/complaints/stats` — dashboard counts: open by category, escalation pyramid, SLA breach count, average resolution time, satisfaction score average.
+- CRUD endpoints for Plant, PlantUnit, TransmissionLine, Substation, DisCo, Feeder, GasPipeline, DiversionOpportunity, CapitalProject, MiniGrid, SettlementInvoice, GencoAllocation, GridMetric, Alert, ValueChainLink, Stakeholder, AuthorityInstrument, EscalationStep, EscalationRule, User, Organisation. Standard REST: GET list, GET one, POST, PATCH, DELETE (soft-delete where applicable).
+- `POST /api/v1/admin/imports/nerc-quarterly` — accept a CSV/JSON of NERC quarterly figures, validate, upsert. Return import summary with row counts and any rejection reasons.
+- `GET /api/v1/admin/audit-log` — admin only. Paginated.
+
+### Background workers
+
+- **Escalation worker** — every 5 min, evaluate active EscalationRule entries against open Complaints. Auto-escalate when SLA windows breach. Write ComplaintEvent. Send Notification to next-level role.
+- **SLA tracker** — every minute, compute hours-since-filed for OPEN complaints. Mark `slaBreached` flag and emit alert when category-specific window passes (from CPR 2023: metering 5 working days, billing 15 working days, supply interruption 24 hours, electrocution immediate).
+- **Stats refresher** — every 5 min, materialise complaint stats into a fast-lookup table.
+
+---
+
+## 4. Frontend (`apps/web` — public-facing dashboard)
+
+This is the v0.4 mockup, **rebuilt as a real React application that calls the API**. Recreate the v0.4 visual exactly — same panels, same colours, same brand standard, same interactions — but every metric pulled from the API rather than hardcoded.
+
+### Pages & routes
+
+The dashboard is **staff-only**. Citizens cannot view sector data; their only access is to file and track their own complaints. The four citizen-only routes are explicitly listed below.
+
+**Public routes (no auth required):**
+- `/login` — staff login. Default landing for unauthenticated users hitting protected routes.
+- `/complaints/file` — public complaint filing form (mobile-first; designed for Nigerian users on slow connections).
+- `/complaints/track` — track a complaint by ticket number + phone last-4.
+- `/complaints/satisfaction/:token` — satisfaction survey landing page (one-tap link from SMS/WhatsApp).
+
+**Protected routes (staff auth required — any non-CITIZEN role):**
+- `/` — Overview (the v0.4 dashboard). Redirects to `/login` if no valid session.
+- `/logout` — clears session.
+
+A protected-route wrapper checks JWT on every navigation; expired tokens trigger a silent refresh, and on refresh failure the user lands on `/login` with a return-to URL preserved.
+
+### Overview dashboard panels (mirror v0.4)
+
+1. **Classification banner** — "RESTRICTED — Minister's War Room". Always visible.
+2. **Dashboard controls** — Expand all / Collapse all buttons.
+3. **KPI row (4 cards)** — Available Generation, Hourly Generation, ATC&C Loss, Metering Rate. Pull from `/sector/kpis`. Always visible (don't allow collapse). Each card shows source: "NERC Q1 2025".
+4. **Geospatial map** — Leaflet, dark-tile filter (`filter: invert(1) hue-rotate(180deg) brightness(0.9) saturate(0.8)` on tiles), 10+ toggleable layers: Generation Plants, Transmission Lines, Substations, DisCo Performance Heat, Capital Projects, Mini-Grids, Gas Pipelines (Operational/Construction/Proposed), Diversion Opportunities, Responsible Stakeholders. **Map has a fullscreen toggle** (button in the header, F-key shortcut, Esc to exit). Don't make the map panel collapsible — fullscreen serves that role.
+5. **Sankey** — dual-axis (electrons left-to-right, naira right-to-left), GenCo → TCN → DisCo → Customer at top; Customer → DisCo → NBET → GenCo at bottom. SVG, brand colours.
+6. **Frequency gauge** — live from SSE stream. Coloured band 49.0–51.0 Hz. Pulse animation.
+7. **Generation table** — plant rows, expandable to unit detail. Inline 👤 accountability popover on each row.
+8. **Transmission table** — line rows, expandable to substation endpoints. Inline 👤.
+9. **Distribution table** — DisCo rows, expandable to top feeders. Inline 👤. Sortable by ATC&C, collection, hours of supply.
+10. **Settlement table** — DisCo rows, expandable to GenCo allocation. Inline 👤.
+11. **Gas-to-Power scorecard** — stranded capacity table with diversion opportunities. Strategic call-out box.
+12. **Capital Projects** (formerly "Project Pipeline" — never call it Pipeline because of gas pipeline collision).
+13. **Customer Service & Complaints panel** — **NEW**. See Section 5.
+14. **Live Alerts panel** — alerts feed with severity badges. Each alert has a "Brief Minister / Open / Press Brief" action button.
+15. **Stakeholder & Escalation Matrix** — 8-row table, value chain → operating stakeholder → regulator → authority instrument → escalation. Role titles only.
+16. **Value Chain Accountability** — interactive horizontal links with traffic-light status; clicking a link reveals operator/regulator/counterpart cards plus numbered escalation tree.
+
+### Frontend behaviours
+
+- **Collapsible panels** — every panel except KPI cards and the map is collapsible. Click header → toggle. Orange ▾ chevron rotates to ▸ when collapsed. Expand all / Collapse all buttons in dashboard controls.
+- **Inline accountability popover** — 👤 badge on every parent row (plants, lines, DisCos, settlement). Click → floating capsule with operator, regulator, escalation chain, authority instrument. Click outside or × to dismiss. **Role titles only — never personal names** (instructions can change with appointments; data must outlast).
+- **Live updates** — frequency gauge and alerts feed via SSE.
+- **Brand-compliant** — Arial, `#E85426`, `#1A1A1A`, `#1C1C1C`, `#F4F4F4`. No deviation. No navy, no gold.
+- **Loading states** — skeleton placeholders matching panel shapes; never show generic spinners.
+- **Empty states** — meaningful messages tied to the panel (e.g. "No active complaints in this category" not "No data").
+- **Accessibility** — WCAG AA. Keyboard navigation through panels, inline popovers reachable, focus rings visible.
+- **Mobile** — responsive down to 380px. The map switches to a simpler layer toggle bottom-sheet on mobile.
+
+---
+
+## 5. Customer Service & Complaints Panel (NEW — first-class)
+
+The dashboard has been blind to the citizen's view of the sector. This panel fixes that. It sits between Capital Projects and Live Alerts in the dashboard.
+
+### Panel header
+"Customer Service & Complaints" · meta: "Per NERC Q1 2025: 254,404 complaints across DisCo-CCUs · 74.10% Forum Office resolution rate"
+
+### Panel content (collapsible)
+
+**Top row — four mini KPIs:**
+- Open complaints (total, with delta vs last week)
+- SLA breaches in last 24h
+- Average resolution time (last 30 days)
+- Satisfaction score (mean of last 100 resolved)
+
+**Heat strip — complaints by category:**
+Horizontal bar chart of the 12 complaint categories (METERING, BILLING, ESTIMATED_BILLING, SUPPLY_INTERRUPTION, VOLTAGE, ELECTROCUTION, INFRASTRUCTURE_DAMAGE, CONNECTION_DELAY, DISCONNECTION, REFUND, ENERGY_THEFT_REPORT, OTHER), counts last 30 days, click to filter the table below.
+
+**Escalation pyramid (right side):**
+Level 1 (DisCo CCU) → Level 2 (DisCo MD) → Level 3 (NERC CCU) → Level 4 (NERC Forum Office) → Level 5 (Ministerial). Stacked bar with counts. Anything at Level 5 has a red background — these are the cases that have reached the Minister.
+
+**Active complaints table — expandable rows:**
+Columns: Ticket | DisCo | Category | Severity | Status | Age | Citizen (name + phone) | Action.
+- Ticket → links to admin detail view (in admin app).
+- Severity badge (CRITICAL/HIGH/MEDIUM/LOW) with brand colours.
+- Status badge.
+- Age coloured by SLA: green if within window, amber within 50% of breach, red if breached.
+- Click row → expand to show description, location, last 3 events from event timeline, and SLA timer.
+
+**DisCo complaint league:**
+Mini-table of the 11 DisCos: name, complaints last 30 days, resolution rate, avg response time, satisfaction score. Sortable; ranking colour-coded.
+
+**Strategic note (always visible at bottom of panel):**
+> "Per NERC's Q1 2025 Quarterly Report, DisCos resolved only 1,554 of 4,169 NERC-CCU complaints (37.27% resolution rate). Forum Offices achieved 74.10%. The most common categories are metering, billing, and supply interruption. Estimated billing remains the highest-political-risk category."
+
+This text is editable in the admin (configurable strategic note per panel).
+
+### Citizen-facing flows
+
+**`/complaints/file`** — public form. Mobile-first. Fields: name, phone (required), email (optional), DisCo (dropdown — auto-detect from phone area if possible), feeder (optional, conditional on DisCo), category (visual icon-grid select), description (text), location (text + optional geolocation), upload up to 3 photos (10MB total). Submit → success page with **ticket number** + "track at /complaints/track" + WhatsApp deep-link to send the ticket to themselves. No auth required; light captcha (hCaptcha or simple math challenge) to deter spam.
+
+**`/complaints/track`** — input ticket number + phone last-4. Returns status, last update, expected resolution time, full event timeline visible to citizen.
+
+**`/complaints/satisfaction/:token`** — landed-on after resolution. 5-star rating + free-text feedback. One-tap from SMS link.
+
+### WhatsApp inbound (stub)
+Endpoint `POST /api/v1/complaints/whatsapp/webhook` accepts Meta Cloud API webhook format. On inbound message, parse for keywords and create a complaint in FILED status. Reply (mock: log to console) with ticket number. Subsequent messages from same phone within 24h append to the complaint as ComplaintEvent (citizen response).
+
+---
+
+## 6. Admin Backend (`apps/admin`)
+
+Separate React app on a separate route (e.g. `admin.warroom.gov.ng` in production; in dev, `localhost:5174`). Auth-required. Same brand standard.
+
+### Pages
+
+- `/login` — staff login.
+- `/dashboard` — admin home: complaints stats, recent imports, pending escalations needing attention.
+- `/complaints` — full complaints management: filter by status/category/DisCo/severity/escalationLevel/dateRange/SLA-status; bulk actions (assign, escalate, close); export CSV.
+- `/complaints/:id` — single complaint detail: full event timeline, citizen contact, attachments, status changes, escalation controls, resolution form, internal notes.
+- `/registry/plants` — CRUD on plants and units.
+- `/registry/transmission` — CRUD on lines and substations.
+- `/registry/discos` — CRUD on DisCos and feeders.
+- `/registry/gas` — CRUD on pipelines and diversion opportunities.
+- `/registry/projects` — CRUD on capital projects.
+- `/registry/minigrids` — CRUD on mini-grids.
+- `/registry/value-chain` — CRUD on value chain links, stakeholders (role titles), authority instruments, escalation steps.
+- `/operations/grid-metrics` — manually input grid metrics (until live SCADA feed is available); CSV import.
+- `/operations/settlement` — period-based settlement entry; per-DisCo invoice and remittance.
+- `/operations/alerts` — create/manage active alerts.
+- `/imports` — CSV/JSON import wizards for NERC quarterly reports, NBET settlement files, NEMSA metering data. Show row-level rejection reasons before commit.
+- `/escalation-rules` — CRUD on EscalationRule. Rule editor with JSON DSL editor or guided form.
+- `/users` — user and organisation management. ADMIN-only.
+- `/audit-log` — searchable, paginated audit log.
+- `/settings` — system settings: classification banner text, panel strategic notes, SLA windows per category.
+
+### Admin behaviours
+
+- **Role-aware UI** — DISCO_AGENT sees only their DisCo's complaints; NERC_VIEWER sees all complaints read-only; MINISTRY_STAFF sees full complaints + plant/line/disco/settlement registry; ADMIN sees everything including users and audit log.
+- **Optimistic UI for status updates** with rollback on API error.
+- **Confirmation dialogs** for destructive actions (delete, escalate to Ministerial).
+- **Inline editing** where it makes sense (e.g. plant utilisation in registry table) with autosave + debounce.
+
+---
+
+## 7. Seed Data
+
+Seed the database with realistic Nigerian sector data from NERC's Q1 2025 Quarterly Report (publicly published July 2025).
+
+### KPIs (from NERC Q1'25)
+- Average available generation: 5,366.88 MW
+- Average hourly generation: 4,770.59 MWh/h
+- Total quarterly generation: 10,304.47 GWh
+- Weighted ATC&C loss: 39.61% (vs MYTO target 20.54%)
+- Net metering rate: 46.98% (187,194 meters installed in Q1)
+- Plant Availability Factor: 39%
+
+### Plants (28 grid-connected per NERC Q1'25 — seed at minimum these 14)
+- Egbin (Sahara) — Lagos, Gas/Steam, 1,320 MW installed, ~46% PAF (Sep 2025)
+- Delta IV (Ughelli) — Delta, 900 MW, Operating
+- Kainji — Niger, Hydro, 760 MW, 91% LF (Sep 2025) — Mainstream Energy concession
+- Jebba — Niger, Hydro, 578 MW, 73% LF — Mainstream Energy concession
+- Shiroro — Niger, Hydro, 600 MW
+- Zungeru — Niger, Hydro, 700 MW, 100% PAF (Sep 2025)
+- Azura-Edo IPP — Edo, Gas (OCGT), 461 MW, ~96% util
+- Olorunsogo NIPP — Ogun, Gas, 754 MW, ~24% util (gas-constrained)
+- Geregu I & II — Kogi, Gas, 849 MW
+- Afam VI — Rivers, Gas, 650 MW (Transcorp Power, acquired from Shell 2021)
+- Okpai I & II — Delta, Gas, 900 MW (Agip)
+- Sapele Power — Delta, Gas/Steam, 720 MW, ~18% util (gas-constrained)
+- Calabar NIPP — Cross River, Gas, 563 MW, ~38% util
+- Alaoji NIPP — Abia, Gas, 1,131 MW, **0 MW output Sep 2025** (gas allocation issue)
+- Omoku, Rivers IPP, Ibom Power — also seeded with **0 output Sep 2025** per NERC
+
+### Transmission lines (at least 6 trunk 330kV)
+- Egbin–Ikeja West (62 km, 91% loading)
+- Benin–Ikeja West (280 km)
+- Shiroro–Kaduna (96 km)
+- Jebba–Shiroro (244 km)
+- Onitsha–New Haven (96 km)
+- Kaduna–Kano (230 km)
+
+### DisCos (all 11 with NERC Q1'25 actuals)
+ATC&C from NERC Q1 2025 Table 6:
+- Eko 29.06%, Ikeja 34.14%, Abuja 44.00%, Ibadan 41.70%, Enugu 24.65%, Benin 42.83%, Port Harcourt 55.90%, Kaduna 68.57% (worst, MYTO target 21.32%), Jos 62.13%, Kano 49.00%, Yola 46.56%.
+Collection efficiency: Eko 84.79% (best), Jos 47.19% (worst).
+
+### Settlement Q1'25
+DRO-adjusted invoice ₦432.13 bn, total remitted ₦414.26 bn (95.86%). FGN tariff subsidy ~₦536 bn covering ~59% of generation costs. Per-DisCo from Figure D: Eko 100%, Ikeja 100%, Abuja 99%, Ibadan 100%, Enugu 99%, Benin 100%, PH 100%, Kaduna 40%, Jos 71%, Kano 100%, Yola 100%.
+
+### Gas pipelines
+- ELPS (operational, NGIC, 1.1 Bcf/d)
+- Trans-Forcados Pipeline (operational, 400 Mmscf/d)
+- OB3 phase 1 Oben–Ajaokuta (operational, 2.0 Bcf/d)
+- AKK Ajaokuta–Kaduna–Kano (under construction, 614 km, $2.8 bn, mainline welding completed Dec 2025 incl. River Niger crossing, first gas to Abuja target Jul 2026; midline compressor at Ajaokuta still required per NGIC Jul 2025 letter)
+- Nigeria–Morocco (proposed, ~3 Bcf/d)
+- Trans-Saharan Gas Pipeline (proposed)
+
+### Capital projects
+- Mambilla Hydro 3,050 MW (EPC under review)
+- Zungeru Hydro 700 MW (operational)
+- Kashimbila Hydro 40 MW (operational)
+- Siemens PPI Phase 1 (12 sites: Apo, Ajah, Okene, Nike Lake, Kwanar Dangora, Maryland, Omouaran, Ojo, Amukpe, Ihovbor, Potiskum, Birnin Kebbi; ~85% installed)
+- Siemens PPI Phase 2 ($328.8M CMEC EPC, signed Apr 2025; 7 line upgrades + 10 new lines, 544 km, 7,140 MW)
+- Qua Iboe IPP 540 MW (construction)
+- Afam III Fast Power 240 MW
+
+### Mini-Grids / DRE (REA NEP and DARES flagship)
+- Bayero University Solar (Kano) 7.1 MW
+- ABU Zaria Solar 7.1 MW
+- UDUS Sokoto Solar 7.1 MW
+- Sabon Gari Market (Kano) 1 MW
+- Ariaria Market (Aba) 9.5 MW
+- DARES programme (1 GW target, World Bank $750M)
+
+### Value Chain seed
+Eight links: Gas Supply, Generation, Transmission, Distribution, Settlement & Trading, Customer & Metering, Off-Grid & DRE, Capital Projects. For each, seed Stakeholders with **role titles only** (no personal names — appointments change), AuthorityInstrument list (Petroleum Industry Act 2021, Electricity Act 2023, MYTO 2025, Vesting Contracts, etc.), and EscalationStep list ending at "Hon. Min. of Power" or above.
+
+### Complaints — seed 250 realistic complaints
+Across all 11 DisCos, weighted per Q1'25 NERC complaint volumes (Ikeja, Port Harcourt, Ibadan top three). Categories weighted: estimated billing 28%, supply interruption 22%, metering 18%, billing 12%, voltage 8%, others smaller. Status mix: 30% open, 25% in progress, 5% escalated, 35% resolved (with satisfaction scores), 5% closed/rejected. Spread across last 90 days. Some at Level 5 (Ministerial) for the panel to show. Generate ticket numbers in `WR-YYYYMMDD-NNNNNN` format.
+
+### Escalation rules — seed 8 baseline rules
+Examples:
+- "Estimated billing > 72h at Level 1 → Level 2"
+- "Electrocution complaints → instant Level 3 (NERC)"
+- "Any Kaduna DisCo complaint > 48h at any level → escalate +1"
+- "Satisfaction score < 2 → reopen + escalate"
+- "Resolution > 5 working days for metering → SLA breach + escalate"
+
+---
+
+## 8. Security & Operations
+
+- **Auth:** JWT signed with RS256 (key in env). 15-min access token, 7-day refresh token. Rotate refresh tokens on each use.
+- **CORS:** explicit origin allow-list per environment.
+- **Helmet** — set on Express. CSP enabled.
+- **Rate limit** — `express-rate-limit` with Redis store in production (memory in dev).
+- **Input validation** — every route Zod-validated.
+- **Audit** — every mutation writes AuditLog (user, before, after, IP, ua, timestamp).
+- **PII** — citizen phone, email, NIN treated as sensitive. Redact in logs. Encrypt NIN at rest (AES-256, key from env).
+- **Secrets** — never in code. `.env` only; production via Replit Secrets manager.
+- **Backups** — Postgres logical dump nightly to object storage (stub; implement as scheduled job).
+- **Health endpoint** — `GET /healthz` returns DB connectivity + worker status.
+
+## 9. Deployment to Replit
+
+- Configure `replit.nix` with Node 20, pnpm, Postgres.
+- `.replit` runs the dev launcher: `pnpm dev` — concurrently starts `apps/api`, `apps/web`, `apps/admin`, plus background workers.
+- Postgres via Replit's database integration; or external Neon/Supabase if more reliable.
+- Set up Replit Secrets for `JWT_SECRET`, `DATABASE_URL`, `WHATSAPP_VERIFY_TOKEN`, `ENCRYPTION_KEY`.
+- Provide a `README.md` with setup instructions, seeding command, default admin login, and a one-paragraph architecture summary.
+- Provide a `Postman` or `Insomnia` collection JSON in `docs/api-collection.json`.
+
+## 10. Acceptance Tests
+
+The build is complete when:
+1. **An unauthenticated request to any Tier 2 or Tier 3 endpoint returns 401.** The dashboard at `/` redirects unauthenticated users to `/login` and preserves the return-to URL.
+2. **A citizen** (no account) can file a complaint at `/complaints/file`, receive a ticket number, track it at `/complaints/track`, and complete a satisfaction survey via the one-tap token link — without ever seeing the dashboard.
+3. **A registered CITIZEN** logging in to the API receives 403 on every Tier 2/3 endpoint with `STAFF_ONLY` error code.
+4. **A DISCO_AGENT** can log in to admin, see only their DisCo's complaints, update status, and escalate.
+5. **A MINISTRY_STAFF** user can log in to the dashboard at `/` and see all 16 panels with NERC Q1 2025 figures; the map fullscreen toggle works; panels collapse; accountability popovers render with **role titles only**.
+6. The escalation worker auto-escalates a complaint past its SLA window and writes a ComplaintEvent.
+7. The Customer Service panel shows live counts that update via SSE when a new complaint is filed.
+8. The audit log captures every admin mutation with user, before, after, IP, and user-agent.
+9. WhatsApp webhook stub creates a complaint when called with a sample Meta Cloud API payload (verified signature).
+10. Brand standard is followed exactly: Arial, `#E85426`, `#1A1A1A`, `#1C1C1C`, `#F4F4F4`. No other accent colours appear anywhere.
+
+## 11. What this build is not (out of scope for this prompt)
+
+- Real SCADA integration with TCN — out of scope; provide a stub that accepts manual GridMetric entries and a CSV import path.
+- Real WhatsApp/Meta Cloud API integration — out of scope; the webhook endpoint must accept the format and parse it correctly, but actual sending replies is stubbed.
+- Real NBET settlement file format integration — out of scope; provide CSV import with documented column mapping.
+- Multi-tenancy — out of scope; this is a single-tenant federal deployment.
+- Mobile app — out of scope; the web dashboard must be responsive but no native app is required.
+
+---
+
+**Build everything described above as production-ready code. Use TypeScript throughout. Write a brief but useful README. When in doubt about a design choice, prefer (a) data integrity over ease, (b) role-clarity over flexibility, (c) brand-compliance over creativity, (d) audit-traceability over performance.**
+
+**The Federal Ministry of Power and ultimately the Minister will rely on this system. Build accordingly.**
