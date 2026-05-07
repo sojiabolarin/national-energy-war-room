@@ -8,7 +8,12 @@ import type { Response } from "express";
 
 const router = Router();
 
-router.use(requireRole("MINISTER", "MINISTRY_STAFF", "ADMIN"));
+router.use((req, res, next) => {
+  if (req.method === "GET") {
+    return requireRole("NERC_VIEWER", "MINISTER", "MINISTRY_STAFF", "ADMIN")(req, res, next);
+  }
+  return requireRole("MINISTER", "MINISTRY_STAFF", "ADMIN")(req, res, next);
+});
 
 function paginateQuery(query: Record<string, string>) {
   const page = Math.max(1, parseInt(query["page"] ?? "1", 10));
@@ -34,9 +39,10 @@ function makeEntityRouter<T extends { id: string }>(
     try {
       const q = req.query as Record<string, string>;
       const { skip, take, page, pageSize } = paginateQuery(q);
+      const activeWhere = { deletedAt: null };
       const [items, total] = await Promise.all([
-        model.findMany({ skip, take, orderBy: defaultOrderBy }),
-        model.count(),
+        model.findMany({ where: activeWhere, skip, take, orderBy: defaultOrderBy }),
+        model.count({ where: activeWhere }),
       ]);
       res.json({ data: items, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
     } catch (err) {
@@ -48,7 +54,9 @@ function makeEntityRouter<T extends { id: string }>(
   r.get("/:id", async (req, res) => {
     try {
       const item = await model.findUnique({ where: { id: req.params["id"] } });
-      if (!item) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
+      if (!item || (item as Record<string, unknown>)["deletedAt"]) {
+        res.status(404).json({ error: { code: "NOT_FOUND" } }); return;
+      }
       res.json({ data: item });
     } catch (err) {
       res.status(500).json({ error: { code: "INTERNAL_ERROR" } });
@@ -87,11 +95,14 @@ function makeEntityRouter<T extends { id: string }>(
     try {
       const id = req.params["id"] as string;
       const before = await model.findUnique({ where: { id } });
-      if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
-      await model.delete({ where: { id } });
-      await writeAuditLog(req.user!.sub, "DELETE", entityName, id, before, null, req);
+      if (!before || (before as Record<string, unknown>)["deletedAt"]) {
+        res.status(404).json({ error: { code: "NOT_FOUND" } }); return;
+      }
+      const softDeleted = await model.update({ where: { id }, data: { deletedAt: new Date(), updatedBy: req.user!.sub } });
+      await writeAuditLog(req.user!.sub, "DELETE", entityName, id, before, softDeleted, req);
       res.json({ data: { message: "Deleted" } });
     } catch (err) {
+      logger.error({ err }, `${entityName} delete failed`);
       res.status(500).json({ error: { code: "INTERNAL_ERROR" } });
     }
   });

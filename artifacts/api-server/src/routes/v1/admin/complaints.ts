@@ -18,6 +18,48 @@ function paginateQuery(query: Record<string, string>) {
   return { skip: (page - 1) * pageSize, take: pageSize, page, pageSize };
 }
 
+/**
+ * Returns the DisCo ID that a DISCO_AGENT is authorised to manage.
+ * Returns null if the user is not a DISCO_AGENT, undefined if no linked disco found.
+ */
+async function getAgentDiscoId(req: AuthenticatedRequest): Promise<string | null | undefined> {
+  if (req.user?.role !== "DISCO_AGENT") return null; // not a DISCO_AGENT
+  if (!req.user.organisationId) return undefined; // DISCO_AGENT but no org
+  const disco = await prisma.disCo.findFirst({ where: { operatorOrgId: req.user.organisationId } });
+  return disco?.id ?? undefined;
+}
+
+/**
+ * For DISCO_AGENT: verifies a complaint belongs to their disco before allowing mutation.
+ * Returns the complaint if access is permitted, or sends 403/404 and returns null.
+ */
+async function assertDiscoOwnership(
+  req: AuthenticatedRequest,
+  res: Response,
+  complaintId: string
+): Promise<{ id: string; [key: string]: unknown } | null> {
+  if (req.user?.role !== "DISCO_AGENT") {
+    const complaint = await prisma.complaint.findUnique({ where: { id: complaintId } });
+    if (!complaint) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return null; }
+    return complaint as { id: string; [key: string]: unknown };
+  }
+
+  const agentDiscoId = await getAgentDiscoId(req);
+  if (!agentDiscoId) {
+    res.status(403).json({ error: { code: "FORBIDDEN", message: "No linked DisCo for this account" } });
+    return null;
+  }
+
+  const complaint = await prisma.complaint.findFirst({
+    where: { id: complaintId, discoId: agentDiscoId },
+  });
+  if (!complaint) {
+    res.status(404).json({ error: { code: "NOT_FOUND", message: "Complaint not found" } });
+    return null;
+  }
+  return complaint as { id: string; [key: string]: unknown };
+}
+
 router.get("/", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const q = req.query as Record<string, string>;
@@ -37,11 +79,18 @@ router.get("/", async (req: AuthenticatedRequest, res: Response) => {
       };
     }
 
-    if (req.user?.role === "DISCO_AGENT" && req.user.organisationId) {
-      const disco = await prisma.disCo.findFirst({ where: { operatorOrgId: req.user.organisationId } });
-      if (disco) where["discoId"] = disco.id;
+    if (req.user?.role === "DISCO_AGENT") {
+      // Strictly enforce scope — ignore any client-supplied discoId
+      const agentDiscoId = await getAgentDiscoId(req);
+      if (!agentDiscoId) {
+        res.status(403).json({ error: { code: "FORBIDDEN", message: "No linked DisCo for this account" } });
+        return;
+      }
+      where["discoId"] = agentDiscoId;
+    } else if (q["discoId"]) {
+      // Non-DISCO_AGENT roles may filter by any discoId
+      where["discoId"] = q["discoId"];
     }
-    if (q["discoId"]) where["discoId"] = q["discoId"];
 
     const [complaints, total] = await Promise.all([
       prisma.complaint.findMany({
@@ -110,14 +159,12 @@ router.get("/stats", async (_req: AuthenticatedRequest, res: Response) => {
 
 router.get("/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const where: Record<string, unknown> = { id: req.params["id"] as string };
-    if (req.user?.role === "DISCO_AGENT" && req.user.organisationId) {
-      const disco = await prisma.disCo.findFirst({ where: { operatorOrgId: req.user.organisationId } });
-      if (disco) where["discoId"] = disco.id;
-    }
+    const id = req.params["id"] as string;
+    const before = await assertDiscoOwnership(req, res, id);
+    if (!before) return;
 
     const complaint = await prisma.complaint.findFirst({
-      where,
+      where: { id },
       include: {
         disco: true,
         feeder: true,
@@ -147,13 +194,14 @@ const updateSchema = z.object({
 router.patch("/:id", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMIN"), validate(updateSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params["id"] as string;
-    const body = req.body as z.infer<typeof updateSchema>;
-    const before = await prisma.complaint.findUnique({ where: { id } });
-    if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
+    const before = await assertDiscoOwnership(req, res, id);
+    if (!before) return;
 
-    if (body.status && body.status !== before.status) {
+    const body = req.body as z.infer<typeof updateSchema>;
+
+    if (body.status && body.status !== (before.status as string)) {
       await prisma.complaintEvent.create({
-        data: { complaintId: id, eventType: "STATUS_CHANGE", fromValue: before.status, toValue: body.status, actorUserId: req.user!.sub, notes: body.notes },
+        data: { complaintId: id, eventType: "STATUS_CHANGE", fromValue: before.status as string, toValue: body.status, actorUserId: req.user!.sub, notes: body.notes },
       });
     }
 
@@ -172,8 +220,8 @@ router.post("/:id/assign", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT"
     const { assignedToUserId, notes, dueAt } = req.body as { assignedToUserId?: string; notes?: string; dueAt?: string };
     if (!assignedToUserId) { res.status(400).json({ error: { code: "MISSING_FIELDS" } }); return; }
 
-    const before = await prisma.complaint.findUnique({ where: { id } });
-    if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
+    const before = await assertDiscoOwnership(req, res, id);
+    if (!before) return;
 
     await prisma.$transaction([
       prisma.complaintAssignment.create({ data: { complaintId: id, assignedToUserId, assignedFromUserId: req.user!.sub, notes, dueAt: dueAt ? new Date(dueAt) : undefined } }),
@@ -188,14 +236,15 @@ router.post("/:id/assign", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT"
   }
 });
 
-router.post("/:id/escalate", requireRole("MINISTER","MINISTRY_STAFF","NERC_VIEWER","DISCO_AGENT","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
+router.post("/:id/escalate", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params["id"] as string;
     const { reason } = req.body as { reason?: string };
-    const before = await prisma.complaint.findUnique({ where: { id } });
-    if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
 
-    const newLevel = Math.min(5, before.escalationLevel + 1);
+    const before = await assertDiscoOwnership(req, res, id);
+    if (!before) return;
+
+    const newLevel = Math.min(5, (before.escalationLevel as number) + 1);
     await prisma.$transaction([
       prisma.complaint.update({ where: { id }, data: { escalationLevel: newLevel, status: "ESCALATED", updatedBy: req.user!.sub } }),
       prisma.complaintEvent.create({ data: { complaintId: id, eventType: "ESCALATED", fromValue: String(before.escalationLevel), toValue: String(newLevel), actorUserId: req.user!.sub, notes: reason } }),
@@ -214,8 +263,8 @@ router.post("/:id/resolve", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT
     const { resolutionText } = req.body as { resolutionText?: string };
     if (!resolutionText) { res.status(400).json({ error: { code: "MISSING_FIELDS", message: "resolutionText required" } }); return; }
 
-    const before = await prisma.complaint.findUnique({ where: { id } });
-    if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
+    const before = await assertDiscoOwnership(req, res, id);
+    if (!before) return;
 
     await prisma.$transaction([
       prisma.complaint.update({ where: { id }, data: { status: "RESOLVED", resolutionText, resolvedAt: new Date(), updatedBy: req.user!.sub } }),
@@ -226,6 +275,28 @@ router.post("/:id/resolve", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT
     await writeAuditLog(req.user!.sub, "RESOLVE", "Complaint", id, before, { status: "RESOLVED", resolutionText }, req);
     res.json({ data: { message: "Complaint resolved" } });
   } catch (err) {
+    res.status(500).json({ error: { code: "INTERNAL_ERROR" } });
+  }
+});
+
+router.post("/:id/note", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const id = req.params["id"] as string;
+    const { notes } = req.body as { notes?: string };
+    if (!notes?.trim()) { res.status(400).json({ error: { code: "MISSING_FIELDS", message: "notes required" } }); return; }
+
+    const before = await assertDiscoOwnership(req, res, id);
+    if (!before) return;
+
+    const event = await prisma.complaintEvent.create({
+      data: { complaintId: id, eventType: "NOTE_ADDED", actorUserId: req.user!.sub, notes: notes.trim() },
+      include: { actor: { select: { id: true, fullName: true, role: true } } },
+    });
+
+    await writeAuditLog(req.user!.sub, "NOTE", "Complaint", id, null, { notes }, req);
+    res.json({ data: event });
+  } catch (err) {
+    logger.error({ err }, "Add note failed");
     res.status(500).json({ error: { code: "INTERNAL_ERROR" } });
   }
 });

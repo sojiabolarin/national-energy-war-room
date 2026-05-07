@@ -239,6 +239,7 @@ model Organisation {
   gencoAllocs   GencoAllocation[]
 
   @@index([type])
+  deletedAt DateTime?
 }
 
 model AuditLog {
@@ -288,6 +289,7 @@ model Plant {
   @@index([status])
   @@index([type])
   @@index([gencoOrgId])
+  deletedAt DateTime?
 }
 
 model PlantUnit {
@@ -307,6 +309,7 @@ model PlantUnit {
   plant Plant @relation(fields: [plantId], references: [id], onDelete: Cascade)
 
   @@index([plantId])
+  deletedAt DateTime?
 }
 
 model Substation {
@@ -330,6 +333,7 @@ model Substation {
   toLines          TransmissionLine[]    @relation("ToSubstation")
 
   @@index([ownerOrgId])
+  deletedAt DateTime?
 }
 
 model TransmissionLine {
@@ -355,6 +359,7 @@ model TransmissionLine {
 
   @@index([status])
   @@index([voltageKv])
+  deletedAt DateTime?
 }
 
 model DisCo {
@@ -387,6 +392,7 @@ model DisCo {
   complaints        Complaint[]
 
   @@index([badge])
+  deletedAt DateTime?
 }
 
 model Feeder {
@@ -408,6 +414,7 @@ model Feeder {
   complaints Complaint[]
 
   @@index([discoId])
+  deletedAt DateTime?
 }
 
 model GasPipeline {
@@ -426,6 +433,7 @@ model GasPipeline {
   updatedBy String?
 
   @@index([status])
+  deletedAt DateTime?
 }
 
 model DiversionOpportunity {
@@ -446,6 +454,7 @@ model DiversionOpportunity {
   plant Plant @relation(fields: [plantId], references: [id])
 
   @@index([plantId])
+  deletedAt DateTime?
 }
 
 model CapitalProject {
@@ -470,6 +479,7 @@ model CapitalProject {
 
   @@index([category])
   @@index([status])
+  deletedAt DateTime?
 }
 
 model MiniGrid {
@@ -490,6 +500,7 @@ model MiniGrid {
   operatorOrg Organisation? @relation(fields: [operatorOrgId], references: [id])
 
   @@index([programme])
+  deletedAt DateTime?
 }
 
 model SettlementInvoice {
@@ -514,6 +525,7 @@ model SettlementInvoice {
 
   @@index([period])
   @@index([discoId])
+  deletedAt DateTime?
 }
 
 model GencoAllocation {
@@ -532,6 +544,7 @@ model GencoAllocation {
 
   @@index([settlementInvoiceId])
   @@index([gencoOrgId])
+  deletedAt DateTime?
 }
 
 model GridMetric {
@@ -544,6 +557,7 @@ model GridMetric {
   demandMwh      Decimal? @db.Decimal(10, 2)
 
   @@index([timestamp])
+  deletedAt DateTime?
 }
 
 model Alert {
@@ -662,6 +676,7 @@ model EscalationRule {
   updatedAt    DateTime @updatedAt
 
   @@index([isActive])
+  deletedAt DateTime?
 }
 
 model ValueChainLink {
@@ -679,6 +694,7 @@ model ValueChainLink {
   escalationSteps     EscalationStep[]
 
   @@index([order])
+  deletedAt DateTime?
 }
 
 model Stakeholder {
@@ -696,6 +712,7 @@ model Stakeholder {
   organisation   Organisation?  @relation(fields: [organisationId], references: [id])
 
   @@index([valueChainLinkId])
+  deletedAt DateTime?
 }
 
 model AuthorityInstrument {
@@ -710,6 +727,7 @@ model AuthorityInstrument {
   valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
 
   @@index([valueChainLinkId])
+  deletedAt DateTime?
 }
 
 model EscalationStep {
@@ -726,6 +744,7 @@ model EscalationStep {
   valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
 
   @@index([valueChainLinkId])
+  deletedAt DateTime?
 }
 
 model Notification {
