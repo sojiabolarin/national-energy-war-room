@@ -8,10 +8,12 @@ import { requireAuth } from "../../middlewares/auth.js";
 import { validate } from "../../middlewares/validate.js";
 import { logger } from "../../lib/logger.js";
 import type { AuthenticatedRequest } from "../../middlewares/auth.js";
+import type { Request, Response } from "express";
 
 const router = Router();
 
 const REFRESH_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
+const REFRESH_COOKIE = "rt";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -34,7 +36,21 @@ async function issueTokens(userId: string, email: string, role: string, organisa
   return { accessToken, refreshToken, expiresAt };
 }
 
-router.post("/register", validate(registerSchema), async (req, res) => {
+function setRefreshCookie(res: Response, token: string, expiresAt: Date) {
+  res.cookie(REFRESH_COOKIE, token, {
+    httpOnly: true,
+    secure: process.env["NODE_ENV"] === "production",
+    sameSite: "strict",
+    expires: expiresAt,
+    path: "/api/v1/auth",
+  });
+}
+
+function clearRefreshCookie(res: Response) {
+  res.clearCookie(REFRESH_COOKIE, { path: "/api/v1/auth" });
+}
+
+router.post("/register", validate(registerSchema), async (req: Request, res: Response) => {
   try {
     const { email, phone, password, fullName } = req.body as z.infer<typeof registerSchema>;
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -46,15 +62,16 @@ router.post("/register", validate(registerSchema), async (req, res) => {
     const user = await prisma.user.create({
       data: { email, phone, passwordHash, fullName, role: "CITIZEN" },
     });
-    const { accessToken, refreshToken } = await issueTokens(user.id, user.email, user.role, user.organisationId);
-    res.status(201).json({ data: { accessToken, refreshToken, user: { id: user.id, email: user.email, role: user.role, fullName: user.fullName } } });
+    const { accessToken, refreshToken, expiresAt } = await issueTokens(user.id, user.email, user.role, user.organisationId);
+    setRefreshCookie(res, refreshToken, expiresAt);
+    res.status(201).json({ data: { accessToken, user: { id: user.id, email: user.email, role: user.role, fullName: user.fullName } } });
   } catch (err) {
     logger.error({ err }, "Register failed");
     res.status(500).json({ error: { code: "INTERNAL_ERROR", message: "Registration failed" } });
   }
 });
 
-router.post("/login", validate(loginSchema), async (req, res) => {
+router.post("/login", validate(loginSchema), async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as z.infer<typeof loginSchema>;
     const user = await prisma.user.findUnique({ where: { email } });
@@ -68,41 +85,50 @@ router.post("/login", validate(loginSchema), async (req, res) => {
       return;
     }
     await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
-    const { accessToken, refreshToken } = await issueTokens(user.id, user.email, user.role, user.organisationId);
-    res.json({ data: { accessToken, refreshToken, user: { id: user.id, email: user.email, role: user.role, fullName: user.fullName, organisationId: user.organisationId } } });
+    const { accessToken, refreshToken, expiresAt } = await issueTokens(user.id, user.email, user.role, user.organisationId);
+    setRefreshCookie(res, refreshToken, expiresAt);
+    res.json({ data: { accessToken, user: { id: user.id, email: user.email, role: user.role, fullName: user.fullName, organisationId: user.organisationId } } });
   } catch (err) {
     logger.error({ err }, "Login failed");
     res.status(500).json({ error: { code: "INTERNAL_ERROR", message: "Login failed" } });
   }
 });
 
-router.post("/refresh", async (req, res) => {
+router.post("/refresh", async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = req.body as { refreshToken?: string };
+    // Read refresh token exclusively from httpOnly cookie
+    const refreshToken = (req.cookies as Record<string, string | undefined>)[REFRESH_COOKIE];
     if (!refreshToken) {
-      res.status(400).json({ error: { code: "MISSING_TOKEN", message: "Refresh token required" } });
+      res.status(401).json({ error: { code: "MISSING_TOKEN", message: "No refresh token" } });
       return;
     }
     const stored = await prisma.refreshToken.findUnique({ where: { token: refreshToken }, include: { user: true } });
     if (!stored || stored.expiresAt < new Date()) {
+      clearRefreshCookie(res);
       res.status(401).json({ error: { code: "INVALID_REFRESH_TOKEN", message: "Invalid or expired refresh token" } });
       return;
     }
     await prisma.refreshToken.delete({ where: { id: stored.id } });
-    const { accessToken, refreshToken: newRefresh } = await issueTokens(stored.user.id, stored.user.email, stored.user.role, stored.user.organisationId);
-    res.json({ data: { accessToken, refreshToken: newRefresh } });
+    const { accessToken, refreshToken: newRefresh, expiresAt } = await issueTokens(stored.user.id, stored.user.email, stored.user.role, stored.user.organisationId);
+    setRefreshCookie(res, newRefresh, expiresAt);
+    res.json({ data: { accessToken } });
   } catch (err) {
     logger.error({ err }, "Refresh failed");
     res.status(500).json({ error: { code: "INTERNAL_ERROR", message: "Token refresh failed" } });
   }
 });
 
-router.post("/logout", requireAuth, async (req: AuthenticatedRequest, res) => {
+router.post("/logout", requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { refreshToken } = req.body as { refreshToken?: string };
+    const refreshToken = (req.cookies as Record<string, string | undefined>)[REFRESH_COOKIE];
     if (refreshToken) {
       await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
+    } else {
+      // Fallback: also accept body-supplied token for backwards compatibility
+      const bodyToken = (req.body as { refreshToken?: string }).refreshToken;
+      if (bodyToken) await prisma.refreshToken.deleteMany({ where: { token: bodyToken } });
     }
+    clearRefreshCookie(res);
     res.json({ data: { message: "Logged out" } });
   } catch (err) {
     logger.error({ err }, "Logout failed");
@@ -110,7 +136,7 @@ router.post("/logout", requireAuth, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-router.get("/me", requireAuth, async (req: AuthenticatedRequest, res) => {
+router.get("/me", requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.sub },
@@ -127,7 +153,7 @@ router.get("/me", requireAuth, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", async (req: Request, res: Response) => {
   const { email } = req.body as { email?: string };
   if (!email) {
     res.status(400).json({ error: { code: "MISSING_EMAIL", message: "Email required" } });
@@ -137,7 +163,7 @@ router.post("/forgot-password", async (req, res) => {
   res.json({ data: { message: "If that email exists, a reset link has been sent" } });
 });
 
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", async (_req: Request, res: Response) => {
   res.json({ data: { message: "Password reset stub - not implemented" } });
 });
 

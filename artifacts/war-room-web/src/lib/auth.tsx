@@ -6,7 +6,7 @@ interface AuthContextType {
   user: UserProfile | null;
   accessToken: string | null;
   isLoading: boolean;
-  login: (accessToken: string, refreshToken?: string) => void;
+  login: (accessToken: string) => void;
   logout: () => void;
 }
 
@@ -15,38 +15,28 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   // Access token — memory only (never persisted to any browser storage)
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  // Refresh token — memory only for security; session is lost on page reload
-  const refreshTokenRef = useRef<string | null>(null);
+  // Refresh token is managed server-side via httpOnly cookie — never stored in JS
   const [isInitialized, setIsInitialized] = useState(false);
   const refreshingRef = useRef(false);
 
   const doRefresh = useCallback(async (): Promise<string | null> => {
     if (refreshingRef.current) return null;
-    const rt = refreshTokenRef.current;
-    if (!rt) return null;
-
     refreshingRef.current = true;
     try {
+      // Cookie is sent automatically — no refresh token needed in the request body
       const res = await fetch("/api/v1/auth/refresh", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: rt }),
+        credentials: "include",
       });
 
       if (!res.ok) {
-        refreshTokenRef.current = null;
         setAccessToken(null);
         return null;
       }
 
-      const json = await res.json() as { data?: { accessToken?: string; refreshToken?: string } };
+      const json = await res.json() as { data?: { accessToken?: string } };
       const newAt = json.data?.accessToken ?? null;
-      const newRt = json.data?.refreshToken ?? null;
-
-      if (newAt) {
-        setAccessToken(newAt);
-        if (newRt) refreshTokenRef.current = newRt;
-      }
+      if (newAt) setAccessToken(newAt);
       return newAt;
     } catch {
       return null;
@@ -56,8 +46,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // No stored token — user must log in fresh each session
-    setIsInitialized(true);
+    // No stored access token — user must log in fresh each session.
+    // Refresh token lives in an httpOnly cookie; we probe it silently on mount.
+    doRefresh().finally(() => setIsInitialized(true));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -65,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSilentRefreshFn(doRefresh);
   }, [accessToken, doRefresh]);
 
-  const { data: user, isLoading: userLoading, isError } = useGetMe({
+  const { data: rawUserResponse, isLoading: userLoading, isError } = useGetMe({
     query: {
       queryKey: ["getMe", accessToken],
       enabled: isInitialized && !!accessToken,
@@ -74,32 +66,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // The API wraps the response in { data: UserProfile }; unwrap it here
+  const user = (rawUserResponse as unknown as { data?: UserProfile })?.data ?? null;
+
   useEffect(() => {
     if (isError) setAccessToken(null);
   }, [isError]);
 
-  const login = useCallback((token: string, refreshToken?: string) => {
+  const login = useCallback((token: string) => {
     setAccessToken(token);
-    if (refreshToken) refreshTokenRef.current = refreshToken;
+    // Refresh token is set as httpOnly cookie by the server — no JS handling needed
   }, []);
 
   const logout = useCallback(() => {
-    const rt = refreshTokenRef.current;
-    if (rt) {
-      fetch("/api/v1/auth/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: rt }),
-      }).catch(() => {});
-    }
+    const at = accessToken;
     setAccessToken(null);
-    refreshTokenRef.current = null;
-  }, []);
+    // Clear the server-side session (refresh token cookie + DB record)
+    fetch("/api/v1/auth/logout", {
+      method: "POST",
+      credentials: "include",
+      headers: at ? { Authorization: `Bearer ${at}` } : {},
+    }).catch(() => {});
+  }, [accessToken]);
 
   const isLoading = !isInitialized || (userLoading && !!accessToken);
 
   return (
-    <AuthContext.Provider value={{ user: user ?? null, accessToken, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, accessToken, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

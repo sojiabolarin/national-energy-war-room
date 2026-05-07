@@ -76,14 +76,20 @@ function severityClass(severity?: string): string {
 
 const NOTE_KEY = "war-room-strategic-note";
 
-export function ComplaintsPanel() {
+interface ComplaintsPanelProps {
+  isDiscoAgent?: boolean;
+}
+
+export function ComplaintsPanel({ isDiscoAgent = false }: ComplaintsPanelProps) {
   const { accessToken } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: rawStats, isLoading: statsLoading } = useGetComplaintStats();
+  const { data: rawStats, isLoading: statsLoading } = useGetComplaintStats({
+    query: { enabled: !isDiscoAgent },
+  });
   const { data: rawComplaints, isLoading: compLoading } = useAdminListComplaints(
-    undefined,
-    { query: { queryKey: ["adminListComplaints"] } }
+    { pageSize: 100 },
+    { query: { queryKey: ["adminListComplaints", isDiscoAgent] } }
   );
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -97,7 +103,6 @@ export function ComplaintsPanel() {
   const [sseStatus, setSseStatus] = useState<"connecting" | "live" | "error">("connecting");
   const activeRef = useRef(true);
 
-  // SSE stream: listen for real-time complaint count updates
   useEffect(() => {
     if (!accessToken) return;
     activeRef.current = true;
@@ -140,16 +145,22 @@ export function ComplaintsPanel() {
   }, [accessToken, queryClient]);
 
   const fetchEvents = useCallback(async (id: string) => {
-    if (!accessToken || complaintEvents[id]) return;
+    if (!accessToken || complaintEvents[id] !== undefined) return;
     try {
       const res = await fetch(`/api/v1/admin/complaints/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      if (!res.ok) return;
+      // On any failure, resolve with empty so the UI shows "No events" not "Loading..."
+      if (!res.ok) {
+        setComplaintEvents((prev) => ({ ...prev, [id]: [] }));
+        return;
+      }
       const json = await res.json() as { data?: { events?: ComplaintEvent[] } };
       const evts = (json.data?.events ?? []).slice(-3);
       setComplaintEvents((prev) => ({ ...prev, [id]: evts }));
-    } catch { /* silently skip */ }
+    } catch {
+      setComplaintEvents((prev) => ({ ...prev, [id]: [] }));
+    }
   }, [accessToken, complaintEvents]);
 
   const toggleRow = (id: string) => {
@@ -175,12 +186,45 @@ export function ComplaintsPanel() {
     setTimeout(() => setNoteSaved(false), 2000);
   };
 
-  if (statsLoading || compLoading) {
+  if ((statsLoading && !isDiscoAgent) || compLoading) {
     return <Skeleton className="h-64 w-full" />;
   }
 
-  const stats = (rawStats as unknown as { data?: ComplaintStats })?.data ?? {};
-  const allComplaints: Complaint[] = ((rawComplaints as unknown as { data?: Complaint[] })?.data) ?? [];
+  const rawList: Complaint[] = ((rawComplaints as unknown as { data?: Complaint[] })?.data) ?? [];
+
+  // For DISCO_AGENT: server already scopes the list to their DisCo via JWT.
+  // Derive stats client-side from the scoped list instead of using the global stats endpoint.
+  const allComplaints: Complaint[] = rawList;
+
+  let stats: ComplaintStats;
+  if (isDiscoAgent) {
+    // Compute stats from the scoped list
+    const openComplaints = allComplaints.filter((c) => c.status !== "RESOLVED" && c.status !== "CLOSED");
+    const catMap: Record<string, number> = {};
+    for (const c of openComplaints) {
+      const cat = c.category ?? "OTHER";
+      catMap[cat] = (catMap[cat] ?? 0) + 1;
+    }
+    const escMap: Record<number, number> = {};
+    for (const c of allComplaints) {
+      const lvl = c.escalationLevel ?? 1;
+      escMap[lvl] = (escMap[lvl] ?? 0) + 1;
+    }
+    stats = {
+      totalOpen: openComplaints.length,
+      slaBreachCount: allComplaints.filter((c) => c.slaBreached).length,
+      openByCategory: Object.entries(catMap).map(([category, count]) => ({
+        category,
+        _count: { id: count },
+      })),
+      escalationPyramid: Object.entries(escMap).map(([level, count]) => ({
+        escalationLevel: Number(level),
+        _count: { id: count },
+      })),
+    };
+  } else {
+    stats = (rawStats as unknown as { data?: ComplaintStats })?.data ?? {};
+  }
 
   // Apply category filter to the complaints table
   const complaints = selectedCategory
@@ -192,13 +236,15 @@ export function ComplaintsPanel() {
   const maxCatCount = Math.max(1, ...openByCategory.map((c) => c._count.id));
   const maxEscCount = Math.max(1, ...escalationPyramid.map((e) => e._count.id));
 
-  // League table: group complaints by disco
+  // League table: group complaints by disco — only shown to full-access roles
   const discoMap: Record<string, { name: string; total: number; breached: number }> = {};
-  for (const c of allComplaints) {
-    const name = c.disco?.name ?? "Unknown";
-    if (!discoMap[name]) discoMap[name] = { name, total: 0, breached: 0 };
-    discoMap[name].total++;
-    if (c.slaBreached) discoMap[name].breached++;
+  if (!isDiscoAgent) {
+    for (const c of allComplaints) {
+      const name = c.disco?.name ?? "Unknown";
+      if (!discoMap[name]) discoMap[name] = { name, total: 0, breached: 0 };
+      discoMap[name].total++;
+      if (c.slaBreached) discoMap[name].breached++;
+    }
   }
   const leagueTable = Object.values(discoMap)
     .sort((a, b) => b.breached / Math.max(b.total, 1) - a.breached / Math.max(a.total, 1))
@@ -229,12 +275,12 @@ export function ComplaintsPanel() {
           <CardContent className="p-4">
             <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2 flex items-center justify-between">
               Total Open
-              {liveCount !== null && liveCount !== (stats.totalOpen ?? 0) && (
+              {!isDiscoAgent && liveCount !== null && liveCount !== (stats.totalOpen ?? 0) && (
                 <span className="text-primary font-mono text-[9px]">↑ LIVE</span>
               )}
             </div>
             <div className="text-2xl font-bold font-mono">
-              {liveCount !== null ? liveCount : (stats.totalOpen ?? 0)}
+              {!isDiscoAgent && liveCount !== null ? liveCount : (stats.totalOpen ?? 0)}
             </div>
           </CardContent>
         </Card>
@@ -295,7 +341,7 @@ export function ComplaintsPanel() {
                   <div
                     className="w-full rounded-sm transition-all group-hover:opacity-90"
                     style={{
-                      background: isActive ? "hsl(var(--primary))" : "hsl(var(--primary))",
+                      background: "hsl(var(--primary))",
                       height: `${barH}px`,
                       opacity: isActive ? 1 : 0.4 + 0.6 * (cat._count.id / maxCatCount),
                       minWidth: 52,
@@ -355,7 +401,7 @@ export function ComplaintsPanel() {
         </div>
       )}
 
-      {/* Active complaints table — filtered by selectedCategory when set */}
+      {/* Active complaints table */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -374,7 +420,7 @@ export function ComplaintsPanel() {
                 <TableHead className="w-6" />
                 <TableHead>Ticket</TableHead>
                 <TableHead>Citizen</TableHead>
-                <TableHead>DisCo</TableHead>
+                {!isDiscoAgent && <TableHead>DisCo</TableHead>}
                 <TableHead>Category</TableHead>
                 <TableHead>Severity</TableHead>
                 <TableHead>Level</TableHead>
@@ -386,8 +432,8 @@ export function ComplaintsPanel() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {complaints.map((c, i) => {
-                const rowId = c.id ?? String(i);
+              {complaints.map((c, idx) => {
+                const rowId = c.id ?? c.ticketNumber ?? `row-${idx}`;
                 const age = ageHours(c.createdAt);
                 const isL5 = (c.escalationLevel ?? 0) >= 5;
                 const expanded = expandedRows.has(rowId);
@@ -408,7 +454,9 @@ export function ComplaintsPanel() {
                       <TableCell className="text-sm max-w-[100px] truncate" title={c.citizenName ?? ""}>
                         {c.citizenName ?? "Anonymous"}
                       </TableCell>
-                      <TableCell className="text-sm">{c.disco?.name ?? "Unknown"}</TableCell>
+                      {!isDiscoAgent && (
+                        <TableCell className="text-sm">{c.disco?.name ?? "Unknown"}</TableCell>
+                      )}
                       <TableCell className="text-sm">{CATEGORY_LABELS[c.category ?? ""] ?? c.category ?? "—"}</TableCell>
                       <TableCell className={`text-xs ${severityClass(c.severity)}`}>
                         {c.severity ?? "MEDIUM"}
@@ -450,7 +498,7 @@ export function ComplaintsPanel() {
 
                     {expanded && (
                       <TableRow key={`${rowId}-detail`} className={isL5 ? "bg-destructive/5" : "bg-secondary/10"}>
-                        <TableCell colSpan={10} className="py-3">
+                        <TableCell colSpan={isDiscoAgent ? 9 : 10} className="py-3">
                           <div className="pl-5 space-y-3 text-xs">
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                               <div>
@@ -476,7 +524,6 @@ export function ComplaintsPanel() {
                                 </div>
                               </div>
                             </div>
-                            {/* Activity timeline — real events from API */}
                             <div className="space-y-1">
                               <div className="text-muted-foreground uppercase tracking-wider mb-1">
                                 Recent Activity
@@ -498,9 +545,6 @@ export function ComplaintsPanel() {
                                         {ev.notes}
                                       </span>
                                     )}
-                                    <span className="text-muted-foreground font-mono ml-auto shrink-0">
-                                      {ev.createdAt ? new Date(ev.createdAt).toLocaleString() : ""}
-                                    </span>
                                   </div>
                                 ))
                               )}
@@ -514,10 +558,8 @@ export function ComplaintsPanel() {
               })}
               {complaints.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
-                    {selectedCategory
-                      ? `No complaints found for category: ${CATEGORY_LABELS[selectedCategory] ?? selectedCategory}`
-                      : "No active complaints found."}
+                  <TableCell colSpan={isDiscoAgent ? 9 : 10} className="text-center text-muted-foreground text-sm py-12">
+                    No complaints found.
                   </TableCell>
                 </TableRow>
               )}
@@ -526,11 +568,11 @@ export function ComplaintsPanel() {
         </div>
       </div>
 
-      {/* League Table */}
-      {leagueTable.length > 0 && (
+      {/* SLA League Table — full-access roles only */}
+      {!isDiscoAgent && leagueTable.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            DisCo Performance League Table
+            SLA League Table
           </h3>
           <div className="rounded-sm border border-border overflow-hidden">
             <Table>
@@ -566,27 +608,29 @@ export function ComplaintsPanel() {
         </div>
       )}
 
-      {/* Strategic Note */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Strategic Note (Minister's Office)
-          </h3>
-          <button
-            onClick={saveNote}
-            className="flex items-center gap-1 text-xs text-primary hover:underline uppercase tracking-wider"
-          >
-            <Save className="w-3.5 h-3.5" />
-            {noteSaved ? "Saved" : "Save"}
-          </button>
+      {/* Strategic Note — full-access roles only */}
+      {!isDiscoAgent && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Strategic Note (Minister's Office)
+            </h3>
+            <button
+              onClick={saveNote}
+              className="flex items-center gap-1 text-xs text-primary hover:underline uppercase tracking-wider"
+            >
+              <Save className="w-3.5 h-3.5" />
+              {noteSaved ? "Saved" : "Save"}
+            </button>
+          </div>
+          <textarea
+            value={strategicNote}
+            onChange={(e) => setStrategicNote(e.target.value)}
+            placeholder="Add strategic observations, escalation notes, or ministerial directives…"
+            className="w-full min-h-[100px] bg-card border border-border rounded-sm px-4 py-3 text-sm font-mono text-foreground placeholder:text-muted-foreground resize-y focus:outline-none focus:ring-1 focus:ring-primary"
+          />
         </div>
-        <textarea
-          value={strategicNote}
-          onChange={(e) => setStrategicNote(e.target.value)}
-          placeholder="Add strategic observations, escalation notes, or ministerial directives…"
-          className="w-full min-h-[100px] bg-card border border-border rounded-sm px-4 py-3 text-sm font-mono text-foreground placeholder:text-muted-foreground resize-y focus:outline-none focus:ring-1 focus:ring-primary"
-        />
-      </div>
+      )}
     </div>
   );
 }

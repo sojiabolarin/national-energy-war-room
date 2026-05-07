@@ -8,9 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, ShieldOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-// Must match ProtectedRoute's ALLOWED_ROLES
-const STAFF_ROLES = ["MINISTRY_STAFF", "ADMIN"];
+import { STAFF_ROLES } from "@/components/layout/protected-route";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -28,11 +26,11 @@ export default function Login() {
     : false;
 
   useEffect(() => {
-    // Only redirect if the authenticated user has a permitted staff role.
-    // If they lack the role, stay on /login and show the access-denied state
-    // so we don't create a /login ↔ / redirect loop.
     if (user && !authLoading && isStaff) {
-      navigate(returnTo, { replace: true });
+      // DISCO_AGENT → go straight to complaints
+      const role = (user as unknown as { role?: string }).role ?? "";
+      const dest = role === "DISCO_AGENT" ? "/complaints" : returnTo;
+      navigate(dest, { replace: true });
     }
   }, [user, authLoading, isStaff, navigate, returnTo]);
 
@@ -42,10 +40,10 @@ export default function Login() {
       { data: { email, password } },
       {
         onSuccess: (res) => {
-          const responseData = res as unknown as { data?: { accessToken?: string; refreshToken?: string } };
+          const responseData = res as unknown as { data?: { accessToken?: string } };
           const token = responseData.data?.accessToken;
-          const refreshToken = responseData.data?.refreshToken;
-          if (token) login(token, refreshToken);
+          // Refresh token is set as an httpOnly cookie by the server — never touches JS
+          if (token) login(token);
         },
         onError: () => {
           toast({
@@ -60,7 +58,6 @@ export default function Login() {
 
   const isPending = loginMutation.isPending || (loginMutation.isSuccess && !user);
 
-  // Authenticated but not staff — stable "no access" screen, no redirect loop
   if (user && !authLoading && !isStaff) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-6 p-6">

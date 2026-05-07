@@ -7,6 +7,10 @@ import { AuthProvider } from "@/lib/auth";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
+import GenerationMapPage from "@/pages/generation-map";
+import DiscoRankingsPage from "@/pages/disco-rankings";
+import ValueChainPage from "@/pages/value-chain-page";
+import ComplaintsOverviewPage from "@/pages/complaints-overview";
 import FileComplaint from "@/pages/complaints/file";
 import TrackComplaint from "@/pages/complaints/track";
 import SatisfactionForm from "@/pages/complaints/satisfaction";
@@ -23,18 +27,19 @@ const queryClient = new QueryClient({
 function AppRoutes() {
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/complaints/file" element={<FileComplaint />} />
       <Route path="/complaints/track" element={<TrackComplaint />} />
       <Route path="/complaints/satisfaction/:token" element={<SatisfactionForm />} />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+
+      {/* Protected staff routes */}
+      <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/map" element={<ProtectedRoute><GenerationMapPage /></ProtectedRoute>} />
+      <Route path="/rankings" element={<ProtectedRoute><DiscoRankingsPage /></ProtectedRoute>} />
+      <Route path="/value-chain" element={<ProtectedRoute><ValueChainPage /></ProtectedRoute>} />
+      <Route path="/complaints" element={<ProtectedRoute><ComplaintsOverviewPage /></ProtectedRoute>} />
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

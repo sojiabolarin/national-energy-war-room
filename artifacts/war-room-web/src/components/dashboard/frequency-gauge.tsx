@@ -49,8 +49,8 @@ export function FrequencyGauge() {
 
     const run = async () => {
       try {
-        // Use the dedicated SSE endpoint that always streams (no Accept negotiation needed)
-        const res = await fetch("/api/v1/sector/grid/live", {
+        // Use the dedicated SSE grid stream endpoint
+        const res = await fetch("/api/v1/sector/grid/stream", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             Accept: "text/event-stream",

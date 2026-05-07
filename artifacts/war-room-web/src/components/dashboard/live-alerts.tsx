@@ -44,8 +44,8 @@ export function LiveAlerts() {
 
     const readStream = async () => {
       try {
-        // Use /alerts/active with SSE Accept header per API contract
-        const response = await fetch("/api/v1/alerts/active", {
+        // Use the dedicated sector alerts stream endpoint
+        const response = await fetch("/api/v1/sector/alerts/stream", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             Accept: "text/event-stream",

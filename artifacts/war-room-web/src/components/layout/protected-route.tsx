@@ -3,7 +3,15 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { Loader2 } from "lucide-react";
 
-const ALLOWED_ROLES = ["MINISTRY_STAFF", "ADMIN"];
+export const STAFF_ROLES = [
+  "MINISTER",
+  "MINISTRY_STAFF",
+  "NERC_VIEWER",
+  "ADMIN",
+  "DISCO_AGENT",
+];
+
+const FULL_ACCESS_ONLY_PATHS = ["/", "/map", "/rankings", "/value-chain"];
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, accessToken, isLoading } = useAuth();
@@ -17,16 +25,35 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
     );
   }
 
-  // Not authenticated at all — redirect to login with returnTo
   if (!accessToken || !user) {
     const returnTo = encodeURIComponent(location.pathname + location.search);
     return <Navigate to={`/login?returnTo=${returnTo}`} replace />;
   }
 
-  // Authenticated but wrong role — redirect to login (citizen accounts use /complaints/*)
-  if (!ALLOWED_ROLES.includes(user.role ?? "")) {
+  if (!STAFF_ROLES.includes(user.role ?? "")) {
     return <Navigate to="/login" replace />;
   }
 
+  // DISCO_AGENT is restricted to the complaints page only
+  if (user.role === "DISCO_AGENT" && FULL_ACCESS_ONLY_PATHS.includes(location.pathname)) {
+    return <Navigate to="/complaints" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+export function RequireFullAccess({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const FULL_ACCESS_ROLES = ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"];
+  if (!FULL_ACCESS_ROLES.includes(user?.role ?? "")) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <span className="text-4xl">🔒</span>
+        <p className="text-muted-foreground text-sm uppercase tracking-wider">
+          Your clearance level does not permit access to this section.
+        </p>
+      </div>
+    );
+  }
   return <>{children}</>;
 }
