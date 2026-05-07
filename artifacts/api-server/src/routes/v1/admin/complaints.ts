@@ -74,8 +74,8 @@ router.get("/stats", async (_req: AuthenticatedRequest, res: Response) => {
       openByCategory,
       escalationCounts,
       slaBreachCount,
-      avgResolutionTime,
-      avgSatisfaction,
+      avgAllTimeSatisfaction,
+      avgLast30DaySatisfaction,
       totalOpen,
     ] = await Promise.all([
       prisma.complaint.groupBy({ by: ["category"], where: { status: { not: "RESOLVED" } }, _count: { id: true } }),
@@ -97,8 +97,8 @@ router.get("/stats", async (_req: AuthenticatedRequest, res: Response) => {
         openByCategory,
         escalationPyramid: escalationCounts,
         slaBreachCount,
-        avgSatisfactionScore: avgSatisfaction._avg.satisfactionScore,
-        satisfactionLastMonth: avgResolutionTime._avg.satisfactionScore,
+        avgSatisfactionScore: avgAllTimeSatisfaction._avg.satisfactionScore,
+        satisfactionLastMonth: avgLast30DaySatisfaction._avg.satisfactionScore,
         totalOpen,
       },
     });
