@@ -4,6 +4,7 @@ import { requireAuth, requireStaff } from "../../middlewares/auth.js";
 import { logger } from "../../lib/logger.js";
 import type { AuthenticatedRequest } from "../../middlewares/auth.js";
 import type { Response } from "express";
+import type { PlantStatus, ProjectCategory } from "@prisma/client";
 
 const router = Router();
 
@@ -96,8 +97,11 @@ router.get("/sankey", async (_req, res) => {
     const [plants, discos] = await Promise.all([
       prisma.plant.findMany({ select: { name: true, actualMw: true, type: true } }),
       prisma.disCo.findMany({
-        select: { name: true, atccLossPct: true },
-        include: { settlements: { orderBy: { period: "desc" }, take: 1 } },
+        select: {
+          name: true,
+          atccLossPct: true,
+          settlements: { orderBy: { period: "desc" }, take: 1 },
+        },
       }),
     ]);
 
@@ -132,7 +136,7 @@ router.get("/plants", async (req: AuthenticatedRequest, res: Response) => {
   try {
     const q = req.query as Record<string, string>;
     const { skip, take, page, pageSize } = paginateQuery(q);
-    const where = q["status"] ? { status: q["status"] as string } : {};
+    const where = q["status"] ? { status: q["status"] as PlantStatus } : {};
     const [plants, total] = await Promise.all([
       prisma.plant.findMany({ where, skip, take, orderBy: { name: "asc" }, include: { genco: { select: { id: true, name: true } } } }),
       prisma.plant.count({ where }),
@@ -227,7 +231,7 @@ router.get("/gas/diversions", async (_req, res) => {
 router.get("/projects", async (req: AuthenticatedRequest, res: Response) => {
   const q = req.query as Record<string, string>;
   const { skip, take, page, pageSize } = paginateQuery(q);
-  const where = q["category"] ? { category: q["category"] as string } : {};
+  const where = q["category"] ? { category: q["category"] as ProjectCategory } : {};
   const [projects, total] = await Promise.all([
     prisma.capitalProject.findMany({ where, skip, take, orderBy: { name: "asc" } }),
     prisma.capitalProject.count({ where }),

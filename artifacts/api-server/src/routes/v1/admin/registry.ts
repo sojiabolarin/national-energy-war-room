@@ -70,7 +70,7 @@ function makeEntityRouter<T extends { id: string }>(
 
   r.patch("/:id", async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const id = req.params["id"]!;
+      const id = req.params["id"] as string;
       const before = await model.findUnique({ where: { id } });
       if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
       const data = { ...req.body, updatedBy: req.user!.sub };
@@ -85,7 +85,7 @@ function makeEntityRouter<T extends { id: string }>(
 
   r.delete("/:id", async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const id = req.params["id"]!;
+      const id = req.params["id"] as string;
       const before = await model.findUnique({ where: { id } });
       if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
       await model.delete({ where: { id } });

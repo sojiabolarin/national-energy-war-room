@@ -19,7 +19,7 @@ function hasAuthToken(req: Request): boolean {
 export const smartLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: (req) => (hasAuthToken(req) ? 600 : 100),
-  keyGenerator: (req) => `${ipKeyGenerator(req)}:${hasAuthToken(req) ? "auth" : "anon"}`,
+  keyGenerator: (req) => `${ipKeyGenerator(req.ip ?? req.socket?.remoteAddress ?? "")}:${hasAuthToken(req) ? "auth" : "anon"}`,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: { code: "RATE_LIMITED", message: "Too many requests" } },

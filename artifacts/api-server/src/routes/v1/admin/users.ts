@@ -8,6 +8,7 @@ import { writeAuditLog } from "../../../middlewares/audit.js";
 import { logger } from "../../../lib/logger.js";
 import type { AuthenticatedRequest } from "../../../middlewares/auth.js";
 import type { Response } from "express";
+import type { UserRole } from "@prisma/client";
 
 const router = Router();
 router.use(requireRole("ADMIN"));
@@ -35,7 +36,7 @@ router.get("/", async (req: AuthenticatedRequest, res: Response) => {
     const q = req.query as Record<string, string>;
     const page = Math.max(1, parseInt(q["page"] ?? "1", 10));
     const pageSize = Math.min(100, parseInt(q["pageSize"] ?? "20", 10));
-    const where = q["role"] ? { role: q["role"] as string } : {};
+    const where = q["role"] ? { role: q["role"] as UserRole } : {};
 
     const [users, total] = await Promise.all([
       prisma.user.findMany({
@@ -73,7 +74,7 @@ router.post("/", validate(createUserSchema), async (req: AuthenticatedRequest, r
 
 router.patch("/:id", validate(updateUserSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const body = req.body as z.infer<typeof updateUserSchema>;
     const before = await prisma.user.findUnique({ where: { id }, select: { id: true, email: true, role: true, fullName: true, isActive: true } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
@@ -98,7 +99,7 @@ router.patch("/:id", validate(updateUserSchema), async (req: AuthenticatedReques
 
 router.delete("/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     if (id === req.user!.sub) { res.status(400).json({ error: { code: "CANNOT_DELETE_SELF" } }); return; }
     const before = await prisma.user.findUnique({ where: { id }, select: { id: true, email: true } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }

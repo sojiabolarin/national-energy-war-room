@@ -110,7 +110,7 @@ router.get("/stats", async (_req: AuthenticatedRequest, res: Response) => {
 
 router.get("/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const where: Record<string, unknown> = { id: req.params["id"] };
+    const where: Record<string, unknown> = { id: req.params["id"] as string };
     if (req.user?.role === "DISCO_AGENT" && req.user.organisationId) {
       const disco = await prisma.disCo.findFirst({ where: { operatorOrgId: req.user.organisationId } });
       if (disco) where["discoId"] = disco.id;
@@ -146,7 +146,7 @@ const updateSchema = z.object({
 
 router.patch("/:id", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMIN"), validate(updateSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const body = req.body as z.infer<typeof updateSchema>;
     const before = await prisma.complaint.findUnique({ where: { id } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
@@ -168,7 +168,7 @@ router.patch("/:id", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMI
 
 router.post("/:id/assign", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const { assignedToUserId, notes, dueAt } = req.body as { assignedToUserId?: string; notes?: string; dueAt?: string };
     if (!assignedToUserId) { res.status(400).json({ error: { code: "MISSING_FIELDS" } }); return; }
 
@@ -190,7 +190,7 @@ router.post("/:id/assign", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT"
 
 router.post("/:id/escalate", requireRole("MINISTER","MINISTRY_STAFF","NERC_VIEWER","DISCO_AGENT","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const { reason } = req.body as { reason?: string };
     const before = await prisma.complaint.findUnique({ where: { id } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
@@ -210,7 +210,7 @@ router.post("/:id/escalate", requireRole("MINISTER","MINISTRY_STAFF","NERC_VIEWE
 
 router.post("/:id/resolve", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const { resolutionText } = req.body as { resolutionText?: string };
     if (!resolutionText) { res.status(400).json({ error: { code: "MISSING_FIELDS", message: "resolutionText required" } }); return; }
 
@@ -232,7 +232,7 @@ router.post("/:id/resolve", requireRole("MINISTER","MINISTRY_STAFF","DISCO_AGENT
 
 router.post("/:id/reopen", requireRole("MINISTER","MINISTRY_STAFF","ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const { reason } = req.body as { reason?: string };
     const before = await prisma.complaint.findUnique({ where: { id } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }

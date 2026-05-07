@@ -7,6 +7,7 @@ import { writeAuditLog } from "../../../middlewares/audit.js";
 import { logger } from "../../../lib/logger.js";
 import type { AuthenticatedRequest } from "../../../middlewares/auth.js";
 import type { Response } from "express";
+import type { AlertStatus } from "@prisma/client";
 
 const router = Router();
 router.use(requireAuth);
@@ -28,7 +29,7 @@ router.get("/", async (req: AuthenticatedRequest, res: Response) => {
     const q = req.query as Record<string, string>;
     const page = Math.max(1, parseInt(q["page"] ?? "1", 10));
     const pageSize = Math.min(100, parseInt(q["pageSize"] ?? "20", 10));
-    const where = q["status"] ? { status: q["status"] as string } : {};
+    const where = q["status"] ? { status: q["status"] as AlertStatus } : {};
     const [alerts, total] = await Promise.all([
       prisma.alert.findMany({ where, skip: (page-1)*pageSize, take: pageSize, orderBy: [{ severity: "asc" }, { createdAt: "desc" }] }),
       prisma.alert.count({ where }),
@@ -52,7 +53,7 @@ router.post("/", validate(alertSchema), async (req: AuthenticatedRequest, res: R
 
 router.patch("/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const before = await prisma.alert.findUnique({ where: { id } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
     const data: Record<string, unknown> = { ...req.body };
@@ -67,7 +68,7 @@ router.patch("/:id", async (req: AuthenticatedRequest, res: Response) => {
 
 router.delete("/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const id = req.params["id"]!;
+    const id = req.params["id"] as string;
     const before = await prisma.alert.findUnique({ where: { id } });
     if (!before) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
     await prisma.alert.delete({ where: { id } });
