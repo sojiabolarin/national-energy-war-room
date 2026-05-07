@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import prisma from "../lib/prisma.js";
 import { logger } from "../lib/logger.js";
+import { recordHeartbeat } from "../lib/workerHeartbeat.js";
 
 async function refreshStats() {
   try {
@@ -13,6 +14,7 @@ async function refreshStats() {
       create: { key: "complaint_stats_cache", value: JSON.stringify({ refreshedAt: new Date(), stats }) },
       update: { value: JSON.stringify({ refreshedAt: new Date(), stats }) },
     });
+    recordHeartbeat("stats-refresher");
     logger.debug("Complaint stats refreshed");
   } catch (err) {
     logger.error({ err }, "Stats refresh error");

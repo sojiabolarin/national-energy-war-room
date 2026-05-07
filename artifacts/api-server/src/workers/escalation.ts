@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import prisma from "../lib/prisma.js";
 import { logger } from "../lib/logger.js";
+import { recordHeartbeat } from "../lib/workerHeartbeat.js";
 
 async function runEscalationWorker() {
   try {
@@ -71,6 +72,7 @@ async function runEscalationWorker() {
       }
     }
 
+    recordHeartbeat("escalation-worker");
     if (escalated > 0) {
       logger.info({ escalated }, `Escalation worker: ${escalated} complaints auto-escalated`);
     }

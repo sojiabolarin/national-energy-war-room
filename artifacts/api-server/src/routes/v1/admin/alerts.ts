@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import prisma from "../../../lib/prisma.js";
-import { requireRole } from "../../../middlewares/auth.js";
+import { requireAuth, requireRole } from "../../../middlewares/auth.js";
 import { validate } from "../../../middlewares/validate.js";
 import { writeAuditLog } from "../../../middlewares/audit.js";
 import { logger } from "../../../lib/logger.js";
@@ -9,6 +9,7 @@ import type { AuthenticatedRequest } from "../../../middlewares/auth.js";
 import type { Response } from "express";
 
 const router = Router();
+router.use(requireAuth);
 router.use(requireRole("MINISTER","MINISTRY_STAFF","ADMIN"));
 
 const alertSchema = z.object({

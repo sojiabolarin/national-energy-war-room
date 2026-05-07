@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import prisma from "../lib/prisma.js";
 import { logger } from "../lib/logger.js";
+import { recordHeartbeat } from "../lib/workerHeartbeat.js";
 
 const SLA_WINDOWS_HOURS: Record<string, number> = {
   ELECTROCUTION: 0,
@@ -44,6 +45,7 @@ async function runSlaTracker() {
       }
     }
 
+    recordHeartbeat("sla-tracker");
     if (breached > 0) {
       logger.info({ breached }, `SLA tracker: ${breached} complaints marked as breached`);
     }

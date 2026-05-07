@@ -4,7 +4,7 @@ import helmet from "helmet";
 import pinoHttp from "pino-http";
 import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
-import { publicLimiter } from "./middlewares/rateLimiter.js";
+import { smartLimiter } from "./middlewares/rateLimiter.js";
 
 const app: Express = express();
 
@@ -53,7 +53,8 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// publicLimiter is applied per-route group (not globally) to avoid throttling authenticated staff
+// Smart global limiter: 100/min for unauthenticated, 600/min for authenticated (detected by Bearer token presence)
+app.use(smartLimiter);
 
 app.use("/", router);
 

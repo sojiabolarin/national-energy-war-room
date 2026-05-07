@@ -3,9 +3,10 @@ import healthRouter from "./health.js";
 import authRouter from "./v1/auth.js";
 import complaintsRouter from "./v1/complaints.js";
 import sectorRouter from "./v1/sector.js";
+import alertsRouter from "./v1/alerts.js";
 import adminRouter from "./v1/admin/index.js";
 import alertsAdminRouter from "./v1/admin/alerts.js";
-import { publicLimiter, authLimiter, complaintSubmitLimiter } from "../middlewares/rateLimiter.js";
+import { complaintSubmitLimiter } from "../middlewares/rateLimiter.js";
 
 const router: IRouter = Router();
 
@@ -14,20 +15,25 @@ router.use(healthRouter);
 
 const v1 = Router();
 
-// Auth — public limiter (100/min per IP)
-v1.use("/auth", publicLimiter, authRouter);
+// smartLimiter applied globally in app.ts handles the 100/600 tier split.
+// Per-route limiters below are additive for specific overrides only.
 
-// Complaints public filing — submit limiter (60/min), tracking is publicLimiter
-v1.use("/complaints/whatsapp", publicLimiter);
+// Auth
+v1.use("/auth", authRouter);
+
+// Complaints — complaint submission gets a stricter per-route cap
 v1.post("/complaints", complaintSubmitLimiter);
-v1.use("/complaints", publicLimiter, complaintsRouter);
+v1.use("/complaints", complaintsRouter);
 
-// Sector intelligence — authenticated staff limiter (600/min)
-v1.use("/sector", authLimiter, sectorRouter);
+// Top-level alerts/active (SSE + JSON) — required contract endpoint
+v1.use("/alerts", alertsRouter);
 
-// Admin — authenticated staff limiter (600/min)
-v1.use("/admin/alerts", authLimiter, alertsAdminRouter);
-v1.use("/admin", authLimiter, adminRouter);
+// Sector intelligence
+v1.use("/sector", sectorRouter);
+
+// Admin
+v1.use("/admin/alerts", alertsAdminRouter);
+v1.use("/admin", adminRouter);
 
 router.use("/api/v1", v1);
 
