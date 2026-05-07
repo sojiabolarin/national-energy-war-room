@@ -72,21 +72,28 @@ router.post("/imports/nerc-quarterly", requireRole("MINISTRY_STAFF","ADMIN"), as
         const disco = await prisma.disCo.findFirst({ where: { name: { contains: discoName, mode: "insensitive" } } });
         if (!disco) { rejected.push({ row: i + 1, reason: `DisCo not found: ${discoName}` }); continue; }
 
-        await prisma.settlementInvoice.upsert({
-          where: { id: `${disco.id}-${body.period}` },
-          create: {
-            id: `${disco.id}-${body.period}`,
-            period: body.period,
-            discoId: disco.id,
-            remittancePct: remittancePct ? parseFloat(remittancePct) : undefined,
-            notes: `Imported from NERC quarterly report`,
-            createdBy: req.user!.sub,
-          },
-          update: {
-            remittancePct: remittancePct ? parseFloat(remittancePct) : undefined,
-            updatedBy: req.user!.sub,
-          },
+        const existing = await prisma.settlementInvoice.findFirst({
+          where: { period: body.period, discoId: disco.id },
         });
+        if (existing) {
+          await prisma.settlementInvoice.update({
+            where: { id: existing.id },
+            data: {
+              remittancePct: remittancePct ? parseFloat(remittancePct) : undefined,
+              updatedBy: req.user!.sub,
+            },
+          });
+        } else {
+          await prisma.settlementInvoice.create({
+            data: {
+              period: body.period,
+              discoId: disco.id,
+              remittancePct: remittancePct ? parseFloat(remittancePct) : undefined,
+              notes: `Imported from NERC quarterly report`,
+              createdBy: req.user!.sub,
+            },
+          });
+        }
         accepted++;
       } catch (err) {
         rejected.push({ row: i + 1, reason: err instanceof Error ? err.message : "Unknown error" });

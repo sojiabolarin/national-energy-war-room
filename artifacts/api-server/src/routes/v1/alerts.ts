@@ -1,6 +1,6 @@
 import { Router } from "express";
 import prisma from "../../lib/prisma.js";
-import { requireAuth } from "../../middlewares/auth.js";
+import { requireAuth, requireStaff } from "../../middlewares/auth.js";
 import type { AuthenticatedRequest } from "../../middlewares/auth.js";
 import type { Response } from "express";
 
@@ -13,7 +13,7 @@ const router = Router();
  * - Accept: application/json  → JSON snapshot
  * Requires authentication.
  */
-router.get("/active", requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+router.get("/active", requireAuth, requireStaff, async (req: AuthenticatedRequest, res: Response) => {
   const acceptsSse = req.headers.accept?.includes("text/event-stream");
 
   if (acceptsSse) {

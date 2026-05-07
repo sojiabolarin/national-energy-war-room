@@ -35,6 +35,19 @@ app.use(
 app.use(
   pinoHttp({
     logger,
+    redact: {
+      paths: [
+        "req.headers.authorization",
+        "req.headers.cookie",
+        "req.body.password",
+        "req.body.passwordHash",
+        "req.body.phone",
+        "req.body.email",
+        "req.body.contactPhone",
+        "req.body.contactName",
+      ],
+      censor: "[REDACTED]",
+    },
     serializers: {
       req(req) {
         return {

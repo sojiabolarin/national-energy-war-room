@@ -1,8 +1,8 @@
 import app from "./app.js";
 import { logger } from "./lib/logger.js";
-import { startEscalationWorker } from "./workers/escalation.js";
-import { startSlaTracker } from "./workers/sla.js";
-import { startStatsRefresher } from "./workers/stats.js";
+import { startEscalationWorker, runEscalationWorker } from "./workers/escalation.js";
+import { startSlaTracker, runSlaTracker } from "./workers/sla.js";
+import { startStatsRefresher, refreshStats } from "./workers/stats.js";
 
 const rawPort = process.env["PORT"];
 
@@ -22,6 +22,11 @@ app.listen(port, (err) => {
     process.exit(1);
   }
   logger.info({ port }, "National Energy War Room API Server listening");
+
+  // Run all workers once immediately so /healthz reports healthy on first request
+  Promise.all([runSlaTracker(), runEscalationWorker(), refreshStats()]).catch((err) => {
+    logger.warn({ err }, "Initial worker run failed (non-fatal)");
+  });
 
   startSlaTracker();
   startEscalationWorker();
