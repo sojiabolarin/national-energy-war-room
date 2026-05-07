@@ -11,6 +11,19 @@ import type { AuthenticatedRequest } from "../../middlewares/auth.js";
 
 const router = Router();
 
+// ── Public DisCo lookup (no auth required — used by citizen complaint form) ──
+router.get("/discos", async (_req, res) => {
+  try {
+    const discos = await prisma.disCo.findMany({
+      select: { id: true, name: true, operatorOrg: { select: { name: true } } },
+      orderBy: { name: "asc" },
+    });
+    res.json({ data: discos });
+  } catch {
+    res.status(500).json({ error: { code: "SERVER_ERROR", message: "Could not load DisCos" } });
+  }
+});
+
 function generateTicketNumber(): string {
   const date = new Date();
   const y = date.getFullYear();
@@ -38,11 +51,43 @@ const fileComplaintSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   source: z.enum(["WEB","WHATSAPP","NERC_PORTAL","FORUM_OFFICE","IN_PERSON","EMAIL","IMPORT"]).default("WEB"),
+  photos: z.array(
+    z.string()
+      .refine((s) => /^data:image\/(jpeg|jpg|png|webp|gif|bmp);base64,/.test(s), {
+        message: "Each photo must be a valid image data URL (jpeg, png, webp, gif, bmp)",
+      })
+  ).max(3).optional(),
 });
+
+const MAX_PHOTO_BINARY_BYTES = 10 * 1024 * 1024; // 10 MB total decoded
+
+function totalDecodedPhotoBytes(photos: string[]): number {
+  return photos.reduce((total, dataUrl) => {
+    const base64 = dataUrl.split(",")[1] ?? "";
+    // base64 string length → approximate binary bytes
+    const padding = (base64.match(/=+$/) ?? [""])[0].length;
+    return total + Math.floor((base64.length * 3) / 4) - padding;
+  }, 0);
+}
 
 router.post("/", complaintSubmitLimiter, validate(fileComplaintSchema), async (req, res) => {
   try {
     const body = req.body as z.infer<typeof fileComplaintSchema>;
+
+    // Server-side photo enforcement: count ≤ 3, MIME already validated by schema,
+    // total decoded binary ≤ 10 MB
+    if (body.photos && body.photos.length > 0) {
+      if (body.photos.length > 3) {
+        res.status(400).json({ error: { code: "TOO_MANY_PHOTOS", message: "Maximum 3 photos allowed" } });
+        return;
+      }
+      const totalBytes = totalDecodedPhotoBytes(body.photos);
+      if (totalBytes > MAX_PHOTO_BINARY_BYTES) {
+        res.status(400).json({ error: { code: "PHOTOS_TOO_LARGE", message: "Total photo size must not exceed 10 MB" } });
+        return;
+      }
+    }
+
     const disco = await prisma.disCo.findUnique({ where: { id: body.discoId } });
     if (!disco) {
       res.status(400).json({ error: { code: "INVALID_DISCO", message: "DisCo not found" } });
@@ -79,6 +124,9 @@ router.post("/", complaintSubmitLimiter, validate(fileComplaintSchema), async (r
         status: "FILED",
         severity: body.category === "ELECTROCUTION" ? "CRITICAL" : "MEDIUM",
         escalationLevel: body.category === "ELECTROCUTION" ? 3 : 1,
+        attachments: body.photos && body.photos.length > 0
+          ? { photos: body.photos.map((dataUrl, i) => ({ index: i, dataUrl })) }
+          : undefined,
       },
     });
 
@@ -96,6 +144,7 @@ router.post("/", complaintSubmitLimiter, validate(fileComplaintSchema), async (r
         ticketNumber: complaint.ticketNumber,
         id: complaint.id,
         status: complaint.status,
+        satisfactionToken,
         message: "Your complaint has been filed. Track it using your ticket number.",
         trackUrl: `/complaints/track`,
         whatsappDeepLink: `https://wa.me/?text=My%20National%20Energy%20War%20Room%20complaint%20ticket:%20${complaint.ticketNumber}`,
@@ -199,6 +248,28 @@ router.post("/:id/satisfaction", async (req, res) => {
     logger.error({ err }, "Satisfaction failed");
     res.status(500).json({ error: { code: "INTERNAL_ERROR", message: "Failed to record satisfaction" } });
   }
+});
+
+// SSE: real-time complaint count push (used by complaints panel)
+router.get("/stream-alerts", requireAuth, async (req: AuthenticatedRequest, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  const send = async () => {
+    try {
+      const [totalOpen, slaBreachCount] = await Promise.all([
+        prisma.complaint.count({ where: { status: { notIn: ["RESOLVED", "CLOSED", "REJECTED"] } } }),
+        prisma.complaint.count({ where: { slaBreached: true, status: { notIn: ["RESOLVED", "CLOSED", "REJECTED"] } } }),
+      ]);
+      res.write(`data: ${JSON.stringify({ totalOpen, slaBreachCount, timestamp: new Date().toISOString() })}\n\n`);
+    } catch { /* ignore */ }
+  };
+
+  await send();
+  const interval = setInterval(send, 15000);
+  req.on("close", () => clearInterval(interval));
 });
 
 const whatsappMessageSchema = z.object({

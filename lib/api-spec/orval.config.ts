@@ -26,7 +26,7 @@ export default defineConfig({
       target: "generated",
       client: "react-query",
       mode: "split",
-      baseUrl: "/api",
+      baseUrl: "",
       clean: true,
       prettier: true,
       override: {
@@ -51,7 +51,6 @@ export default defineConfig({
       workspace: apiZodSrc,
       client: "zod",
       target: "generated",
-      schemas: { path: "generated/types", type: "typescript" },
       mode: "split",
       clean: true,
       prettier: true,

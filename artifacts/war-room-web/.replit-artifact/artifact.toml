@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "War Room Dashboard"
+version = "1.0.0"
+id = "artifacts/war-room-web"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20408
+
+[services.development]
+run = "pnpm --filter @workspace/war-room-web run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/war-room-web", "run", "build" ]
+publicDir = "artifacts/war-room-web/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20408"
+BASE_PATH = "/"

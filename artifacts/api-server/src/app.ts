@@ -63,8 +63,8 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
 // Smart global limiter: 100/min for unauthenticated, 600/min for authenticated (detected by Bearer token presence)
 app.use(smartLimiter);

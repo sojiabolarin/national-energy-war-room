@@ -17,6 +17,8 @@ const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
 
 let _baseUrl: string | null = null;
 let _authTokenGetter: AuthTokenGetter | null = null;
+let _silentRefreshFn: (() => Promise<string | null>) | null = null;
+let _isRetrying = false;
 
 /**
  * Set a base URL that is prepended to every relative request URL
@@ -42,6 +44,14 @@ export function setBaseUrl(url: string | null): void {
  */
 export function setAuthTokenGetter(getter: AuthTokenGetter | null): void {
   _authTokenGetter = getter;
+}
+
+/**
+ * Register a silent refresh function. When a request returns 401, this
+ * function is called to attempt a token refresh and then the request is retried.
+ */
+export function setSilentRefreshFn(fn: (() => Promise<string | null>) | null): void {
+  _silentRefreshFn = fn;
 }
 
 function isRequest(input: RequestInfo | URL): input is Request {
@@ -363,6 +373,28 @@ export async function customFetch<T = unknown>(
   const response = await fetch(input, { ...init, method, headers });
 
   if (!response.ok) {
+    // Attempt silent token refresh on 401 (only once, not recursively)
+    if (response.status === 401 && _silentRefreshFn && !_isRetrying) {
+      _isRetrying = true;
+      try {
+        const newToken = await _silentRefreshFn();
+        if (newToken) {
+          const retryHeaders = mergeHeaders(
+            isRequest(input) ? input.headers : undefined,
+            headersInit,
+          );
+          retryHeaders.set("authorization", `Bearer ${newToken}`);
+          const retryResponse = await fetch(input, { ...init, method, headers: retryHeaders });
+          if (retryResponse.ok) {
+            return (await parseSuccessBody(retryResponse, responseType, requestInfo)) as T;
+          }
+          const retryErrorData = await parseErrorBody(retryResponse, method);
+          throw new ApiError(retryResponse, retryErrorData, requestInfo);
+        }
+      } finally {
+        _isRetrying = false;
+      }
+    }
     const errorData = await parseErrorBody(response, method);
     throw new ApiError(response, errorData, requestInfo);
   }
