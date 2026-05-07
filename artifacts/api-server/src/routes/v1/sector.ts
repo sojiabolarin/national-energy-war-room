@@ -82,8 +82,26 @@ router.get("/grid/stream", async (req: AuthenticatedRequest, res: Response) => {
 
   const send = async () => {
     try {
-      const metric = await prisma.gridMetric.findFirst({ orderBy: { timestamp: "desc" } });
-      res.write(`data: ${JSON.stringify(metric)}\n\n`);
+      const [metric, plants] = await Promise.all([
+        prisma.gridMetric.findFirst({ orderBy: { timestamp: "desc" } }),
+        prisma.plant.findMany({
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            actualMw: true,
+            availableMw: true,
+            installedMw: true,
+            latitude: true,
+            longitude: true,
+            type: true,
+            state: true,
+            paf: true,
+          },
+          orderBy: { name: "asc" },
+        }),
+      ]);
+      res.write(`data: ${JSON.stringify({ metric, plants })}\n\n`);
     } catch { /* ignore */ }
   };
 

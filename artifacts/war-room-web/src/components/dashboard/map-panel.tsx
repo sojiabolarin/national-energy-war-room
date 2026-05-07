@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { Layers, X, Maximize2, Minimize2 } from "lucide-react";
+import { Layers, X, Maximize2, Minimize2, Radio } from "lucide-react";
 import { useGetPlants, useGetDiscos, useGetActiveAlerts } from "@workspace/api-client-react";
+import { useAuth } from "../../lib/auth";
 
 interface Plant {
   id?: string;
@@ -10,10 +11,12 @@ interface Plant {
   type?: string;
   installedMw?: string | number;
   availableMw?: string | number;
+  actualMw?: string | number;
   status?: string;
   latitude?: string | number;
   longitude?: string | number;
   state?: string;
+  paf?: string | number;
 }
 
 interface Disco {
@@ -39,7 +42,7 @@ const LAYER_DEFS = [
   { id: "transmission", label: "Transmission Corridors", defaultOn: true  },
   { id: "substations",  label: "330kV Substations",      defaultOn: true  },
   { id: "gas",          label: "Gas Pipeline Routes",    defaultOn: true  },
-  { id: "disco",        label: "DisCo Service Areas",    defaultOn: false },
+  { id: "disco",        label: "DisCo ATC&C Heat Layer", defaultOn: true  },
   { id: "alerts",       label: "Active Alert Zones",     defaultOn: false },
   { id: "projects",     label: "Capital Projects",       defaultOn: false },
   { id: "minigrids",    label: "Mini-Grid Clusters",     defaultOn: false },
@@ -48,33 +51,56 @@ const LAYER_DEFS = [
   { id: "frequency",    label: "Frequency Zones",        defaultOn: false },
 ];
 
-// Brand palette only: #E85426 (primary), #1A1A1A (dark), #F4F4F4 (light), greys
 const BRAND_PRIMARY  = "#E85426";
-const BRAND_PARTIAL  = "#c46a3e"; // muted primary
+const BRAND_PARTIAL  = "#c46a3e";
 const BRAND_MUTED    = "#888888";
 const BRAND_DARK     = "#555555";
 
-const PLANT_COLORS: Record<string, string> = {
-  OPERATIONAL: BRAND_PRIMARY,
-  PARTIAL:     BRAND_PARTIAL,
+// Status colors matched to DB enum values: OPERATING, PARTIAL, CONSTRAINED, OUT
+const PLANT_STATUS_COLORS: Record<string, string> = {
+  OPERATING:    "#22c55e",   // green  — fully operational
+  OPERATIONAL:  "#22c55e",   // alias (legacy)
+  PARTIAL:      "#f59e0b",   // amber  — partial output
+  CONSTRAINED:  BRAND_PRIMARY, // orange — gas/fuel constrained
+  OUT:          "#dc2626",   // red    — zero output / tripped
+  MAINTENANCE:  "#6366f1",   // indigo — scheduled maintenance
 };
+
+function plantColor(status?: string): string {
+  return PLANT_STATUS_COLORS[status?.toUpperCase() ?? ""] ?? BRAND_DARK;
+}
+
+// Choropleth colour by ATC&C loss % — green → amber → orange → red
+function discoHeatColor(atcc: number): string {
+  if (atcc < 30) return "#22c55e";
+  if (atcc < 45) return "#f59e0b";
+  if (atcc < 60) return BRAND_PRIMARY;
+  return "#dc2626";
+}
+
+function alertColor(severity?: string): string {
+  switch (severity) {
+    case "CRITICAL": return BRAND_PRIMARY;
+    case "HIGH":     return BRAND_PARTIAL;
+    default:         return BRAND_MUTED;
+  }
+}
 
 // Major Nigerian 330 kV transmission corridors [lat, lng]
 const TRANSMISSION_LINES: [number, number][][] = [
-  [[6.55, 3.58], [7.73, 4.52]],         // Egbin–Oshogbo
-  [[7.73, 4.52], [9.12, 4.82]],         // Oshogbo–Jebba
-  [[9.12, 4.82], [9.87, 4.63]],         // Jebba–Kainji
-  [[5.74, 5.90], [6.33, 5.63]],         // Delta–Benin
-  [[5.74, 5.90], [6.15, 6.79]],         // Delta–Onitsha
-  [[6.15, 6.79], [5.23, 7.35]],         // Onitsha–Alaoji
-  [[9.05, 7.47], [10.52, 7.44]],        // Abuja–Kaduna
-  [[10.52, 7.44], [12.00, 8.52]],       // Kaduna–Kano
-  [[9.90, 6.83], [9.05, 7.47]],         // Shiroro–Abuja
-  [[9.12, 4.82], [9.90, 6.83]],         // Jebba–Shiroro
-  [[6.33, 5.63], [7.73, 4.52]],         // Benin–Oshogbo
+  [[6.55, 3.58], [7.73, 4.52]],
+  [[7.73, 4.52], [9.12, 4.82]],
+  [[9.12, 4.82], [9.87, 4.63]],
+  [[5.74, 5.90], [6.33, 5.63]],
+  [[5.74, 5.90], [6.15, 6.79]],
+  [[6.15, 6.79], [5.23, 7.35]],
+  [[9.05, 7.47], [10.52, 7.44]],
+  [[10.52, 7.44], [12.00, 8.52]],
+  [[9.90, 6.83], [9.05, 7.47]],
+  [[9.12, 4.82], [9.90, 6.83]],
+  [[6.33, 5.63], [7.73, 4.52]],
 ];
 
-// Major Nigerian 330kV substation nodes
 const SUBSTATION_SITES: { pos: [number, number]; name: string; kv: number }[] = [
   { pos: [6.55,  3.58], name: "Egbin",       kv: 330 },
   { pos: [7.73,  4.52], name: "Oshogbo",     kv: 330 },
@@ -92,7 +118,6 @@ const SUBSTATION_SITES: { pos: [number, number]; name: string; kv: number }[] = 
   { pos: [6.30,  7.50], name: "New Haven",   kv: 330 },
 ];
 
-// NGC gas pipeline routes grouped by operational status
 type GasStatus = "OPERATIONAL" | "PARTIAL" | "MAINTENANCE";
 const GAS_PIPELINES_BY_STATUS: { coords: [number, number][][]; label: string; status: GasStatus }[] = [
   {
@@ -112,7 +137,6 @@ const GAS_PIPELINES_BY_STATUS: { coords: [number, number][][]; label: string; st
   },
 ];
 
-// Representative capital project sites (REA/NERC listed off-grid projects)
 const PROJECT_SITES: { pos: [number, number]; name: string }[] = [
   { pos: [11.85, 13.15], name: "Maiduguri Solar Mini-Grid" },
   { pos: [10.28, 9.72],  name: "Gombe Embedded Generation" },
@@ -121,7 +145,6 @@ const PROJECT_SITES: { pos: [number, number]; name: string }[] = [
   { pos: [12.15, 15.22], name: "Mubi Solar Park" },
 ];
 
-// Mini-grid cluster centroids (REA data-approximate)
 const MINIGRID_SITES: { pos: [number, number]; name: string }[] = [
   { pos: [12.65, 8.28],  name: "Kano Rural Mini-Grid Cluster" },
   { pos: [6.88, 3.72],   name: "Lagos Island Micro-Grid" },
@@ -129,14 +152,12 @@ const MINIGRID_SITES: { pos: [number, number]; name: string }[] = [
   { pos: [6.72, 7.50],   name: "Enugu Peri-Urban Cluster" },
 ];
 
-// Diversion opportunity points (where stranded gas can be redirected to power)
 const DIVERSION_SITES: { pos: [number, number]; name: string }[] = [
   { pos: [5.40, 6.13],   name: "Warri Gas Diversion Pt." },
   { pos: [4.98, 7.90],   name: "Aba Industrial Offtake" },
   { pos: [7.50, 4.54],   name: "Oshogbo Transmission Spur" },
 ];
 
-// Stakeholder office locations (NERC, TCN, NBET, NEMSF)
 const STAKEHOLDER_SITES: { pos: [number, number]; name: string; org: string }[] = [
   { pos: [9.07, 7.39],   name: "NERC Head Office",  org: "Regulator"   },
   { pos: [9.03, 7.47],   name: "TCN HQ",            org: "Transmission" },
@@ -145,36 +166,14 @@ const STAKEHOLDER_SITES: { pos: [number, number]; name: string; org: string }[] 
   { pos: [6.45, 3.40],   name: "IKEDC Lagos",       org: "DisCo"       },
 ];
 
-// Alert indicator positions spread across economic zones
 const ALERT_ANCHORS: [number, number][] = [
   [6.45, 3.40], [9.07, 7.40], [12.00, 8.52], [4.82, 7.04],
   [7.40, 3.90], [6.15, 6.79], [10.52, 7.44], [7.73, 4.52],
 ];
 
-function plantColor(status?: string): string {
-  return PLANT_COLORS[status?.toUpperCase() ?? ""] ?? BRAND_DARK;
-}
-
-function discoColor(badge?: string | null): string {
-  switch (badge) {
-    case "CRITICAL": return BRAND_PRIMARY;
-    case "WARN":     return BRAND_PARTIAL;
-    default:         return BRAND_DARK;
-  }
-}
-
-function alertColor(severity?: string): string {
-  switch (severity) {
-    case "CRITICAL": return BRAND_PRIMARY;
-    case "HIGH":     return BRAND_PARTIAL;
-    default:         return BRAND_MUTED;
-  }
-}
-
 function InvalidateSize({ trigger }: { trigger: unknown }) {
   const map = useMap();
   useEffect(() => {
-    // Small delay allows the DOM to finish layout before Leaflet recalculates
     const id = setTimeout(() => map.invalidateSize(), 120);
     return () => clearTimeout(id);
   }, [map, trigger]);
@@ -187,6 +186,11 @@ export function MapPanel() {
   const [activeLayers, setActiveLayers] = useState<Record<string, boolean>>(
     Object.fromEntries(LAYER_DEFS.map((l) => [l.id, l.defaultOn]))
   );
+  const [liveConnected, setLiveConnected] = useState(false);
+  const [livePlants, setLivePlants] = useState<Plant[] | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const { accessToken } = useAuth();
 
   const { data: rawPlantsData } = useGetPlants();
   const { data: rawDiscosData } = useGetDiscos();
@@ -196,9 +200,80 @@ export function MapPanel() {
   const discosData = rawDiscosData as unknown as { data?: Disco[] };
   const alertsData = rawAlertsData as unknown as { data?: Alert[] };
 
-  const plants: Plant[] = plantsData?.data ?? [];
+  const apiPlants: Plant[] = plantsData?.data ?? [];
   const discos: Disco[] = discosData?.data ?? [];
   const alerts: Alert[] = alertsData?.data ?? [];
+
+  // Use SSE live data when available, fall back to REST data
+  const plants: Plant[] = livePlants ?? apiPlants;
+
+  // Fetch-based SSE stream — fetch() can carry the Bearer token unlike EventSource
+  useEffect(() => {
+    if (!accessToken) return;
+
+    let retryTimer: ReturnType<typeof setTimeout>;
+    let active = true;
+
+    async function connect() {
+      const ac = new AbortController();
+      abortRef.current = ac;
+
+      try {
+        const res = await fetch("/api/v1/sector/grid/stream", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          signal: ac.signal,
+        });
+
+        if (!res.ok || !res.body) {
+          throw new Error(`Stream error: ${res.status}`);
+        }
+
+        setLiveConnected(true);
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (active) {
+          const { done, value } = await reader.read();
+          if (done) {
+            // Stream ended normally — mark disconnected and schedule reconnect
+            setLiveConnected(false);
+            if (active) retryTimer = setTimeout(connect, 5000);
+            return;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const payload = JSON.parse(line.slice(6)) as { plants?: Plant[] };
+                if (Array.isArray(payload.plants)) {
+                  setLivePlants(payload.plants);
+                }
+              } catch { /* ignore parse errors */ }
+            }
+          }
+        }
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return;
+        setLiveConnected(false);
+        if (active) {
+          retryTimer = setTimeout(connect, 10000);
+        }
+      }
+    }
+
+    connect();
+
+    return () => {
+      active = false;
+      abortRef.current?.abort();
+      clearTimeout(retryTimer);
+    };
+  }, [accessToken]);
 
   const toggleLayer = useCallback((id: string) => {
     setActiveLayers((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -237,6 +312,14 @@ export function MapPanel() {
 
   return (
     <div className={`relative ${isFullscreen ? "fixed inset-0 z-[100] bg-background" : "h-[500px] w-full"}`}>
+      {/* Live indicator badge */}
+      <div className="absolute top-3 left-[calc(50%-4rem)] z-[400] flex items-center gap-1.5 bg-card/90 border border-border rounded-full px-3 py-1 text-[10px] uppercase tracking-wider shadow">
+        <Radio size={10} className={liveConnected ? "text-green-400 animate-pulse" : "text-muted-foreground"} />
+        <span className={liveConnected ? "text-green-400" : "text-muted-foreground"}>
+          {liveConnected ? "Live" : "Connecting…"}
+        </span>
+      </div>
+
       <div className="absolute top-3 right-3 z-[400] flex gap-1">
         <button
           onClick={() => setIsFullscreen((v) => !v)}
@@ -328,17 +411,48 @@ export function MapPanel() {
           })
         )}
 
-        {/* ── Generation plants (live API data) ── */}
+        {/* ── DisCo ATC&C choropleth heat layer (live API data) ── */}
+        {activeLayers.disco && discos.map((disco, idx) => {
+          const lat = disco.latitude != null ? Number(disco.latitude) : null;
+          const lng = disco.longitude != null ? Number(disco.longitude) : null;
+          if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) return null;
+          const atcc = Number(disco.atccLossPct ?? 50);
+          const color = discoHeatColor(atcc);
+          const hrs = Number(disco.hoursOfSupplyDaily ?? 12);
+          // Radius proportional to supply hours — bigger = more supply, smaller = poor
+          const radius = Math.max(14, Math.min(32, hrs * 2));
+          return (
+            <CircleMarker
+              key={disco.id ?? idx}
+              center={[lat, lng]}
+              radius={radius}
+              pathOptions={{ color, fillColor: color, fillOpacity: 0.28, weight: 2 }}
+            >
+              <Popup>
+                <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
+                  <div className="font-bold mb-1">{disco.name} DisCo</div>
+                  <div className="text-xs opacity-80">{disco.operatorOrg?.name ?? ""}</div>
+                  <div className="text-xs opacity-80">Hours/Day: {Number(disco.hoursOfSupplyDaily ?? 0).toFixed(1)} h</div>
+                  <div className="text-xs font-semibold mt-1">ATC&C Loss: {atcc.toFixed(1)}%</div>
+                  <div className="text-xs font-bold mt-1">Status: {disco.badge ?? "N/A"}</div>
+                </div>
+              </Popup>
+            </CircleMarker>
+          );
+        })}
+
+        {/* ── Generation plants (live SSE → REST fallback) ── */}
         {activeLayers.plants && plants.map((plant, idx) => {
           const lat = plant.latitude != null ? Number(plant.latitude) : null;
           const lng = plant.longitude != null ? Number(plant.longitude) : null;
           if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) return null;
+          const color = plantColor(plant.status);
           return (
             <CircleMarker
               key={plant.id ?? idx}
               center={[lat, lng]}
               radius={8}
-              pathOptions={{ color: plantColor(plant.status), fillColor: plantColor(plant.status), fillOpacity: 0.85, weight: 1.5 }}
+              pathOptions={{ color, fillColor: color, fillOpacity: 0.85, weight: 1.5 }}
             >
               <Popup>
                 <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
@@ -347,34 +461,10 @@ export function MapPanel() {
                   <div className="text-xs opacity-80">State: {plant.state ?? "N/A"}</div>
                   <div className="text-xs opacity-80">Installed: {Number(plant.installedMw ?? 0).toLocaleString()} MW</div>
                   <div className="text-xs opacity-80">Available: {Number(plant.availableMw ?? 0).toLocaleString()} MW</div>
-                  <div className="text-xs font-bold mt-1">{plant.status ?? "Unknown"}</div>
-                </div>
-              </Popup>
-            </CircleMarker>
-          );
-        })}
-
-        {/* ── DisCo service area centroids (live API data with lat/lng) ── */}
-        {activeLayers.disco && discos.map((disco, idx) => {
-          const lat = disco.latitude != null ? Number(disco.latitude) : null;
-          const lng = disco.longitude != null ? Number(disco.longitude) : null;
-          if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) return null;
-          const hrs = Number(disco.hoursOfSupplyDaily ?? 12);
-          const radius = Math.max(6, Math.min(24, hrs * 1.5));
-          return (
-            <CircleMarker
-              key={disco.id ?? idx}
-              center={[lat, lng]}
-              radius={radius}
-              pathOptions={{ color: discoColor(disco.badge), fillColor: discoColor(disco.badge), fillOpacity: 0.35, weight: 2 }}
-            >
-              <Popup>
-                <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
-                  <div className="font-bold mb-1">{disco.name} DisCo</div>
-                  <div className="text-xs opacity-80">{disco.operatorOrg?.name ?? ""}</div>
-                  <div className="text-xs opacity-80">Hours/Day: {Number(disco.hoursOfSupplyDaily ?? 0).toFixed(1)} h</div>
-                  <div className="text-xs opacity-80">ATC&C Loss: {Number(disco.atccLossPct ?? 0).toFixed(1)}%</div>
-                  <div className="text-xs font-bold mt-1">Status: {disco.badge ?? "N/A"}</div>
+                  <div className="text-xs opacity-80">Output: {Number(plant.actualMw ?? 0).toLocaleString()} MW</div>
+                  <div className="text-xs font-bold mt-1" style={{ color }}>
+                    {plant.status ?? "Unknown"}
+                  </div>
                 </div>
               </Popup>
             </CircleMarker>
@@ -383,7 +473,9 @@ export function MapPanel() {
 
         {/* ── Active alert zones (live API data) ── */}
         {activeLayers.alerts && alerts.slice(0, ALERT_ANCHORS.length).map((alert, idx) => {
-          const [lat, lng] = ALERT_ANCHORS[idx];
+          const anchor = ALERT_ANCHORS[idx];
+          if (!anchor) return null;
+          const [lat, lng] = anchor;
           return (
             <CircleMarker
               key={alert.id ?? idx}
@@ -428,7 +520,7 @@ export function MapPanel() {
         {/* ── Stakeholder locations ── */}
         {activeLayers.stakeholders && STAKEHOLDER_SITE_ITEMS}
 
-        {/* ── Frequency zone overlays (generation hub circles) ── */}
+        {/* ── Frequency zone overlays ── */}
         {activeLayers.frequency && [
           { center: [6.55, 3.58] as [number, number], label: "Lagos Hub" },
           { center: [9.82, 4.60] as [number, number], label: "Kainji Hub" },
@@ -452,32 +544,55 @@ export function MapPanel() {
 
       {/* Legend */}
       <div className="absolute top-3 left-3 z-[400] bg-card/90 border border-border rounded-sm px-3 py-2 text-[10px] uppercase tracking-wider space-y-1">
+        <div className="text-[9px] font-bold opacity-60 pb-0.5">Plant Status</div>
         <div className="flex items-center gap-2">
-          <span className="inline-block w-3 h-3 rounded-full" style={{ background: BRAND_PRIMARY }} />
-          Operational
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#22c55e" }} />
+          Operating
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-block w-3 h-3 rounded-full" style={{ background: BRAND_PARTIAL }} />
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#f59e0b" }} />
           Partial
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-muted-foreground inline-block" />
-          Offline
-        </div>
-        <div className="flex items-center gap-2 pt-1 border-t border-border">
-          <span className="inline-block w-6 border-t-2 border-dashed border-primary opacity-70" />
-          330kV
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: BRAND_PRIMARY }} />
+          Constrained
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-block w-6 border-t-2 border-dashed border-muted-foreground opacity-60" />
-          Gas
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#dc2626" }} />
+          Out
+        </div>
+        <div className="text-[9px] font-bold opacity-60 pt-1 pb-0.5 border-t border-border">ATC&amp;C Loss</div>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#22c55e" }} />
+          &lt;30%
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#f59e0b" }} />
+          30–45%
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: BRAND_PRIMARY }} />
+          45–60%
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: "#dc2626" }} />
+          &gt;60%
+        </div>
+        <div className="pt-1 border-t border-border space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-6 border-t-2 border-dashed border-primary opacity-70" />
+            330kV Line
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-6 border-t-2 border-dashed border-muted-foreground opacity-60" />
+            Gas Pipeline
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// Extracted JSX arrays to keep the return block clean
 const MINIGRID_SITE_ITEMS = MINIGRID_SITES.map((site, i) => (
   <CircleMarker
     key={`mg-${i}`}
