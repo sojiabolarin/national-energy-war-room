@@ -4,6 +4,7 @@ import {
   useAdminGetComplaint,
   useUpdateComplaint,
   useEscalateComplaint,
+  useResolveComplaint,
   useReopenComplaint,
 } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
@@ -110,12 +111,12 @@ export default function ComplaintDetailPage() {
   const [noteText, setNoteText] = useState("");
   const [optimisticStatus, setOptimisticStatus] = useState<string | null>(null);
   const [assignLoading, setAssignLoading] = useState(false);
-  const [resolveLoading, setResolveLoading] = useState(false);
   const [noteLoading, setNoteLoading] = useState(false);
 
   const { data, isLoading, refetch } = useAdminGetComplaint(id!);
   const updateMutation = useUpdateComplaint();
   const escalateMutation = useEscalateComplaint();
+  const resolveMutation = useResolveComplaint();
   const reopenMutation = useReopenComplaint();
 
   interface ComplaintResponse { data?: ComplaintRecord }
@@ -176,29 +177,26 @@ export default function ComplaintDetailPage() {
     );
   }
 
-  async function handleResolve() {
+  function handleResolve() {
     if (!resolutionText.trim()) { toast({ title: "Resolution text is required", variant: "destructive" }); return; }
-    setResolveLoading(true);
     const previousStatus = currentStatus;
     setOptimisticStatus("RESOLVED");
-    try {
-      const res = await fetch(`/api/v1/admin/complaints/${id}/resolve`, {
-        method: "POST", headers: authHeaders(true), body: JSON.stringify({ resolutionText: resolutionText.trim() }),
-      });
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({})) as { error?: { message?: string } };
-        throw new Error(errJson.error?.message ?? `Server ${res.status}`);
-      }
-      toast({ title: "Complaint resolved" });
-      setResolutionText("");
-      void refetch();
-      setOptimisticStatus(null);
-    } catch (err) {
-      setOptimisticStatus(previousStatus);
-      toast({ title: "Resolution failed", description: err instanceof Error ? err.message : "Resolution failed", variant: "destructive" });
-    } finally {
-      setResolveLoading(false);
-    }
+    resolveMutation.mutate(
+      { id: id!, data: { resolutionText: resolutionText.trim() } },
+      {
+        onSuccess: () => {
+          toast({ title: "Complaint resolved" });
+          setResolutionText("");
+          void refetch();
+          setOptimisticStatus(null);
+        },
+        onError: (err) => {
+          setOptimisticStatus(previousStatus);
+          const message = err instanceof Error ? err.message : "Resolution failed";
+          toast({ title: "Resolution failed", description: message, variant: "destructive" });
+        },
+      },
+    );
   }
 
   function handleReopen() {
@@ -541,8 +539,8 @@ export default function ComplaintDetailPage() {
                       className="text-xs min-h-[80px] bg-background border-border resize-none"
                     />
                     <Button size="sm" className="w-full gap-2 bg-green-700 hover:bg-green-600 text-white"
-                      onClick={() => void handleResolve()} disabled={resolveLoading || !resolutionText.trim()}>
-                      {resolveLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                      onClick={handleResolve} disabled={resolveMutation.isPending || !resolutionText.trim()}>
+                      {resolveMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                       Mark Resolved
                     </Button>
                   </div>

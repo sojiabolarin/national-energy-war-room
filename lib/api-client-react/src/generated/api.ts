@@ -29,6 +29,7 @@ import type {
   HealthStatus,
   LoginRequest,
   RegisterRequest,
+  ResolveComplaintBody,
   SectorKpis,
   TrackComplaintParams,
   UpdateComplaintBody,
@@ -48,7 +49,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
-  return `/api/healthz`;
+  return `/healthz`;
 };
 
 export const healthCheck = async (
@@ -61,7 +62,7 @@ export const healthCheck = async (
 };
 
 export const getHealthCheckQueryKey = () => {
-  return [`/api/healthz`] as const;
+  return [`/healthz`] as const;
 };
 
 export const getHealthCheckQueryOptions = <
@@ -2801,11 +2802,14 @@ export const getResolveComplaintUrl = (id: string) => {
 
 export const resolveComplaint = async (
   id: string,
+  resolveComplaintBody: ResolveComplaintBody,
   options?: RequestInit,
 ): Promise<void> => {
   return customFetch<void>(getResolveComplaintUrl(id), {
     ...options,
     method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(resolveComplaintBody),
   });
 };
 
@@ -2816,14 +2820,14 @@ export const getResolveComplaintMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof resolveComplaint>>,
     TError,
-    { id: string },
+    { id: string; data: BodyType<ResolveComplaintBody> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof resolveComplaint>>,
   TError,
-  { id: string },
+  { id: string; data: BodyType<ResolveComplaintBody> },
   TContext
 > => {
   const mutationKey = ["resolveComplaint"];
@@ -2837,11 +2841,11 @@ export const getResolveComplaintMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof resolveComplaint>>,
-    { id: string }
+    { id: string; data: BodyType<ResolveComplaintBody> }
   > = (props) => {
-    const { id } = props ?? {};
+    const { id, data } = props ?? {};
 
-    return resolveComplaint(id, requestOptions);
+    return resolveComplaint(id, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -2850,7 +2854,7 @@ export const getResolveComplaintMutationOptions = <
 export type ResolveComplaintMutationResult = NonNullable<
   Awaited<ReturnType<typeof resolveComplaint>>
 >;
-
+export type ResolveComplaintMutationBody = BodyType<ResolveComplaintBody>;
 export type ResolveComplaintMutationError = ErrorType<unknown>;
 
 export const useResolveComplaint = <
@@ -2860,14 +2864,14 @@ export const useResolveComplaint = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof resolveComplaint>>,
     TError,
-    { id: string },
+    { id: string; data: BodyType<ResolveComplaintBody> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof resolveComplaint>>,
   TError,
-  { id: string },
+  { id: string; data: BodyType<ResolveComplaintBody> },
   TContext
 > => {
   return useMutation(getResolveComplaintMutationOptions(options));

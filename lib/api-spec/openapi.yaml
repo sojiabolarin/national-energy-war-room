@@ -532,6 +532,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResolveComplaintBody"
       responses:
         "200":
           description: Resolved
@@ -744,6 +750,14 @@ components:
               type: integer
             totalPages:
               type: integer
+
+    ResolveComplaintBody:
+      type: object
+      required: [resolutionText]
+      properties:
+        resolutionText:
+          type: string
+          minLength: 1
 
     ErrorResponse:
       type: object

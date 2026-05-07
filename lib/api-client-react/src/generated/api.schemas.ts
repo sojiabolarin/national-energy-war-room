@@ -94,6 +94,11 @@ export interface PaginatedResponse {
   pagination?: PaginatedResponsePagination;
 }
 
+export interface ResolveComplaintBody {
+  /** @minLength 1 */
+  resolutionText: string;
+}
+
 export type ErrorResponseErrorDetailsItem = { [key: string]: unknown };
 
 export type ErrorResponseError = {

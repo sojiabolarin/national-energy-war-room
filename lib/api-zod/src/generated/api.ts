@@ -213,6 +213,10 @@ export const ResolveComplaintParams = zod.object({
   id: zod.coerce.string(),
 });
 
+export const ResolveComplaintBody = zod.object({
+  resolutionText: zod.string().min(1),
+});
+
 export const ReopenComplaintParams = zod.object({
   id: zod.coerce.string(),
 });
