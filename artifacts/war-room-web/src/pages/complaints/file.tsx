@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,24 +8,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Loader2, MapPin, Upload, Zap, LightbulbOff, FileText,
-  AlertTriangle, CheckCircle2, X, MessageCircle,
+  AlertTriangle, CheckCircle2, X, MessageCircle, ChevronLeft,
+  Gauge, CreditCard, Construction, PlugZap, RefreshCcw, FlaskConical,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// DiscoS fetched from public endpoint at runtime — no auth required
 const DISCOS_API = "/api/v1/complaints/discos";
 
 interface DiscoOption { id: string; name: string; operatorName: string }
 
 const CATEGORIES = [
-  { id: "SUPPLY_INTERRUPTION", label: "Power Outage",         icon: <LightbulbOff className="w-6 h-6" /> },
-  { id: "BILLING",             label: "Billing Issue",        icon: <FileText className="w-6 h-6" /> },
-  { id: "VOLTAGE",             label: "Voltage / Meter Fault",icon: <Zap className="w-6 h-6" /> },
-  { id: "ELECTROCUTION",       label: "Safety Hazard",        icon: <AlertTriangle className="w-6 h-6" /> },
+  { id: "SUPPLY_INTERRUPTION",  label: "Power Outage",          icon: <LightbulbOff className="w-5 h-5" /> },
+  { id: "BILLING",              label: "Billing Issue",          icon: <CreditCard className="w-5 h-5" /> },
+  { id: "METERING",             label: "Metering Issue",         icon: <Gauge className="w-5 h-5" /> },
+  { id: "ESTIMATED_BILLING",    label: "Estimated Billing",      icon: <FileText className="w-5 h-5" /> },
+  { id: "VOLTAGE",              label: "Voltage Problem",        icon: <Zap className="w-5 h-5" /> },
+  { id: "ELECTROCUTION",        label: "Safety / Electrocution", icon: <AlertTriangle className="w-5 h-5" /> },
+  { id: "INFRASTRUCTURE_DAMAGE",label: "Infrastructure Damage",  icon: <Construction className="w-5 h-5" /> },
+  { id: "CONNECTION_DELAY",     label: "Connection Delay",       icon: <PlugZap className="w-5 h-5" /> },
+  { id: "DISCONNECTION",        label: "Wrongful Disconnection", icon: <X className="w-5 h-5" /> },
+  { id: "REFUND",               label: "Refund Request",         icon: <RefreshCcw className="w-5 h-5" /> },
+  { id: "ENERGY_THEFT_REPORT",  label: "Energy Theft Report",    icon: <FlaskConical className="w-5 h-5" /> },
+  { id: "OTHER",                label: "Other",                  icon: <FileText className="w-5 h-5" /> },
 ];
 
 const MAX_FILES = 3;
-const MAX_TOTAL_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
 
 interface SuccessState {
   ticketNumber: string;
@@ -45,6 +53,7 @@ function readFileAsDataUrl(file: File): Promise<string> {
 
 export default function FileComplaint() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,8 +63,9 @@ export default function FileComplaint() {
 
   const [citizenName, setCitizenName] = useState("");
   const [citizenPhone, setCitizenPhone] = useState("");
+  const [citizenEmail, setCitizenEmail] = useState("");
   const [discoId, setDiscoId] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(searchParams.get("category") ?? "");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [captcha, setCaptcha] = useState("");
@@ -63,7 +73,11 @@ export default function FileComplaint() {
   const [success, setSuccess] = useState<SuccessState | null>(null);
   const [isPending, setIsPending] = useState(false);
 
-  // Load DiscoS from API on first interaction with the select
+  useEffect(() => {
+    const cat = searchParams.get("category");
+    if (cat) setCategory(cat);
+  }, [searchParams]);
+
   const fetchDiscos = useCallback(async () => {
     if (discosFetched || discosLoading) return;
     setDiscosLoading(true);
@@ -79,7 +93,7 @@ export default function FileComplaint() {
           }))
         );
       }
-    } catch { /* fallback: discos stays empty, user can still type */ }
+    } catch { /* fallback */ }
     finally {
       setDiscosLoading(false);
       setDiscosFetched(true);
@@ -135,20 +149,18 @@ export default function FileComplaint() {
 
     setIsPending(true);
     try {
-      const photos = files.length > 0
-        ? await Promise.all(files.map(readFileAsDataUrl))
-        : undefined;
-
+      const photos = files.length > 0 ? await Promise.all(files.map(readFileAsDataUrl)) : undefined;
       const body: Record<string, unknown> = {
         citizenName,
         citizenPhone,
-        discoId,          // now a real UUID from the API
+        discoId,
         category,
         description,
         source: "WEB",
       };
+      if (citizenEmail) body.citizenEmail = citizenEmail;
       if (location) body.location = location;
-      if (photos)   body.photos  = photos;
+      if (photos) body.photos = photos;
 
       const res = await fetch("/api/v1/complaints", {
         method: "POST",
@@ -169,8 +181,8 @@ export default function FileComplaint() {
       const json = await res.json() as {
         data?: { ticketNumber?: string; id?: string; satisfactionToken?: string };
       };
-      const ticketNumber      = json.data?.ticketNumber     ?? "WR-UNKNOWN";
-      const id                = json.data?.id               ?? "";
+      const ticketNumber = json.data?.ticketNumber ?? "WR-UNKNOWN";
+      const id = json.data?.id ?? "";
       const satisfactionToken = json.data?.satisfactionToken ?? "";
 
       setSuccess({ ticketNumber, id, satisfactionToken, phone: citizenPhone.slice(-4) });
@@ -189,10 +201,9 @@ export default function FileComplaint() {
     const satParam = success.id && success.satisfactionToken
       ? `${success.id}.${success.satisfactionToken}`
       : success.id || "unknown";
-    const satUrl   = `${window.location.origin}/complaints/satisfaction/${satParam}`;
     const trackUrl = `/complaints/track?ticket=${encodeURIComponent(success.ticketNumber)}&phone=${success.phone}`;
-    const waText   = encodeURIComponent(
-      `My NERC electricity complaint has been filed.\n\nTicket: ${success.ticketNumber}\nTrack: ${window.location.origin}${trackUrl}\nRate our service: ${satUrl}\n\nPowered by NERC Consumer Protection Portal.`
+    const waText = encodeURIComponent(
+      `My electricity complaint has been filed with WestMetro.\n\nTicket: ${success.ticketNumber}\nTrack: ${window.location.origin}${trackUrl}\n\nPowered by NERC Consumer Protection Portal.`
     );
 
     return (
@@ -201,32 +212,44 @@ export default function FileComplaint() {
           <CheckCircle2 className="w-10 h-10 text-primary" />
         </div>
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold uppercase tracking-wider">Complaint Filed</h1>
-          <p className="text-muted-foreground">Your complaint has been received and assigned a ticket number.</p>
+          <h1 className="text-2xl font-black uppercase tracking-wider">Complaint Filed</h1>
+          <p className="text-muted-foreground text-sm">
+            Your complaint has been received. Save your ticket number to track progress.
+          </p>
         </div>
-        <div className="bg-card border border-border rounded-sm px-8 py-4 text-center">
-          <div className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Ticket Number</div>
-          <div className="text-2xl font-mono font-bold text-primary">{success.ticketNumber}</div>
+        <div className="bg-card border border-primary/40 rounded-sm px-8 py-5 text-center w-full max-w-xs">
+          <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">Ticket Number</div>
+          <div className="text-2xl font-mono font-black text-primary tracking-wider">{success.ticketNumber}</div>
+          <div className="text-[10px] text-muted-foreground mt-2 uppercase tracking-wide">Save this number to track your complaint</div>
         </div>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <a
             href={`https://wa.me/?text=${waText}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold py-3 px-6 rounded-sm uppercase tracking-wider hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center gap-2 bg-[#25D366] text-white font-black py-3.5 px-6 rounded-sm uppercase tracking-wider hover:opacity-90 transition-opacity"
           >
             <MessageCircle className="w-5 h-5" />
             Share on WhatsApp
           </a>
-          <button onClick={() => navigate(trackUrl)} className="text-sm text-primary hover:underline uppercase tracking-wider">
+          <button
+            onClick={() => navigate(trackUrl)}
+            className="flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold py-3 px-6 rounded-sm uppercase tracking-wider hover:bg-primary/90 transition-colors"
+          >
             Track My Complaint
           </button>
           {satParam !== "unknown" && (
-            <button onClick={() => navigate(`/complaints/satisfaction/${satParam}`)} className="text-sm text-muted-foreground hover:underline">
+            <button
+              onClick={() => navigate(`/complaints/satisfaction/${satParam}`)}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+            >
               Rate This Service
             </button>
           )}
-          <button onClick={() => navigate("/complaints/file")} className="text-sm text-muted-foreground hover:underline">
+          <button
+            onClick={() => { setSuccess(null); setCitizenName(""); setCitizenPhone(""); setDiscoId(""); setCategory(""); setDescription(""); setLocation(""); setCaptcha(""); setFiles([]); }}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+          >
             File Another Complaint
           </button>
         </div>
@@ -235,28 +258,35 @@ export default function FileComplaint() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10 shadow-md">
-        <div className="flex items-center justify-center gap-3">
-          <span className="inline-flex items-center justify-center bg-white rounded-full p-0.5 shrink-0">
-            <img src="/ministry-logo.png" alt="Ministry of Power" className="h-8 w-8 rounded-full object-cover" />
-          </span>
-          <div className="text-center">
-            <h1 className="text-lg font-bold uppercase tracking-wider leading-tight">NERC Consumer Protection</h1>
-            <p className="text-[11px] opacity-90">File a formal complaint against your DisCo</p>
+    <div className="min-h-screen bg-background text-foreground pb-24">
+      {/* Header */}
+      <div className="bg-primary text-primary-foreground px-4 py-4 sticky top-0 z-10 shadow-md">
+        <div className="max-w-md mx-auto flex items-center gap-3">
+          <Link to="/complaints" className="text-primary-foreground/80 hover:text-primary-foreground">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="inline-flex items-center justify-center bg-white rounded-full p-0.5 shrink-0">
+              <img src="/ministry-logo.png" alt="WestMetro" className="h-7 w-7 rounded-full object-cover" />
+            </span>
+            <div>
+              <div className="text-sm font-black uppercase tracking-widest leading-none">WestMetro</div>
+              <div className="text-[10px] opacity-85 uppercase tracking-wider">File a Complaint</div>
+            </div>
           </div>
+          <div className="w-5" />
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-4 mt-4">
+      <div className="max-w-md mx-auto px-4 mt-5">
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* Category picker */}
           <div className="space-y-3">
-            <Label className="uppercase text-xs font-bold tracking-wider text-muted-foreground">
-              Select Category
+            <Label className="uppercase text-xs font-bold tracking-widest text-muted-foreground">
+              What type of complaint?
             </Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {CATEGORIES.map((cat) => (
                 <div
                   key={cat.id}
@@ -264,30 +294,31 @@ export default function FileComplaint() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && setCategory(cat.id)}
-                  className={`p-4 border rounded-sm flex flex-col items-center gap-2 cursor-pointer transition-colors ${
+                  className={`p-3 border rounded-sm flex items-center gap-2.5 cursor-pointer transition-colors ${
                     category === cat.id
-                      ? "bg-primary/20 border-primary text-primary"
+                      ? "bg-primary/15 border-primary text-primary"
                       : "bg-card border-border hover:bg-secondary"
                   }`}
                 >
-                  {cat.icon}
-                  <span className="text-xs font-bold text-center">{cat.label}</span>
+                  <span className={category === cat.id ? "text-primary" : "text-muted-foreground"}>{cat.icon}</span>
+                  <span className="text-xs font-bold leading-tight">{cat.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Form fields */}
           <div className="space-y-4 bg-card border border-border p-4 rounded-sm">
-            {/* DisCo — loaded from API for real UUIDs */}
             <div className="space-y-2">
               <Label>Distribution Company (DisCo)</Label>
               <Select
+                value={discoId}
                 onValueChange={setDiscoId}
                 onOpenChange={(open) => { if (open) fetchDiscos(); }}
                 required
               >
                 <SelectTrigger className="bg-background">
-                  <SelectValue placeholder={discosLoading ? "Loading DisCos…" : "Select DisCo"} />
+                  <SelectValue placeholder={discosLoading ? "Loading DisCos…" : "Select your DisCo"} />
                 </SelectTrigger>
                 <SelectContent>
                   {discosLoading && (
@@ -309,7 +340,6 @@ export default function FileComplaint() {
               </Select>
             </div>
 
-            {/* Name */}
             <div className="space-y-2">
               <Label>Your Full Name</Label>
               <Input
@@ -322,9 +352,8 @@ export default function FileComplaint() {
               />
             </div>
 
-            {/* Phone */}
             <div className="space-y-2">
-              <Label>Phone Number (receives SMS updates)</Label>
+              <Label>Phone Number <span className="text-muted-foreground text-xs font-normal">(for SMS updates)</span></Label>
               <Input
                 required
                 type="tel"
@@ -336,27 +365,37 @@ export default function FileComplaint() {
               />
             </div>
 
-            {/* Description */}
+            <div className="space-y-2">
+              <Label>Email Address <span className="text-muted-foreground text-xs font-normal">(optional)</span></Label>
+              <Input
+                type="email"
+                value={citizenEmail}
+                onChange={(e) => setCitizenEmail(e.target.value)}
+                autoComplete="email"
+                className="bg-background"
+                placeholder="you@example.com"
+              />
+            </div>
+
             <div className="space-y-2">
               <Label>Describe the Issue</Label>
               <Textarea
                 required
-                minLength={20}
-                className="min-h-[100px] bg-background"
+                minLength={10}
+                className="min-h-[110px] bg-background"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Please describe the problem in detail…"
+                placeholder="Please describe the problem in detail — when it started, how it affects you, etc."
               />
             </div>
 
-            {/* Location */}
             <div className="space-y-2">
-              <Label>Location</Label>
+              <Label>Location <span className="text-muted-foreground text-xs font-normal">(optional)</span></Label>
               <div className="flex gap-2">
                 <Input
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Street address or GPS"
+                  placeholder="Street address or GPS coordinates"
                   className="bg-background flex-1"
                 />
                 <Button type="button" variant="outline" onClick={handleGeolocation} className="shrink-0" title="Use my location">
@@ -385,7 +424,7 @@ export default function FileComplaint() {
               {files.length > 0 && (
                 <div className="space-y-1 mb-2">
                   {files.map((f, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs bg-secondary rounded-sm px-3 py-1">
+                    <div key={i} className="flex items-center justify-between text-xs bg-secondary rounded-sm px-3 py-1.5">
                       <span className="truncate max-w-[220px] font-mono">{f.name}</span>
                       <button type="button" onClick={() => removeFile(i)} className="text-muted-foreground hover:text-destructive ml-2">
                         <X size={14} />
@@ -400,7 +439,7 @@ export default function FileComplaint() {
                   onClick={() => fileInputRef.current?.click()}
                   className="w-full border-2 border-dashed border-border rounded-sm p-4 text-center hover:bg-secondary/50 transition-colors"
                 >
-                  <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
+                  <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-1" />
                   <span className="text-xs text-muted-foreground">
                     Tap to add photo ({files.length}/{MAX_FILES})
                   </span>
@@ -410,7 +449,7 @@ export default function FileComplaint() {
 
             {/* CAPTCHA */}
             <div className="space-y-2 pt-2 border-t border-border">
-              <Label>Verification: What is 7 + 3?</Label>
+              <Label>Spam check: What is 7 + 3?</Label>
               <Input
                 required
                 value={captcha}
@@ -424,12 +463,16 @@ export default function FileComplaint() {
 
           <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-6 text-lg rounded-sm"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black py-6 text-base rounded-sm uppercase tracking-wider"
             disabled={isPending || !category || !discoId}
           >
             {isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
             Submit Complaint
           </Button>
+
+          <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-mono pb-4">
+            WestMetro · NERC Consumer Protection · Powered by National Energy War Room
+          </p>
         </form>
       </div>
     </div>

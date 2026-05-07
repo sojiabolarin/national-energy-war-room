@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { useTrackComplaint } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Loader2, CheckCircle2, Clock, AlertCircle, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Search, Loader2, CheckCircle2, Clock, AlertCircle,
+  ChevronDown, ChevronRight, ChevronLeft, XCircle,
+} from "lucide-react";
 
 interface ComplaintEvent {
   id: string;
@@ -42,6 +45,31 @@ const EVENT_LABELS: Record<string, string> = {
   SATISFACTION:      "Feedback Received",
 };
 
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+  FILED:       { label: "Filed",       color: "text-muted-foreground",  icon: <Clock className="w-4 h-4" /> },
+  ASSIGNED:    { label: "Assigned",    color: "text-blue-400",          icon: <Clock className="w-4 h-4" /> },
+  IN_PROGRESS: { label: "In Progress", color: "text-yellow-400",        icon: <Clock className="w-4 h-4" /> },
+  ESCALATED:   { label: "Escalated",   color: "text-orange-400",        icon: <AlertCircle className="w-4 h-4" /> },
+  RESOLVED:    { label: "Resolved",    color: "text-primary",           icon: <CheckCircle2 className="w-4 h-4" /> },
+  CLOSED:      { label: "Closed",      color: "text-muted-foreground",  icon: <CheckCircle2 className="w-4 h-4" /> },
+  REJECTED:    { label: "Rejected",    color: "text-destructive",       icon: <XCircle className="w-4 h-4" /> },
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  SUPPLY_INTERRUPTION:  "Power Outage",
+  BILLING:              "Billing Issue",
+  METERING:             "Metering Issue",
+  ESTIMATED_BILLING:    "Estimated Billing",
+  VOLTAGE:              "Voltage Problem",
+  ELECTROCUTION:        "Safety / Electrocution",
+  INFRASTRUCTURE_DAMAGE:"Infrastructure Damage",
+  CONNECTION_DELAY:     "Connection Delay",
+  DISCONNECTION:        "Wrongful Disconnection",
+  REFUND:               "Refund Request",
+  ENERGY_THEFT_REPORT:  "Energy Theft Report",
+  OTHER:                "Other",
+};
+
 function eventLabel(type: string): string {
   return EVENT_LABELS[type] ?? type.replace(/_/g, " ");
 }
@@ -65,56 +93,86 @@ export default function TrackComplaint() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (ticket && phone4.length === 4) {
-      setQueryKey({ ticket, phone: phone4 });
+    const trimmedTicket = ticket.trim().toUpperCase();
+    if (trimmedTicket && phone4.length === 4) {
+      setQueryKey({ ticket: trimmedTicket, phone: phone4 });
     }
   };
 
-  // API wraps the record in { data: { ... } }
   const complaint = (complaintData as unknown as { data?: ComplaintRecord })?.data;
   const events: ComplaintEvent[] = complaint?.events ?? [];
+  const statusCfg = STATUS_CONFIG[String(complaint?.status ?? "")] ?? STATUS_CONFIG["FILED"];
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10 shadow-md">
-        <div className="flex items-center justify-center gap-3">
-          <span className="inline-flex items-center justify-center bg-white rounded-full p-0.5 shrink-0">
-            <img src="/ministry-logo.png" alt="Ministry of Power" className="h-8 w-8 rounded-full object-cover" />
-          </span>
-          <h1 className="text-xl font-bold uppercase tracking-wider">Track Complaint</h1>
+      {/* Header */}
+      <div className="bg-primary text-primary-foreground px-4 py-4 sticky top-0 z-10 shadow-md">
+        <div className="max-w-md mx-auto flex items-center gap-3">
+          <Link to="/complaints" className="text-primary-foreground/80 hover:text-primary-foreground">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="inline-flex items-center justify-center bg-white rounded-full p-0.5 shrink-0">
+              <img src="/ministry-logo.png" alt="WestMetro" className="h-7 w-7 rounded-full object-cover" />
+            </span>
+            <div>
+              <div className="text-sm font-black uppercase tracking-widest leading-none">WestMetro</div>
+              <div className="text-[10px] opacity-85 uppercase tracking-wider">Track Complaint</div>
+            </div>
+          </div>
+          <div className="w-5" />
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-4 mt-6">
-        <form onSubmit={handleSearch} className="flex gap-2 mb-8">
-          <div className="flex-1 space-y-2">
-            <Input
-              placeholder="Ticket Number (e.g. WR-20260507-000001)"
-              value={ticket}
-              onChange={(e) => setTicket(e.target.value)}
-              className="bg-card font-mono uppercase"
-              required
-            />
-            <Input
-              placeholder="Phone Last 4 Digits"
-              value={phone4}
-              onChange={(e) => setPhone4(e.target.value)}
-              maxLength={4}
-              className="bg-card font-mono"
-              required
-            />
-          </div>
-          <Button type="submit" className="h-auto px-6 bg-primary" disabled={isLoading}>
-            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-          </Button>
-        </form>
+      <div className="max-w-md mx-auto p-4 mt-4">
+        {/* Search form */}
+        <Card className="bg-card border-border mb-6">
+          <CardContent className="p-4">
+            <form onSubmit={handleSearch} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5 block">
+                  Ticket Number
+                </label>
+                <Input
+                  placeholder="e.g. WR-20260507-000001"
+                  value={ticket}
+                  onChange={(e) => setTicket(e.target.value)}
+                  className="bg-background font-mono uppercase"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5 block">
+                  Last 4 Digits of Phone Number
+                </label>
+                <Input
+                  placeholder="e.g. 5678"
+                  value={phone4}
+                  onChange={(e) => setPhone4(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  maxLength={4}
+                  className="bg-background font-mono tracking-widest"
+                  inputMode="numeric"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full bg-primary font-bold py-5 uppercase tracking-wider" disabled={isLoading}>
+                {isLoading
+                  ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Searching…</>
+                  : <><Search className="w-4 h-4 mr-2" /> Find My Complaint</>
+                }
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
         {isError && (
           <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-sm flex items-start gap-3">
             <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
             <div>
-              <h4 className="font-bold">Not Found</h4>
-              <p className="text-sm">Could not find a complaint matching that ticket number and phone combination.</p>
+              <h4 className="font-bold text-sm">Not Found</h4>
+              <p className="text-sm mt-0.5">
+                No complaint found matching that ticket number and phone combination. Please check your details and try again.
+              </p>
             </div>
           </div>
         )}
@@ -126,68 +184,76 @@ export default function TrackComplaint() {
               <CardContent className="p-4">
                 <div className="flex justify-between items-start mb-4 border-b border-border pb-4">
                   <div>
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Status</div>
-                    <div className="text-xl font-bold text-primary flex items-center gap-2">
-                      {String(complaint.status) === "RESOLVED"
-                        ? <CheckCircle2 className="w-5 h-5 text-primary" />
-                        : <Clock className="w-5 h-5 text-muted-foreground" />}
-                      {String(complaint.status ?? "IN PROGRESS")}
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-1">Status</div>
+                    <div className={`text-lg font-black flex items-center gap-1.5 ${statusCfg.color}`}>
+                      {statusCfg.icon}
+                      {statusCfg.label}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Ticket</div>
-                    <div className="font-mono font-bold text-sm">{String(complaint.ticketNumber ?? ticket)}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-1">Ticket</div>
+                    <div className="font-mono font-bold text-xs">{String(complaint.ticketNumber ?? ticket)}</div>
                   </div>
                 </div>
 
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2.5 text-sm">
                   {complaint.disco?.name && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">DisCo</span>
-                      <span className="font-bold">{complaint.disco.name}</span>
+                    <div className="flex justify-between items-baseline gap-4">
+                      <span className="text-muted-foreground shrink-0">DisCo</span>
+                      <span className="font-bold text-right">{complaint.disco.name}</span>
                     </div>
                   )}
-                  {complaint.feeder?.name && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Feeder</span>
-                      <span className="font-bold">{complaint.feeder.name}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Category</span>
-                    <span className="font-bold">{String(complaint.category ?? "Unknown")}</span>
+                  <div className="flex justify-between items-baseline gap-4">
+                    <span className="text-muted-foreground shrink-0">Category</span>
+                    <span className="font-bold text-right">
+                      {CATEGORY_LABELS[String(complaint.category ?? "")] ?? String(complaint.category ?? "Unknown")}
+                    </span>
                   </div>
                   {complaint.severity && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Severity</span>
-                      <span className="font-bold">{complaint.severity}</span>
+                    <div className="flex justify-between items-baseline gap-4">
+                      <span className="text-muted-foreground shrink-0">Severity</span>
+                      <span className={`font-bold ${complaint.severity === "CRITICAL" ? "text-destructive" : ""}`}>
+                        {complaint.severity}
+                      </span>
                     </div>
                   )}
                   {complaint.slaBreached && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">SLA</span>
-                      <span className="font-bold text-destructive">BREACHED</span>
+                    <div className="flex justify-between items-baseline gap-4">
+                      <span className="text-muted-foreground shrink-0">SLA Status</span>
+                      <span className="font-bold text-destructive">BREACHED — escalated to NERC</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Filed On</span>
-                    <span className="font-mono">
+                  <div className="flex justify-between items-baseline gap-4">
+                    <span className="text-muted-foreground shrink-0">Filed On</span>
+                    <span className="font-mono text-xs">
                       {complaint.createdAt
-                        ? new Date(String(complaint.createdAt)).toLocaleDateString("en-GB")
+                        ? new Date(String(complaint.createdAt)).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
                         : "Unknown"}
                     </span>
                   </div>
                   {complaint.resolvedAt && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Resolved</span>
-                      <span className="font-mono">
-                        {new Date(String(complaint.resolvedAt)).toLocaleDateString("en-GB")}
+                    <div className="flex justify-between items-baseline gap-4">
+                      <span className="text-muted-foreground shrink-0">Resolved</span>
+                      <span className="font-mono text-xs">
+                        {new Date(String(complaint.resolvedAt)).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
                       </span>
+                    </div>
+                  )}
+                  {complaint.location && (
+                    <div className="flex justify-between items-baseline gap-4">
+                      <span className="text-muted-foreground shrink-0">Location</span>
+                      <span className="font-bold text-right text-xs">{complaint.location}</span>
+                    </div>
+                  )}
+                  {complaint.description && (
+                    <div className="pt-2 border-t border-border">
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Description</div>
+                      <p className="text-sm">{complaint.description}</p>
                     </div>
                   )}
                   {complaint.resolutionText && (
                     <div className="pt-2 border-t border-border">
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Resolution</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Resolution</div>
                       <p className="text-sm">{complaint.resolutionText}</p>
                     </div>
                   )}
@@ -203,7 +269,7 @@ export default function TrackComplaint() {
                     className="flex w-full items-center justify-between mb-3"
                     onClick={() => setShowTimeline((v) => !v)}
                   >
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                       Activity Timeline ({events.length})
                     </span>
                     {showTimeline
@@ -212,13 +278,12 @@ export default function TrackComplaint() {
                   </button>
 
                   {showTimeline && (
-                    <ol className="relative border-l border-border ml-2 space-y-4">
+                    <ol className="relative border-l border-primary/30 ml-2 space-y-5">
                       {[...events].reverse().map((ev, i) => (
-                        <li key={ev.id ?? i} className="ml-4">
-                          {/* Dot */}
-                          <span className="absolute -left-[5px] flex items-center justify-center w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-card mt-0.5" />
+                        <li key={ev.id ?? i} className="ml-5">
+                          <span className="absolute -left-[5px] flex items-center justify-center w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-card mt-1" />
                           <div className="flex flex-wrap items-baseline gap-2">
-                            <span className="text-xs font-bold uppercase tracking-wide">
+                            <span className="text-xs font-black uppercase tracking-wide">
                               {eventLabel(ev.eventType)}
                             </span>
                             <span className="text-[10px] text-muted-foreground font-mono">
@@ -238,6 +303,10 @@ export default function TrackComplaint() {
                 </CardContent>
               </Card>
             )}
+
+            <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-mono pt-2">
+              WestMetro · NERC Consumer Protection
+            </p>
           </div>
         )}
       </div>

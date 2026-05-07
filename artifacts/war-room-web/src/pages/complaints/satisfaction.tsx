@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Star, CheckCircle2, Loader2 } from "lucide-react";
+import { Star, CheckCircle2, Loader2, ChevronLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
+const RATING_LABELS = ["", "Very Poor", "Poor", "Average", "Good", "Excellent"];
+
 export default function SatisfactionForm() {
-  // token param encodes `${complaintId}.${satisfactionToken}` separated by a dot
   const { token } = useParams<{ token: string }>();
 
   const [rating, setRating] = useState(0);
@@ -30,7 +31,7 @@ export default function SatisfactionForm() {
 
     try {
       if (!complaintId || !satisfactionToken) {
-        throw new Error("Invalid satisfaction link.");
+        throw new Error("Invalid satisfaction link. Please use the link sent to you.");
       }
 
       const res = await fetch(`/api/v1/complaints/${complaintId}/satisfaction`, {
@@ -54,14 +55,24 @@ export default function SatisfactionForm() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">
-        <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle2 className="w-10 h-10 text-primary" />
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 gap-6 text-center">
+        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
+          <CheckCircle2 className="w-12 h-12 text-primary" />
         </div>
-        <h1 className="text-2xl font-bold uppercase tracking-wider text-center mb-2">Feedback Received</h1>
-        <p className="text-muted-foreground text-center max-w-sm">
-          Thank you for taking the time to share your experience. Your feedback helps improve
-          power sector accountability.
+        <div>
+          <h1 className="text-2xl font-black uppercase tracking-wider mb-2">Thank You!</h1>
+          <p className="text-muted-foreground max-w-sm mx-auto text-sm leading-relaxed">
+            Your feedback has been recorded. It helps NERC hold DisCos accountable and improve service for all citizens.
+          </p>
+        </div>
+        <Link
+          to="/complaints"
+          className="text-xs text-primary hover:underline uppercase tracking-widest font-bold mt-4"
+        >
+          Return to Portal Home
+        </Link>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono">
+          WestMetro · NERC Consumer Protection
         </p>
       </div>
     );
@@ -69,28 +80,48 @@ export default function SatisfactionForm() {
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10 shadow-md">
-        <h1 className="text-xl font-bold uppercase tracking-wider text-center">Service Satisfaction</h1>
+      {/* Header */}
+      <div className="bg-primary text-primary-foreground px-4 py-4 sticky top-0 z-10 shadow-md">
+        <div className="max-w-md mx-auto flex items-center gap-3">
+          <Link to="/complaints" className="text-primary-foreground/80 hover:text-primary-foreground">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="inline-flex items-center justify-center bg-white rounded-full p-0.5 shrink-0">
+              <img src="/ministry-logo.png" alt="WestMetro" className="h-7 w-7 rounded-full object-cover" />
+            </span>
+            <div>
+              <div className="text-sm font-black uppercase tracking-widest leading-none">WestMetro</div>
+              <div className="text-[10px] opacity-85 uppercase tracking-wider">Service Satisfaction</div>
+            </div>
+          </div>
+          <div className="w-5" />
+        </div>
       </div>
 
-      <div className="max-w-md mx-auto p-4 mt-8">
+      <div className="max-w-md mx-auto p-4 mt-6">
+        <div className="text-center mb-6">
+          <h2 className="text-base font-black uppercase tracking-wider mb-1">Rate Your Experience</h2>
+          <p className="text-xs text-muted-foreground">How satisfied are you with how your complaint was handled?</p>
+        </div>
+
         <Card className="bg-card border-border">
           <CardContent className="p-6">
-            <h2 className="text-center font-bold text-lg mb-6">How was your issue handled?</h2>
-
             <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="flex justify-center gap-2">
+              {/* Star rating */}
+              <div className="flex justify-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
                     type="button"
-                    className="p-2 transition-transform hover:scale-110"
+                    className="p-2 transition-transform hover:scale-110 active:scale-95"
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
                     onClick={() => setRating(star)}
+                    aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
                   >
                     <Star
-                      className={`w-10 h-10 ${
+                      className={`w-10 h-10 transition-colors ${
                         (hoverRating || rating) >= star
                           ? "fill-primary text-primary"
                           : "text-muted-foreground"
@@ -100,17 +131,23 @@ export default function SatisfactionForm() {
                 ))}
               </div>
 
-              <div className="text-center font-bold text-primary uppercase tracking-widest text-sm h-6">
-                {rating === 1 && "Very Poor"}
-                {rating === 2 && "Poor"}
-                {rating === 3 && "Average"}
-                {rating === 4 && "Good"}
-                {rating === 5 && "Excellent"}
+              {/* Rating label */}
+              <div className="text-center font-black text-primary uppercase tracking-widest text-sm h-5">
+                {RATING_LABELS[hoverRating || rating] ?? ""}
+              </div>
+
+              {/* Stars description */}
+              <div className="grid grid-cols-5 gap-1 text-center">
+                {["Very Poor", "Poor", "Average", "Good", "Excellent"].map((label, i) => (
+                  <div key={label} className={`text-[9px] font-bold uppercase leading-tight ${(hoverRating || rating) === i + 1 ? "text-primary" : "text-muted-foreground"}`}>
+                    {label}
+                  </div>
+                ))}
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs uppercase tracking-wider font-bold text-muted-foreground">
-                  Additional Comments (Optional)
+                <label className="text-xs uppercase tracking-widest font-bold text-muted-foreground block">
+                  Additional Comments <span className="font-normal normal-case">(optional)</span>
                 </label>
                 <Textarea
                   value={feedback}
@@ -121,23 +158,23 @@ export default function SatisfactionForm() {
               </div>
 
               {errorMsg && (
-                <p className="text-sm text-destructive text-center font-medium">{errorMsg}</p>
+                <p className="text-sm text-destructive text-center font-medium bg-destructive/10 p-3 rounded-sm">{errorMsg}</p>
               )}
 
               <Button
                 type="submit"
-                className="w-full bg-primary font-bold py-6 text-lg"
+                className="w-full bg-primary font-black py-6 text-base uppercase tracking-wider"
                 disabled={rating === 0 || submitting}
               >
                 {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                SUBMIT FEEDBACK
+                Submit Feedback
               </Button>
             </form>
           </CardContent>
         </Card>
 
         <p className="text-center text-[10px] text-muted-foreground font-mono mt-8 uppercase tracking-widest">
-          Ref: {token}
+          Ref: {token ? `${token.substring(0, 8)}…` : "invalid"}
         </p>
       </div>
     </div>

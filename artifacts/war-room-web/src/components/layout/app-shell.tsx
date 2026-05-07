@@ -47,7 +47,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
   },
   {
-    path: "/complaints",
+    path: "/staff/complaints",
     label: "Complaints",
     icon: <MessageSquareWarning className="w-4 h-4" />,
     // all staff can access complaints
