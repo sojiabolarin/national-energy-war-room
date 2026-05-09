@@ -439,9 +439,8 @@ export function ComplaintsPanel({ isDiscoAgent = false }: ComplaintsPanelProps) 
                 const expanded = expandedRows.has(rowId);
 
                 return (
-                  <>
+                  <tbody key={rowId} style={{ display: "contents" }}>
                     <TableRow
-                      key={rowId}
                       className={`cursor-pointer ${isL5 ? "bg-destructive/10 hover:bg-destructive/15" : "hover:bg-secondary/30"}`}
                       onClick={() => toggleRow(rowId)}
                     >
@@ -553,7 +552,7 @@ export function ComplaintsPanel({ isDiscoAgent = false }: ComplaintsPanelProps) 
                         </TableCell>
                       </TableRow>
                     )}
-                  </>
+                  </tbody>
                 );
               })}
               {complaints.length === 0 && (

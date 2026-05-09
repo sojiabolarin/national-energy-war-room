@@ -475,14 +475,14 @@ async function main() {
   const sources    = ["WEB","WHATSAPP","NERC_PORTAL","FORUM_OFFICE","IN_PERSON","EMAIL"] as const;
 
   const citizenNames = ["Chukwuemeka Obi","Fatima Abdullahi","Oluwaseun Adeyemi","Ngozi Okonkwo","Ibrahim Musa","Amaka Ezeh","Yusuf Aliyu","Chidinma Eze","Bello Garba","Adaeze Nwosu","Musa Suleiman","Onyeka Igwe","Halima Umar","Emeka Nwachukwu","Kemi Adesanya","Lawal Isa","Blessing Okafor","Rabiu Abdulkadir","Chisom Obiora","Abubakar Tanko","Taiwo Okafor","Kehinde Adebayo","Tochukwu Eze","Salihu Abubakar","Nkechi Okoye","Abdullahi Kawu","Amarachi Nweze","Usman Garba","Ifeanyi Obi","Mariam Bello"];
-  const discoWeights = [0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,3,4,4,5,5,5,6,6,6,6,6,7,7,7,7,8,8,9,9,9,10,10,10];
+  const complaintDiscoWeights = [0,0,0,0,0,1,1,1,1,1,1,2,2,2,3,3,3,3,4,4,5,5,5,6,6,6,6,6,7,7,7,7,8,8,9,9,9,10,10,10];
   const nigerianLocs = ["Agege, Lagos","Victoria Island, Lagos","Kuje, Abuja","Maitama, Abuja","New GRA, Port Harcourt","D-Line, Port Harcourt","Bodija, Ibadan","Challenge, Ibadan","Barnawa, Kaduna","Sabon Tasha, Kaduna","Onitsha Main Market, Anambra","Nnewi, Anambra","Diobu, Port Harcourt","Rumuola, Rivers","Tudun Wada, Jos","Bukuru, Jos","Wuse 2, Abuja","Garki, Abuja","Isale Eko, Lagos","Surulere, Lagos","Gwarinpa, Abuja","Dei-Dei, Abuja","Ojodu, Lagos","Yaba, Lagos","Sapele Road, Benin City","Ugbowo, Benin City","New Haven, Enugu","Independence Layout, Enugu","Kano Road, Kaduna","Ungwan Boro, Kaduna"];
 
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
   const TOTAL_COMPLAINTS = 1500;
 
   for (let i = 0; i < TOTAL_COMPLAINTS; i++) {
-    const discoIdx = discoWeights[i % discoWeights.length]!;
+    const discoIdx = complaintDiscoWeights[i % complaintDiscoWeights.length]!;
     const disco = discos[discoIdx]!;
     const category = categories[i % categories.length]!;
     const status = statuses[i % statuses.length]!;
