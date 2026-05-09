@@ -1,0 +1,34 @@
+{
+  "generated": "2026-05-09",
+  "totalActions": 4,
+  "actions": [
+    {
+      "table": "gridConnectedPlants",
+      "action": "MERGE",
+      "kept": "Calabar NIPP",
+      "merged": [
+        "Odukpani NIPP"
+      ],
+      "reason": "Same physical NDPHC NIPP plant (561MW, Cross River, Odukpani LGA). Canonical name per NERC Q1 2025.",
+      "preservedAs": "alsoKnownAs"
+    },
+    {
+      "table": "tcnSubstations",
+      "action": "DROP",
+      "removed": "Kaduna (Kumbotso 2)",
+      "reason": "Misnamed duplicate of Kaduna Mando 330kV. Kumbotso is in Kano, not Kaduna."
+    },
+    {
+      "table": "tcnSubstations",
+      "action": "DROP",
+      "removed": "Damaturu - Maiduguri Loop",
+      "reason": "Was a transmission line entry mistakenly placed in substations. Belongs in transmissionLines table."
+    },
+    {
+      "table": "stateRegulators",
+      "action": "DROP",
+      "removed": "ONDOERC",
+      "reason": "Alternate naming for OSERC. Canonical = OSERC per state law."
+    }
+  ]
+}
