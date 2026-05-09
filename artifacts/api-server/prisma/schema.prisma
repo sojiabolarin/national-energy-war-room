@@ -220,13 +220,23 @@ model RefreshToken {
 }
 
 model Organisation {
-  id        String    @id @default(uuid())
-  name      String
-  type      OrgType
-  parentId  String?
-  website   String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                   String    @id @default(uuid())
+  externalId           String?   @unique
+  name                 String
+  shortName            String?
+  type                 OrgType
+  parentId             String?
+  website              String?
+  mandate              String?
+  vision               String?
+  mission              String?
+  establishedYear      Int?
+  legalBasis           String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean   @default(false)
+  dataSource           String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   parent        Organisation?  @relation("OrgHierarchy", fields: [parentId], references: [id])
   children      Organisation[] @relation("OrgHierarchy")
@@ -263,30 +273,39 @@ model AuditLog {
 }
 
 model Plant {
-  id                String      @id @default(uuid())
-  name              String
-  type              PlantType
-  installedMw       Decimal     @db.Decimal(10, 2)
-  availableMw       Decimal     @db.Decimal(10, 2)
-  actualMw          Decimal     @db.Decimal(10, 2)
-  state             String
-  latitude          Decimal?    @db.Decimal(10, 7)
-  longitude         Decimal?    @db.Decimal(10, 7)
-  status            PlantStatus @default(OPERATING)
-  gencoOrgId        String?
-  commissioningDate DateTime?
-  paf               Decimal?    @db.Decimal(5, 2)
-  notes             String?
-  alsoKnownAs       String?
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  createdBy         String?
-  updatedBy         String?
+  id                   String      @id @default(uuid())
+  externalId           String?     @unique
+  name                 String
+  displayName          String?
+  type                 PlantType
+  gencoType            String?
+  installedMw          Decimal     @db.Decimal(10, 2)
+  availableMw          Decimal     @db.Decimal(10, 2)
+  actualMw             Decimal     @db.Decimal(10, 2)
+  state                String
+  lga                  String?
+  latitude             Decimal?    @db.Decimal(10, 7)
+  longitude            Decimal?    @db.Decimal(10, 7)
+  status               PlantStatus @default(OPERATING)
+  gencoOrgId           String?
+  commissioningDate    DateTime?
+  paf                  Decimal?    @db.Decimal(5, 2)
+  constraintReason     String?
+  notes                String?
+  alsoKnownAs          String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean     @default(false)
+  dataSource           String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  createdBy            String?
+  updatedBy            String?
 
   genco              Organisation?       @relation(fields: [gencoOrgId], references: [id])
   units              PlantUnit[]
   diversionOpps      DiversionOpportunity[]
   gencoAllocations   GencoAllocation[]
+  dispatchHistory    DispatchHistory[]
 
   @@index([status])
   @@index([type])
@@ -315,20 +334,25 @@ model PlantUnit {
 }
 
 model Substation {
-  id               String   @id @default(uuid())
-  name             String
-  voltageClass     String
-  capacityMva      Decimal  @db.Decimal(10, 2)
-  transformerConfig String?
-  circuitCount     Int?
-  latitude         Decimal? @db.Decimal(10, 7)
-  longitude        Decimal? @db.Decimal(10, 7)
-  state            String?
-  ownerOrgId       String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  createdBy        String?
-  updatedBy        String?
+  id                   String   @id @default(uuid())
+  externalId           String?  @unique
+  name                 String
+  displayName          String?
+  voltageClass         String
+  capacityMva          Decimal  @db.Decimal(10, 2)
+  transformerConfig    String?
+  circuitCount         Int?
+  latitude             Decimal? @db.Decimal(10, 7)
+  longitude            Decimal? @db.Decimal(10, 7)
+  state                String?
+  ownerOrgId           String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean  @default(false)
+  dataSource           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  createdBy            String?
+  updatedBy            String?
 
   ownerOrg         Organisation?         @relation(fields: [ownerOrgId], references: [id])
   fromLines        TransmissionLine[]    @relation("FromSubstation")
@@ -421,22 +445,26 @@ model Feeder {
 }
 
 model GasPipeline {
-  id               String         @id @default(uuid())
-  name             String
-  capacity         String?
-  capacityMmscfd   Decimal?       @db.Decimal(10, 2)
-  operator         String?
-  status           PipelineStatus @default(OPERATIONAL)
-  geometry         Json?
-  routeCoordinates Json?
-  notes            String?
-  fromPoint        String?
-  toPoint          String?
-  lengthKm         Decimal?       @db.Decimal(10, 2)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  createdBy        String?
-  updatedBy        String?
+  id                   String         @id @default(uuid())
+  externalId           String?        @unique
+  name                 String
+  capacity             String?
+  capacityMmscfd       Decimal?       @db.Decimal(10, 2)
+  operator             String?
+  status               PipelineStatus @default(OPERATIONAL)
+  geometry             Json?
+  routeCoordinates     Json?
+  notes                String?
+  fromPoint            String?
+  toPoint              String?
+  lengthKm             Decimal?       @db.Decimal(10, 2)
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean        @default(false)
+  dataSource           String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  createdBy            String?
+  updatedBy            String?
 
   @@index([status])
   deletedAt DateTime?
@@ -464,24 +492,28 @@ model DiversionOpportunity {
 }
 
 model CapitalProject {
-  id              String          @id @default(uuid())
-  name            String
-  category        ProjectCategory
-  status          String
-  sponsorOrgId    String?
-  latitude        Decimal?        @db.Decimal(10, 7)
-  longitude       Decimal?        @db.Decimal(10, 7)
-  timeline        String?
-  capexUsd        Decimal?        @db.Decimal(15, 2)
-  completionPct   Decimal?        @db.Decimal(5, 2)
-  funder          String?
-  contractorOrEpc String?
-  notes           String?
-  sourceRef       String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  createdBy       String?
-  updatedBy       String?
+  id                   String          @id @default(uuid())
+  externalId           String?         @unique
+  name                 String
+  category             ProjectCategory
+  status               String
+  sponsorOrgId         String?
+  latitude             Decimal?        @db.Decimal(10, 7)
+  longitude            Decimal?        @db.Decimal(10, 7)
+  timeline             String?
+  capexUsd             Decimal?        @db.Decimal(15, 2)
+  completionPct        Decimal?        @db.Decimal(5, 2)
+  funder               String?
+  contractorOrEpc      String?
+  notes                String?
+  sourceRef            String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean         @default(false)
+  dataSource           String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  createdBy            String?
+  updatedBy            String?
 
   sponsorOrg Organisation? @relation(fields: [sponsorOrgId], references: [id])
 
@@ -491,24 +523,28 @@ model CapitalProject {
 }
 
 model MiniGrid {
-  id            String            @id @default(uuid())
-  name          String
-  capacityKw    Decimal           @db.Decimal(10, 2)
-  beneficiaries Int?
-  latitude      Decimal?          @db.Decimal(10, 7)
-  longitude     Decimal?          @db.Decimal(10, 7)
-  state         String?
-  lga           String?
-  operatorOrgId String?
-  programme     MiniGridProgramme @default(NEP)
-  status        String            @default("OPERATIONAL")
-  completionYear Int?
-  funder        String?
-  operatorName  String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  createdBy     String?
-  updatedBy     String?
+  id                   String            @id @default(uuid())
+  externalId           String?           @unique
+  name                 String
+  capacityKw           Decimal           @db.Decimal(10, 2)
+  beneficiaries        Int?
+  latitude             Decimal?          @db.Decimal(10, 7)
+  longitude            Decimal?          @db.Decimal(10, 7)
+  state                String?
+  lga                  String?
+  operatorOrgId        String?
+  programme            MiniGridProgramme @default(NEP)
+  status               String            @default("OPERATIONAL")
+  completionYear       Int?
+  funder               String?
+  operatorName         String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean           @default(false)
+  dataSource           String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  createdBy            String?
+  updatedBy            String?
 
   operatorOrg Organisation? @relation(fields: [operatorOrgId], references: [id])
 
@@ -784,60 +820,82 @@ model SystemSetting {
 // ── Institutional Directory ──────────────────────────────────────────────────
 
 model ForumOffice {
-  id            String   @id @default(uuid())
-  name          String
-  city          String?
-  statesCovered Json?
-  address       String?
-  email         String?
-  phone         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                   String    @id @default(uuid())
+  externalId           String?   @unique
+  name                 String
+  city                 String?
+  statesCovered        Json?
+  address              String?
+  email                String?
+  phone                String?
+  verifiedAt           DateTime?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean   @default(false)
+  dataSource           String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model NemsaFieldOffice {
-  id            String   @id @default(uuid())
-  zoneName      String
-  statesCovered Json?
-  address       String?
-  email         String?
-  phone         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                   String    @id @default(uuid())
+  externalId           String?   @unique
+  zoneName             String
+  statesCovered        Json?
+  address              String?
+  email                String?
+  phone                String?
+  verifiedAt           DateTime?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean   @default(false)
+  dataSource           String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model TcnRegion {
-  id             String   @id @default(uuid())
-  name           String
-  headquarters   String?
-  coverageStates Json?
-  contactNumber  String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  externalId           String?  @unique
+  name                 String
+  headquarters         String?
+  coverageStates       Json?
+  contactNumber        String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean  @default(false)
+  dataSource           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model TcnControlCentre {
-  id             String   @id @default(uuid())
-  type           String
-  name           String
-  location       String?
-  address        String?
-  coverageStates Json?
-  contactNumber  String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  externalId           String?  @unique
+  type                 String
+  name                 String
+  location             String?
+  address              String?
+  coverageStates       Json?
+  contactNumber        String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean  @default(false)
+  dataSource           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model ReaZonalOffice {
-  id             String   @id @default(uuid())
-  zoneName       String
-  headquarters   String?
-  statesCovered  Json?
-  address        String?
-  email          String?
-  phone          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  externalId           String?  @unique
+  zoneName             String
+  headquarters         String?
+  statesCovered        Json?
+  address              String?
+  email                String?
+  phone                String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean  @default(false)
+  dataSource           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model DiscoCustomerCareChannel {
@@ -852,13 +910,85 @@ model DiscoCustomerCareChannel {
 }
 
 model GlossaryTerm {
-  id         String   @id @default(uuid())
-  acronym    String   @unique
-  expansion  String
-  definition String
-  category   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  acronym              String   @unique
+  expansion            String
+  definition           String
+  category             String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean  @default(false)
+  dataSource           String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model TariffOrder {
+  id                   String    @id @default(uuid())
+  externalId           String?   @unique
+  orderRef             String    @unique
+  issuingBody          String
+  scope                String
+  state                String?
+  title                String
+  effectiveDate        DateTime
+  expiryDate           DateTime?
+  applicableTo         Json
+  bandStructure        Json
+  subsidyRetained      Boolean   @default(false)
+  notes                String?
+  dataSource           String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([scope])
+  @@index([issuingBody])
+}
+
+model StateRegulator {
+  id                   String    @id @default(uuid())
+  externalId           String?   @unique
+  shortName            String
+  fullName             String
+  state                String
+  establishedYear      Int?
+  legalBasis           String?
+  address              String?
+  website              String?
+  email                String?
+  chairman             String?
+  subDiscoCarveOut     Json?
+  firstTariffOrderDate DateTime?
+  notes                String?
+  dataSource           String?
+  sourceAuthorityScore Int?
+  lowConfidence        Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([state])
+}
+
+model DispatchHistory {
+  id             String   @id @default(uuid())
+  plantId        String
+  plantName      String
+  date           DateTime @db.Date
+  actualMw       Decimal  @db.Decimal(10, 2)
+  availableMw    Decimal  @db.Decimal(10, 2)
+  installedMw    Decimal  @db.Decimal(10, 2)
+  capacityFactor Decimal  @db.Decimal(5, 3)
+  outageReason   String?
+  dataSource     String?
+  synthetic      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  plant Plant @relation(fields: [plantId], references: [id])
+
+  @@unique([plantId, date])
+  @@index([plantId])
+  @@index([date])
 }
 
 enum DataQualityFlagStatus {

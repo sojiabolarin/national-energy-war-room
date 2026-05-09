@@ -28,6 +28,8 @@ import {
   ChevronRight,
   Shield,
   ShieldAlert,
+  FileText,
+  Activity,
 } from "lucide-react";
 
 interface NavItem {
@@ -84,6 +86,17 @@ const NAV_ITEMS: NavItem[] = [
     path: "/data-quality",
     icon: ShieldAlert,
     requiredRoles: ["ADMIN", "MINISTRY_STAFF", "NERC_VIEWER"],
+  },
+  {
+    label: "Regulatory",
+    path: "/regulatory",
+    icon: FileText,
+    requiredRoles: ["ADMIN", "MINISTRY_STAFF", "NERC_VIEWER"],
+    children: [
+      { label: "Tariff Orders", path: "/regulatory/tariff-orders", icon: FileText },
+      { label: "State Regulators", path: "/regulatory/state-regulators", icon: Building2 },
+      { label: "Dispatch History", path: "/regulatory/dispatch-history", icon: Activity },
+    ],
   },
   {
     label: "Users & Orgs",

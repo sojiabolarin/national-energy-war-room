@@ -27,6 +27,9 @@ import UsersPage from "@/pages/users";
 import AuditLogPage from "@/pages/audit-log";
 import SettingsPage from "@/pages/settings";
 import DataQualityPage from "@/pages/data-quality";
+import TariffOrdersPage from "@/pages/regulatory/tariff-orders";
+import StateRegulatorsPage from "@/pages/regulatory/state-regulators";
+import DispatchHistoryPage from "@/pages/regulatory/dispatch-history";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -161,6 +164,30 @@ function AdminRoutes() {
             element={
               <ProtectedRoute requiredRoles={[...REGISTRY_OPS_ROLES]}>
                 <DataQualityPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/regulatory/tariff-orders"
+            element={
+              <ProtectedRoute requiredRoles={[...REGISTRY_OPS_ROLES]}>
+                <TariffOrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/regulatory/state-regulators"
+            element={
+              <ProtectedRoute requiredRoles={[...REGISTRY_OPS_ROLES]}>
+                <StateRegulatorsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/regulatory/dispatch-history"
+            element={
+              <ProtectedRoute requiredRoles={[...REGISTRY_OPS_ROLES]}>
+                <DispatchHistoryPage />
               </ProtectedRoute>
             }
           />
