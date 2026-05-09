@@ -26,6 +26,7 @@ import EscalationRulesPage from "@/pages/escalation-rules";
 import UsersPage from "@/pages/users";
 import AuditLogPage from "@/pages/audit-log";
 import SettingsPage from "@/pages/settings";
+import DataQualityPage from "@/pages/data-quality";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -152,6 +153,14 @@ function AdminRoutes() {
             element={
               <ProtectedRoute requiredRoles={[...ADMIN_ONLY]}>
                 <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/data-quality"
+            element={
+              <ProtectedRoute requiredRoles={[...REGISTRY_OPS_ROLES]}>
+                <DataQualityPage />
               </ProtectedRoute>
             }
           />

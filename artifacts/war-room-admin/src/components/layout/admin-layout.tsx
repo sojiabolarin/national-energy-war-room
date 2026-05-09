@@ -27,6 +27,7 @@ import {
   ChevronDown,
   ChevronRight,
   Shield,
+  ShieldAlert,
 } from "lucide-react";
 
 interface NavItem {
@@ -77,6 +78,12 @@ const NAV_ITEMS: NavItem[] = [
     path: "/escalation-rules",
     icon: GitBranch,
     requiredRoles: ["ADMIN", "MINISTRY_STAFF"],
+  },
+  {
+    label: "Data Quality",
+    path: "/data-quality",
+    icon: ShieldAlert,
+    requiredRoles: ["ADMIN", "MINISTRY_STAFF", "NERC_VIEWER"],
   },
   {
     label: "Users & Orgs",

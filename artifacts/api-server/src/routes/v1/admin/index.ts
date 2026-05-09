@@ -4,6 +4,7 @@ import { requireStaff } from "../../../middlewares/auth.js";
 import complaintsAdminRouter from "./complaints.js";
 import registryRouter from "./registry.js";
 import usersRouter from "./users.js";
+import dataQualityRouter from "./data-quality.js";
 import prisma from "../../../lib/prisma.js";
 import { parse } from "csv-parse/sync";
 import { logger } from "../../../lib/logger.js";
@@ -17,6 +18,7 @@ router.use(requireAuth, requireStaff);
 router.use("/complaints", complaintsAdminRouter);
 router.use("/registry", registryRouter);
 router.use("/users", usersRouter);
+router.use("/data-quality", dataQualityRouter);
 
 router.get("/audit-log", requireRole("ADMIN"), async (req: AuthenticatedRequest, res: Response) => {
   try {

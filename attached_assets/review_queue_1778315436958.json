@@ -1,0 +1,66 @@
+{
+  "generated": "2026-05-09",
+  "totalItems": 10,
+  "items": [
+    {
+      "recordId": "SUB-57cc62a5d600",
+      "reason": "LOW_CONFIDENCE_SOURCE",
+      "severity": "MEDIUM",
+      "detail": "Source 'TCN / OpenStreetMap 2025' scored 3/10. Verify with TCN."
+    },
+    {
+      "recordId": "SUB-1f2451b14e0c",
+      "reason": "LOW_CONFIDENCE_SOURCE",
+      "severity": "MEDIUM",
+      "detail": "Source 'TCN / OpenStreetMap 2025' scored 3/10. Verify with TCN."
+    },
+    {
+      "recordId": "SUB-85690f01417a",
+      "reason": "LOW_CONFIDENCE_SOURCE",
+      "severity": "MEDIUM",
+      "detail": "Source 'TCN / OpenStreetMap 2025' scored 3/10. Verify with TCN."
+    },
+    {
+      "recordId": "PLT-e6a182503600",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Egbin' is 456m from 'AES Barge' (id=PLT-df303c69cfec). Possible duplicate or naming inconsistency."
+    },
+    {
+      "recordId": "PLT-e011925e480a",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Sapele Steam' is 314m from 'Sapele NIPP' (id=PLT-78b40eb96f30). Possible duplicate or naming inconsistency."
+    },
+    {
+      "recordId": "PLT-1808c51b8a9e",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Geregu Gas' is 248m from 'Geregu NIPP' (id=PLT-a8b39c54554b). Possible duplicate or naming inconsistency."
+    },
+    {
+      "recordId": "PLT-3fae26ce30cf",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Olorunsogo Gas' is 313m from 'Olorunsogo NIPP' (id=PLT-5ef0551d59ee). Possible duplicate or naming inconsistency."
+    },
+    {
+      "recordId": "PLT-895cdf5e6bd3",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Omotosho Gas' is 314m from 'Omotosho NIPP' (id=PLT-35c335f583fd). Possible duplicate or naming inconsistency."
+    },
+    {
+      "recordId": "PLT-f79202c1c6ce",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Afam VI' is 314m from 'Afam IV-V' (id=PLT-194daa532178). Possible duplicate or naming inconsistency."
+    },
+    {
+      "recordId": "PLT-f46aa0b99814",
+      "reason": "COORDINATE_CLUSTER",
+      "severity": "HIGH",
+      "detail": "Plant 'Rivers IPP' is 314m from 'Notore Power' (id=PLT-8b3a24221e8f). Possible duplicate or naming inconsistency."
+    }
+  ]
+}

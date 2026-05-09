@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { useGetPlants } from "@workspace/api-client-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Popover, PopoverContent, PopoverTrigger, PopoverClose } from "@/components/ui/popover";
@@ -88,9 +88,8 @@ export function GenerationTable() {
             {plants.map((plant) => {
               const isOpen = expanded.has(plant.id);
               return (
-                <>
+                <Fragment key={plant.id}>
                   <TableRow
-                    key={plant.id}
                     className="cursor-pointer hover:bg-secondary/20"
                     onClick={() => toggle(plant.id)}
                   >
@@ -182,7 +181,7 @@ export function GenerationTable() {
                       </TableCell>
                     </TableRow>
                   )}
-                </>
+                </Fragment>
               );
             })}
             {plants.length === 0 && (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import { useGetComplaintStats, useAdminListComplaints } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
@@ -439,7 +439,7 @@ export function ComplaintsPanel({ isDiscoAgent = false }: ComplaintsPanelProps) 
                 const expanded = expandedRows.has(rowId);
 
                 return (
-                  <tbody key={rowId} style={{ display: "contents" }}>
+                  <Fragment key={rowId}>
                     <TableRow
                       className={`cursor-pointer ${isL5 ? "bg-destructive/10 hover:bg-destructive/15" : "hover:bg-secondary/30"}`}
                       onClick={() => toggleRow(rowId)}
@@ -552,7 +552,7 @@ export function ComplaintsPanel({ isDiscoAgent = false }: ComplaintsPanelProps) 
                         </TableCell>
                       </TableRow>
                     )}
-                  </tbody>
+                  </Fragment>
                 );
               })}
               {complaints.length === 0 && (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { useGetCapitalProjects } from "@workspace/api-client-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -76,9 +76,8 @@ export function CapitalProjects() {
             const isOpen = expanded.has(project.id);
             const pct = Number(project.completionPct ?? 0);
             return (
-              <>
+              <Fragment key={project.id}>
                 <TableRow
-                  key={project.id}
                   className="cursor-pointer hover:bg-secondary/20"
                   onClick={() => toggle(project.id)}
                 >
@@ -125,7 +124,7 @@ export function CapitalProjects() {
                     </TableCell>
                   </TableRow>
                 )}
-              </>
+              </Fragment>
             );
           })}
         </TableBody>

@@ -687,6 +687,73 @@ async function main() {
 
   console.log("  → Institutional directory created: 11 Forum Offices, 12 NEMSA offices, 12 TCN regions, 8 control centres, 6 REA zonal offices, 11 DisCo customer care channels, 40 glossary terms");
 
+  // ── DATA QUALITY FLAGS ────────────────────────────────────────────────────
+  await prisma.dataQualityFlag.deleteMany();
+  await prisma.dataQualityFlag.createMany({
+    data: [
+      {
+        recordId: "SUB-57cc62a5d600",
+        reason: "LOW_CONFIDENCE_SOURCE",
+        severity: "MEDIUM",
+        detail: "Source 'TCN / OpenStreetMap 2025' scored 3/10. Coordinate data not verified with TCN GIS division. Recommend cross-referencing with official TCN network diagram.",
+      },
+      {
+        recordId: "SUB-1f2451b14e0c",
+        reason: "LOW_CONFIDENCE_SOURCE",
+        severity: "MEDIUM",
+        detail: "Source 'TCN / OpenStreetMap 2025' scored 3/10. Coordinate data not verified with TCN GIS division. Recommend cross-referencing with official TCN network diagram.",
+      },
+      {
+        recordId: "SUB-85690f01417a",
+        reason: "LOW_CONFIDENCE_SOURCE",
+        severity: "MEDIUM",
+        detail: "Source 'TCN / OpenStreetMap 2025' scored 3/10. Coordinate data not verified with TCN GIS division. Recommend cross-referencing with official TCN network diagram.",
+      },
+      {
+        recordId: "PLT-e6a182503600",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Egbin' is 456 m from 'AES Barge' (PLT-df303c69cfec). Both are legitimate co-located plants on the Lagos Lagoon shoreline. Confirm distinct NERC licences to close.",
+      },
+      {
+        recordId: "PLT-e011925e480a",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Sapele Steam' is 314 m from 'Sapele NIPP' (PLT-78b40eb96f30). Co-located at Sapele Power Station site (Delta State). Confirm distinct NERC generation licences.",
+      },
+      {
+        recordId: "PLT-1808c51b8a9e",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Geregu Gas' is 248 m from 'Geregu NIPP' (PLT-a8b39c54554b). Co-located at Geregu Power Plant site (Kogi State). Confirm distinct NERC generation licences.",
+      },
+      {
+        recordId: "PLT-3fae26ce30cf",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Olorunsogo Gas' is 313 m from 'Olorunsogo NIPP' (PLT-5ef0551d59ee). Co-located at Olorunsogo Power Station (Ogun State). Confirm distinct NERC generation licences.",
+      },
+      {
+        recordId: "PLT-895cdf5e6bd3",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Omotosho Gas' is 314 m from 'Omotosho NIPP' (PLT-35c335f583fd). Co-located at Omotosho Power Station (Ondo State). Confirm distinct NERC generation licences.",
+      },
+      {
+        recordId: "PLT-f79202c1c6ce",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Afam VI' is 314 m from 'Afam IV-V' (PLT-194daa532178). Co-located at Afam Power Station complex (Rivers State). Confirm distinct NERC generation licences.",
+      },
+      {
+        recordId: "PLT-f46aa0b99814",
+        reason: "COORDINATE_CLUSTER",
+        severity: "HIGH",
+        detail: "Plant 'Rivers IPP' is 314 m from 'Notore Power' (PLT-8b3a24221e8f). Both located in Trans-Amadi Industrial Layout, Port Harcourt. Confirm distinct NERC licences and street addresses.",
+      },
+    ],
+  });
+
   // ── SYSTEM SETTINGS ───────────────────────────────────────────────────────
   await prisma.systemSetting.createMany({
     data: [

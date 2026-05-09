@@ -859,3 +859,24 @@ model GlossaryTerm {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+enum DataQualityFlagStatus {
+  PENDING
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
+}
+
+model DataQualityFlag {
+  id           String                @id @default(uuid())
+  recordId     String
+  reason       String
+  severity     String
+  detail       String
+  status       DataQualityFlagStatus @default(PENDING)
+  notes        String?
+  resolvedById String?
+  resolvedAt   DateTime?
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+}
