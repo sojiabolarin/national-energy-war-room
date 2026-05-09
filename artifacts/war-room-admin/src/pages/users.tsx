@@ -34,7 +34,26 @@ interface Organisation {
 }
 
 const ROLES = ["ADMIN", "MINISTRY_STAFF", "MINISTER", "NERC_VIEWER", "DISCO_AGENT", "CITIZEN"];
-const ORG_TYPES = ["DISCO", "GENCO", "TRANSCO", "REGULATOR", "MINISTRY", "OTHER"];
+
+const ORG_TYPES = [
+  "GENCO", "DISCO", "TCN", "NBET", "NERC",
+  "NMDPRA", "NGIC", "REA", "FMP", "FGN_POWER_CO", "NDPHC", "OTHER",
+] as const;
+
+const ORG_TYPE_LABELS: Record<string, string> = {
+  GENCO: "GenCo (Generation)",
+  DISCO: "DisCo (Distribution)",
+  TCN: "TCN (Transmission)",
+  NBET: "NBET (Bulk Trading)",
+  NERC: "NERC (Regulator)",
+  NMDPRA: "NMDPRA (Midstream/Downstream)",
+  NGIC: "NGIC (Gas Infrastructure)",
+  REA: "REA (Rural Electrification)",
+  FMP: "FMP (Federal Ministry of Power)",
+  FGN_POWER_CO: "FGN Power Co.",
+  NDPHC: "NDPHC (Niger Delta Power)",
+  OTHER: "Other",
+};
 
 function roleBadge(role: string) {
   switch (role) {
@@ -283,7 +302,7 @@ export default function UsersPage() {
                     <td className="p-3 font-medium text-foreground">{org.name}</td>
                     <td className="p-3">
                       <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded border bg-blue-600/20 text-blue-400 border-blue-600/40">
-                        {org.type}
+                        {ORG_TYPE_LABELS[org.type] ?? org.type}
                       </span>
                     </td>
                     <td className="p-3 text-muted-foreground font-mono text-[10px]">{org.website ?? "—"}</td>
@@ -496,7 +515,7 @@ function OrgForm({ org, accessToken, onSuccess, onCancel }: {
         <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">Type</Label>
         <Select value={form.type} onValueChange={(v) => setForm((f) => ({ ...f, type: v }))}>
           <SelectTrigger className="h-7 text-xs bg-background border-border"><SelectValue /></SelectTrigger>
-          <SelectContent>{ORG_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+          <SelectContent>{ORG_TYPES.map((t) => <SelectItem key={t} value={t}>{ORG_TYPE_LABELS[t] ?? t}</SelectItem>)}</SelectContent>
         </Select>
       </div>
       <div className="space-y-1">
