@@ -87,6 +87,7 @@ enum ProjectCategory {
 enum MiniGridProgramme {
   NEP
   DARES
+  EEP
   OTHER
 }
 
@@ -386,10 +387,11 @@ model DisCo {
   createdBy             String?
   updatedBy             String?
 
-  operatorOrg       Organisation?       @relation(fields: [operatorOrgId], references: [id])
-  feeders           Feeder[]
-  settlements       SettlementInvoice[]
-  complaints        Complaint[]
+  operatorOrg              Organisation?              @relation(fields: [operatorOrgId], references: [id])
+  feeders                  Feeder[]
+  settlements              SettlementInvoice[]
+  complaints               Complaint[]
+  customerCareChannels     DiscoCustomerCareChannel[]
 
   @@index([badge])
   deletedAt DateTime?
@@ -418,19 +420,22 @@ model Feeder {
 }
 
 model GasPipeline {
-  id        String         @id @default(uuid())
-  name      String
-  capacity  String?
-  operator  String?
-  status    PipelineStatus @default(OPERATIONAL)
-  geometry  Json?
-  notes     String?
-  fromPoint String?
-  toPoint   String?
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  createdBy String?
-  updatedBy String?
+  id               String         @id @default(uuid())
+  name             String
+  capacity         String?
+  capacityMmscfd   Decimal?       @db.Decimal(10, 2)
+  operator         String?
+  status           PipelineStatus @default(OPERATIONAL)
+  geometry         Json?
+  routeCoordinates Json?
+  notes            String?
+  fromPoint        String?
+  toPoint          String?
+  lengthKm         Decimal?       @db.Decimal(10, 2)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  createdBy        String?
+  updatedBy        String?
 
   @@index([status])
   deletedAt DateTime?
@@ -458,22 +463,24 @@ model DiversionOpportunity {
 }
 
 model CapitalProject {
-  id           String          @id @default(uuid())
-  name         String
-  category     ProjectCategory
-  status       String
-  sponsorOrgId String?
-  latitude     Decimal?        @db.Decimal(10, 7)
-  longitude    Decimal?        @db.Decimal(10, 7)
-  timeline     String?
-  capexUsd     Decimal?        @db.Decimal(15, 2)
-  completionPct Decimal?       @db.Decimal(5, 2)
-  notes        String?
-  sourceRef    String?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  createdBy    String?
-  updatedBy    String?
+  id              String          @id @default(uuid())
+  name            String
+  category        ProjectCategory
+  status          String
+  sponsorOrgId    String?
+  latitude        Decimal?        @db.Decimal(10, 7)
+  longitude       Decimal?        @db.Decimal(10, 7)
+  timeline        String?
+  capexUsd        Decimal?        @db.Decimal(15, 2)
+  completionPct   Decimal?        @db.Decimal(5, 2)
+  funder          String?
+  contractorOrEpc String?
+  notes           String?
+  sourceRef       String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  createdBy       String?
+  updatedBy       String?
 
   sponsorOrg Organisation? @relation(fields: [sponsorOrgId], references: [id])
 
@@ -489,9 +496,14 @@ model MiniGrid {
   beneficiaries Int?
   latitude      Decimal?          @db.Decimal(10, 7)
   longitude     Decimal?          @db.Decimal(10, 7)
+  state         String?
+  lga           String?
   operatorOrgId String?
   programme     MiniGridProgramme @default(NEP)
   status        String            @default("OPERATIONAL")
+  completionYear Int?
+  funder        String?
+  operatorName  String?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   createdBy     String?
@@ -727,7 +739,6 @@ model AuthorityInstrument {
   valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
 
   @@index([valueChainLinkId])
-  deletedAt DateTime?
 }
 
 model EscalationStep {
@@ -744,7 +755,6 @@ model EscalationStep {
   valueChainLink ValueChainLink @relation(fields: [valueChainLinkId], references: [id], onDelete: Cascade)
 
   @@index([valueChainLinkId])
-  deletedAt DateTime?
 }
 
 model Notification {
@@ -768,4 +778,84 @@ model SystemSetting {
   key       String   @unique
   value     String
   updatedAt DateTime @updatedAt
+}
+
+// ── Institutional Directory ──────────────────────────────────────────────────
+
+model ForumOffice {
+  id            String   @id @default(uuid())
+  name          String
+  city          String?
+  statesCovered Json?
+  address       String?
+  email         String?
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model NemsaFieldOffice {
+  id            String   @id @default(uuid())
+  zoneName      String
+  statesCovered Json?
+  address       String?
+  email         String?
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TcnRegion {
+  id             String   @id @default(uuid())
+  name           String
+  headquarters   String?
+  coverageStates Json?
+  contactNumber  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model TcnControlCentre {
+  id             String   @id @default(uuid())
+  type           String
+  name           String
+  location       String?
+  address        String?
+  coverageStates Json?
+  contactNumber  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ReaZonalOffice {
+  id             String   @id @default(uuid())
+  zoneName       String
+  headquarters   String?
+  statesCovered  Json?
+  address        String?
+  email          String?
+  phone          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model DiscoCustomerCareChannel {
+  id             String   @id @default(uuid())
+  discoId        String?
+  discoShortName String
+  channels       Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  disco DisCo? @relation(fields: [discoId], references: [id])
+}
+
+model GlossaryTerm {
+  id         String   @id @default(uuid())
+  acronym    String   @unique
+  expansion  String
+  definition String
+  category   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

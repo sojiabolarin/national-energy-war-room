@@ -1,0 +1,4392 @@
+{
+  "request1_nercForumOffices": [
+    {
+      "id": "FRM-dde60a33c5aa",
+      "name": "Abuja Forum Office",
+      "city": "Abuja",
+      "statesCovered": [
+        "FCT",
+        "Nasarawa",
+        "Niger"
+      ],
+      "address": "NERC Forum Office, Central Business District, Abuja",
+      "email": "abujaforum@nerc.gov.ng",
+      "phone": "+2342013444331",
+      "dataSource": "NERC 2025 / FMP Handbook",
+      "verifiedAt": "2026-05-09",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-f352009f3df9",
+      "name": "Eko Forum Office",
+      "city": "Lagos",
+      "statesCovered": [
+        "Lagos"
+      ],
+      "address": "Eko Distribution Zone, Marina, Lagos",
+      "email": "ekoforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-9e56f6ddb6d1",
+      "name": "Ikeja Forum Office",
+      "city": "Lagos",
+      "statesCovered": [
+        "Lagos"
+      ],
+      "address": "Ikeja Electricity District, Ikeja, Lagos",
+      "email": "ikejaforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-3cb62a06e549",
+      "name": "Benin Forum Office",
+      "city": "Benin City",
+      "statesCovered": [
+        "Edo"
+      ],
+      "address": "Benin City, Edo State",
+      "email": "beninforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-44ed8c82e94b",
+      "name": "Port Harcourt Forum Office",
+      "city": "Port Harcourt",
+      "statesCovered": [
+        "Rivers"
+      ],
+      "address": "Port Harcourt, Rivers State",
+      "email": "portharcourtforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-545997dc6c2b",
+      "name": "Ibadan Forum Office",
+      "city": "Ibadan",
+      "statesCovered": [
+        "Oyo",
+        "Osun",
+        "Ogun",
+        "Kwara"
+      ],
+      "address": "Ibadan Electricity Distribution Zone, Ibadan",
+      "email": "ibadanforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-aacbf6597236",
+      "name": "Enugu Forum Office",
+      "city": "Enugu",
+      "statesCovered": [
+        "Enugu",
+        "Anambra",
+        "Imo",
+        "Abia",
+        "Ebonyi"
+      ],
+      "address": "Enugu Distribution Zone, Enugu",
+      "email": "enuguforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-d7da3cf61cdb",
+      "name": "Kano Forum Office",
+      "city": "Kano",
+      "statesCovered": [
+        "Kano",
+        "Jigawa",
+        "Katsina"
+      ],
+      "address": "Kano Electricity Distribution Zone, Kano",
+      "email": "kanoforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-f57d897a2a9b",
+      "name": "Kaduna Forum Office",
+      "city": "Kaduna",
+      "statesCovered": [
+        "Kaduna",
+        "Kebbi",
+        "Sokoto",
+        "Zamfara"
+      ],
+      "address": "Kaduna Distribution Zone, Kaduna",
+      "email": "kadunaforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-b4e79c7f6d2a",
+      "name": "Jos Forum Office",
+      "city": "Jos",
+      "statesCovered": [
+        "Plateau",
+        "Bauchi",
+        "Gombe",
+        "Benue"
+      ],
+      "address": "Jos Electricity Distribution Zone, Jos",
+      "email": "josforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "FRM-25f4bf16ce16",
+      "name": "Yola Forum Office",
+      "city": "Yola",
+      "statesCovered": [
+        "Adamawa",
+        "Taraba",
+        "Borno",
+        "Yobe"
+      ],
+      "address": "Yola Distribution Zone, Yola",
+      "email": "yolaforum@nerc.gov.ng",
+      "phone": null,
+      "dataSource": "NERC 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    }
+  ],
+  "request2_nemsaInspectorateOffices": [
+    {
+      "id": "NEM-90c58777d2ee",
+      "zoneName": "Abuja",
+      "statesCovered": [
+        "FCT",
+        "Nasarawa",
+        "Niger"
+      ],
+      "address": "NEMSA Regional Office, Abuja",
+      "phone": "+2347006367200",
+      "email": "info@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": "2026-05-09",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-b1a4722cf248",
+      "zoneName": "Lagos-Eko",
+      "statesCovered": [
+        "Lagos"
+      ],
+      "address": "Eko Regional Inspectorate Office, Lagos",
+      "phone": null,
+      "email": "lagos@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-1645381d3e09",
+      "zoneName": "Lagos-Ikeja",
+      "statesCovered": [
+        "Lagos",
+        "Ogun"
+      ],
+      "address": "Ikeja Regional Inspectorate Office, Lagos",
+      "phone": null,
+      "email": "ikeja@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-6819332aeb83",
+      "zoneName": "Port-Harcourt",
+      "statesCovered": [
+        "Rivers",
+        "Bayelsa"
+      ],
+      "address": "Port Harcourt Regional Office",
+      "phone": null,
+      "email": "ph@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-e0a683dc8d33",
+      "zoneName": "Benin",
+      "statesCovered": [
+        "Edo",
+        "Delta"
+      ],
+      "address": "Benin Regional Inspectorate Office",
+      "phone": null,
+      "email": "benin@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-1cc1b583fbeb",
+      "zoneName": "Ibadan",
+      "statesCovered": [
+        "Oyo",
+        "Osun",
+        "Ondo",
+        "Ekiti",
+        "Kwara"
+      ],
+      "address": "Ibadan Regional Inspectorate Office",
+      "phone": null,
+      "email": "ibadan@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-cc7c8797301d",
+      "zoneName": "Enugu",
+      "statesCovered": [
+        "Enugu",
+        "Anambra",
+        "Imo",
+        "Abia",
+        "Ebonyi"
+      ],
+      "address": "Enugu Regional Inspectorate Office",
+      "phone": null,
+      "email": "enugu@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-b2a5b36515d7",
+      "zoneName": "Uyo",
+      "statesCovered": [
+        "Akwa Ibom",
+        "Cross River"
+      ],
+      "address": "Uyo Regional Inspectorate Office",
+      "phone": null,
+      "email": "uyo@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-6ec53adc0f31",
+      "zoneName": "Kano",
+      "statesCovered": [
+        "Kano",
+        "Jigawa",
+        "Katsina"
+      ],
+      "address": "Kano Regional Inspectorate Office",
+      "phone": null,
+      "email": "kano@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-842f5a370991",
+      "zoneName": "Kaduna",
+      "statesCovered": [
+        "Kaduna",
+        "Kebbi",
+        "Sokoto",
+        "Zamfara"
+      ],
+      "address": "Kaduna Regional Inspectorate Office",
+      "phone": null,
+      "email": "kaduna@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-53767b54f99f",
+      "zoneName": "Jos",
+      "statesCovered": [
+        "Plateau",
+        "Bauchi",
+        "Gombe",
+        "Benue"
+      ],
+      "address": "Jos Regional Inspectorate Office",
+      "phone": null,
+      "email": "jos@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "NEM-6a34f7d50698",
+      "zoneName": "Yola",
+      "statesCovered": [
+        "Adamawa",
+        "Taraba",
+        "Borno",
+        "Yobe"
+      ],
+      "address": "Yola Regional Inspectorate Office",
+      "phone": null,
+      "email": "yola@nemsa.gov.ng",
+      "dataSource": "NEMSA 2025",
+      "verifiedAt": null,
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    }
+  ],
+  "request3_tcnRegions": {
+    "regions": [
+      {
+        "id": "RGN-64659403f2ee",
+        "name": "Lagos Region",
+        "headquarters": "Lagos",
+        "coverageStates": [
+          "Lagos"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-3a3fa0682227",
+        "name": "Benin Region",
+        "headquarters": "Benin City",
+        "coverageStates": [
+          "Edo",
+          "Delta"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-11985d4aa588",
+        "name": "Enugu Region",
+        "headquarters": "Enugu",
+        "coverageStates": [
+          "Enugu",
+          "Anambra",
+          "Imo",
+          "Abia",
+          "Ebonyi"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-79649d25f2fe",
+        "name": "Port Harcourt Region",
+        "headquarters": "Port Harcourt",
+        "coverageStates": [
+          "Rivers",
+          "Bayelsa",
+          "Akwa Ibom",
+          "Cross River"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-cb8fb465d359",
+        "name": "Kano Region",
+        "headquarters": "Kano",
+        "coverageStates": [
+          "Kano",
+          "Jigawa",
+          "Katsina"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-254f266bedec",
+        "name": "Kaduna Region",
+        "headquarters": "Kaduna",
+        "coverageStates": [
+          "Kaduna",
+          "Kebbi",
+          "Zamfara",
+          "Sokoto"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-667cdf0a8c3d",
+        "name": "Jos Region",
+        "headquarters": "Jos",
+        "coverageStates": [
+          "Plateau",
+          "Bauchi",
+          "Gombe"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-dfd1c3734a3f",
+        "name": "Abuja Region",
+        "headquarters": "Abuja",
+        "coverageStates": [
+          "FCT",
+          "Niger",
+          "Kogi",
+          "Nasarawa"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-399c82833e16",
+        "name": "Osogbo Region",
+        "headquarters": "Osogbo",
+        "coverageStates": [
+          "Oyo",
+          "Osun",
+          "Ekiti",
+          "Ondo",
+          "Kwara"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-f674d4af1af2",
+        "name": "Bauchi Region",
+        "headquarters": "Bauchi",
+        "coverageStates": [
+          "Bauchi",
+          "Gombe",
+          "Yobe",
+          "Borno"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-a09902435566",
+        "name": "Yola Region",
+        "headquarters": "Yola",
+        "coverageStates": [
+          "Adamawa",
+          "Taraba"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "RGN-4a4a28af9496",
+        "name": "Makurdi Region",
+        "headquarters": "Makurdi",
+        "coverageStates": [
+          "Benue"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      }
+    ],
+    "controlCentres": [
+      {
+        "id": "CCT-d0ef51cb9bb8",
+        "type": "NCC",
+        "name": "National Control Centre",
+        "location": "Osogbo",
+        "address": "Osogbo, Osun State",
+        "coverageStates": [
+          "Nigeria"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-b7aff43688af",
+        "type": "SNCC",
+        "name": "Supplementary National Control Centre",
+        "location": "Shiroro",
+        "address": "Shiroro, Niger State",
+        "coverageStates": [
+          "Nigeria"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-c1013f865875",
+        "type": "RCC",
+        "name": "Lagos Regional Control Centre",
+        "location": "Lagos",
+        "address": "Ikeja West, Lagos",
+        "coverageStates": [
+          "Lagos",
+          "Ogun"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-3da5408e40c8",
+        "type": "RCC",
+        "name": "Benin Regional Control Centre",
+        "location": "Benin City",
+        "address": "Benin City, Edo State",
+        "coverageStates": [
+          "Edo",
+          "Delta"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-015e26e8fcd6",
+        "type": "RCC",
+        "name": "Enugu Regional Control Centre",
+        "location": "Enugu",
+        "address": "New Haven, Enugu",
+        "coverageStates": [
+          "Enugu",
+          "Anambra",
+          "Imo",
+          "Abia",
+          "Ebonyi"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-765306b41658",
+        "type": "RCC",
+        "name": "Port Harcourt Regional Control Centre",
+        "location": "Port Harcourt",
+        "address": "Port Harcourt, Rivers State",
+        "coverageStates": [
+          "Rivers",
+          "Bayelsa",
+          "Akwa Ibom",
+          "Cross River"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-c474aff2f507",
+        "type": "RCC",
+        "name": "Kaduna Regional Control Centre",
+        "location": "Kaduna",
+        "address": "Kaduna, Kaduna State",
+        "coverageStates": [
+          "Kaduna",
+          "Kebbi",
+          "Zamfara",
+          "Sokoto"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      },
+      {
+        "id": "CCT-f8fdf36f01a3",
+        "type": "RCC",
+        "name": "Bauchi Regional Control Centre",
+        "location": "Bauchi",
+        "address": "Bauchi, Bauchi State",
+        "coverageStates": [
+          "Bauchi",
+          "Gombe",
+          "Yobe",
+          "Borno"
+        ],
+        "contactNumber": null,
+        "dataSource": "TCN 2025",
+        "sourceAuthorityScore": 8,
+        "lowConfidence": false
+      }
+    ]
+  },
+  "request4_reaZonalOffices": [
+    {
+      "id": "REZ-4fbcefbcf428",
+      "zoneName": "North Central",
+      "headquarters": "Lokoja",
+      "statesCovered": [
+        "Kogi",
+        "Niger",
+        "Benue",
+        "Plateau",
+        "Nasarawa",
+        "FCT"
+      ],
+      "address": "REA Zonal Office, Lokoja",
+      "email": "info@rea.gov.ng",
+      "phone": "+23494611900",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "REZ-73224019e2c7",
+      "zoneName": "South West",
+      "headquarters": "Osogbo",
+      "statesCovered": [
+        "Lagos",
+        "Oyo",
+        "Ogun",
+        "Osun",
+        "Ondo",
+        "Ekiti"
+      ],
+      "address": "REA South West Office, Osogbo",
+      "email": "info@rea.gov.ng",
+      "phone": null,
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "REZ-1b5f45847476",
+      "zoneName": "South East",
+      "headquarters": "Enugu",
+      "statesCovered": [
+        "Enugu",
+        "Anambra",
+        "Imo",
+        "Abia",
+        "Ebonyi"
+      ],
+      "address": "REA South East Office, Enugu",
+      "email": "info@rea.gov.ng",
+      "phone": null,
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "REZ-0bb1c6838d5b",
+      "zoneName": "South South",
+      "headquarters": "Port Harcourt",
+      "statesCovered": [
+        "Rivers",
+        "Bayelsa",
+        "Akwa Ibom",
+        "Cross River",
+        "Edo",
+        "Delta"
+      ],
+      "address": "REA South South Office, Port Harcourt",
+      "email": "info@rea.gov.ng",
+      "phone": null,
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "REZ-14ef8bc6ce3b",
+      "zoneName": "North West",
+      "headquarters": "Kaduna",
+      "statesCovered": [
+        "Kaduna",
+        "Kano",
+        "Jigawa",
+        "Katsina",
+        "Kebbi",
+        "Sokoto",
+        "Zamfara"
+      ],
+      "address": "REA North West Office, Kaduna",
+      "email": "info@rea.gov.ng",
+      "phone": null,
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "REZ-10d724184a8b",
+      "zoneName": "North East",
+      "headquarters": "Bauchi",
+      "statesCovered": [
+        "Bauchi",
+        "Gombe",
+        "Adamawa",
+        "Taraba",
+        "Yobe",
+        "Borno"
+      ],
+      "address": "REA North East Office, Bauchi",
+      "email": "info@rea.gov.ng",
+      "phone": null,
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    }
+  ],
+  "request5_discoCustomerCare": [
+    {
+      "discoName": "AEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "08039070070",
+          "is24Hour": true,
+          "dataSource": "AEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@abujaelectricity.com",
+          "is24Hour": true,
+          "dataSource": "AEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://abujaelectricity.com",
+          "is24Hour": true,
+          "dataSource": "AEDC Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "EKEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2347003550000",
+          "is24Hour": true,
+          "dataSource": "EKEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@ekedp.com",
+          "is24Hour": true,
+          "dataSource": "EKEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://ekedp.com",
+          "is24Hour": true,
+          "dataSource": "EKEDC Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "IKEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2347000225543",
+          "is24Hour": true,
+          "dataSource": "IKEDC Website 2025"
+        },
+        {
+          "channelType": "WHATSAPP",
+          "value": "+2349087928856",
+          "is24Hour": true,
+          "dataSource": "IKEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@ikejaelectric.com",
+          "is24Hour": true,
+          "dataSource": "IKEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://ikejaelectric.com",
+          "is24Hour": true,
+          "dataSource": "IKEDC Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "BEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2348139214444",
+          "is24Hour": true,
+          "dataSource": "BEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@bedcpower.com",
+          "is24Hour": true,
+          "dataSource": "BEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://bedcpower.com",
+          "is24Hour": true,
+          "dataSource": "BEDC Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "PHED",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2348001234567",
+          "is24Hour": true,
+          "dataSource": "PHED Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@phed.com.ng",
+          "is24Hour": true,
+          "dataSource": "PHED Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://phed.com.ng",
+          "is24Hour": true,
+          "dataSource": "PHED Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "IBEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2347001234567",
+          "is24Hour": true,
+          "dataSource": "IBEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@ibedc.com",
+          "is24Hour": true,
+          "dataSource": "IBEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://ibedc.com",
+          "is24Hour": true,
+          "dataSource": "IBEDC Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "EEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+23484700000",
+          "is24Hour": true,
+          "dataSource": "EEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@enugudisco.com",
+          "is24Hour": true,
+          "dataSource": "EEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://enugudisco.com",
+          "is24Hour": true,
+          "dataSource": "EEDC Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "KEDCO",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2348039070070",
+          "is24Hour": true,
+          "dataSource": "KEDCO Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@kedco.ng",
+          "is24Hour": true,
+          "dataSource": "KEDCO Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://kedco.ng",
+          "is24Hour": true,
+          "dataSource": "KEDCO Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "KAEDCO",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2348139000111",
+          "is24Hour": true,
+          "dataSource": "KAEDCO Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@kaedco.com",
+          "is24Hour": true,
+          "dataSource": "KAEDCO Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://kaedco.com",
+          "is24Hour": true,
+          "dataSource": "KAEDCO Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "JED",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2347044440000",
+          "is24Hour": true,
+          "dataSource": "JED Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@jedplc.com",
+          "is24Hour": true,
+          "dataSource": "JED Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://jedplc.com",
+          "is24Hour": true,
+          "dataSource": "JED Website 2025"
+        }
+      ]
+    },
+    {
+      "discoName": "YEDC",
+      "channels": [
+        {
+          "channelType": "PHONE",
+          "value": "+2348139888888",
+          "is24Hour": true,
+          "dataSource": "YEDC Website 2025"
+        },
+        {
+          "channelType": "EMAIL",
+          "value": "customercare@yedc.ng",
+          "is24Hour": true,
+          "dataSource": "YEDC Website 2025"
+        },
+        {
+          "channelType": "WEBSITE",
+          "value": "https://yedc.ng",
+          "is24Hour": true,
+          "dataSource": "YEDC Website 2025"
+        }
+      ]
+    }
+  ],
+  "request6_sectorGlossary": [
+    {
+      "acronym": "NESI",
+      "expansion": "Nigerian Electricity Supply Industry",
+      "description": "Nigeria's integrated electricity market ecosystem",
+      "category": "OTHER"
+    },
+    {
+      "acronym": "NERC",
+      "expansion": "Nigerian Electricity Regulatory Commission",
+      "description": "Primary electricity sector regulator in Nigeria",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "REA",
+      "expansion": "Rural Electrification Agency",
+      "description": "Agency responsible for rural electrification and mini-grid expansion",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "TCN",
+      "expansion": "Transmission Company of Nigeria",
+      "description": "Operator of the national transmission grid",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "NBET",
+      "expansion": "Nigerian Bulk Electricity Trading Plc",
+      "description": "Bulk trader and power purchaser",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "NEMSA",
+      "expansion": "Nigerian Electricity Management Services Agency",
+      "description": "Electrical standards and inspection agency",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "MYTO",
+      "expansion": "Multi Year Tariff Order",
+      "description": "Tariff methodology used by NERC",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "ATC&C",
+      "expansion": "Aggregate Technical Commercial and Collection Losses",
+      "description": "Loss metric for DisCo performance",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "PPI",
+      "expansion": "Presidential Power Initiative",
+      "description": "Nigeria-Siemens power infrastructure upgrade programme",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "DARES",
+      "expansion": "Distributed Access through Renewable Energy Scale-up",
+      "description": "World Bank-backed distributed renewable energy programme",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "FMP",
+      "expansion": "Federal Ministry of Power",
+      "description": "Federal ministry with policy oversight for the power sector",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "NDPHC",
+      "expansion": "Niger Delta Power Holding Company",
+      "description": "Company managing NIPP power assets",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "NIPP",
+      "expansion": "National Integrated Power Project",
+      "description": "Federal government power generation and infrastructure programme",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "GENCO",
+      "expansion": "Generation Company",
+      "description": "Power generation company licensed by NERC",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "DISCO",
+      "expansion": "Distribution Company",
+      "description": "Electricity distribution company licensed by NERC",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "IPP",
+      "expansion": "Independent Power Producer",
+      "description": "Privately owned power generator selling to the grid",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "EPSRA",
+      "expansion": "Electric Power Sector Reform Act",
+      "description": "Foundational electricity sector legislation (2005, repealed by Electricity Act 2023)",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "EA2023",
+      "expansion": "Electricity Act 2023",
+      "description": "Current primary electricity sector legislation enabling state-level regulation",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "NCC",
+      "expansion": "National Control Centre",
+      "description": "TCN's primary grid system operator centre at Osogbo",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "SNCC",
+      "expansion": "Supplementary National Control Centre",
+      "description": "Backup national grid control centre at Shiroro",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "RCC",
+      "expansion": "Regional Control Centre",
+      "description": "Regional grid operations centre under TCN",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "MAP",
+      "expansion": "Meter Asset Provider",
+      "description": "Licensed entity providing electricity meters under the MAP scheme",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "NMMP",
+      "expansion": "National Mass Metering Programme",
+      "description": "Federal initiative to close the metering gap across DisCos",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "SAIDI",
+      "expansion": "System Average Interruption Duration Index",
+      "description": "Reliability metric for outage duration",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "SAIFI",
+      "expansion": "System Average Interruption Frequency Index",
+      "description": "Reliability metric for outage frequency",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "CAIDI",
+      "expansion": "Customer Average Interruption Duration Index",
+      "description": "Reliability metric for average customer interruption duration",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "OCGT",
+      "expansion": "Open Cycle Gas Turbine",
+      "description": "Single-cycle gas turbine generation technology",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "CCGT",
+      "expansion": "Combined Cycle Gas Turbine",
+      "description": "Higher-efficiency combined-cycle gas turbine technology",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "PAF",
+      "expansion": "Plant Availability Factor",
+      "description": "Ratio of plant available capacity to installed capacity over a period",
+      "category": "TECHNICAL"
+    },
+    {
+      "acronym": "NEP",
+      "expansion": "Nigeria Electrification Project",
+      "description": "World Bank-funded REA programme for off-grid electrification",
+      "category": "INSTRUMENT"
+    },
+    {
+      "acronym": "NMDPRA",
+      "expansion": "Nigerian Midstream and Downstream Petroleum Regulatory Authority",
+      "description": "Regulator for midstream and downstream gas and petroleum infrastructure",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "NUPRC",
+      "expansion": "Nigerian Upstream Petroleum Regulatory Commission",
+      "description": "Regulator for upstream petroleum operations",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "NNPC",
+      "expansion": "Nigerian National Petroleum Company Limited",
+      "description": "National oil company also active in gas-to-power infrastructure",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "PHCN",
+      "expansion": "Power Holding Company of Nigeria",
+      "description": "Predecessor monopoly utility, unbundled in 2013",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "BPE",
+      "expansion": "Bureau of Public Enterprises",
+      "description": "Federal agency that supervised the NESI privatisation",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "NESO",
+      "expansion": "Nigerian Electricity System Operator",
+      "description": "Independent system operator function within TCN",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "MO",
+      "expansion": "Market Operator",
+      "description": "TCN function responsible for market settlement and administration",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "TSP",
+      "expansion": "Transmission Service Provider",
+      "description": "TCN's wires-and-substations function",
+      "category": "MARKET_ROLE"
+    },
+    {
+      "acronym": "CBN",
+      "expansion": "Central Bank of Nigeria",
+      "description": "Apex bank, also funder of power sector intervention facilities",
+      "category": "AGENCY"
+    },
+    {
+      "acronym": "PSRP",
+      "expansion": "Power Sector Recovery Programme",
+      "description": "Federal programme to restore financial viability of the NESI",
+      "category": "INSTRUMENT"
+    }
+  ],
+  "request7_organisationProfiles": [
+    {
+      "id": "ORG-df1b0eae414a",
+      "shortName": "FMP",
+      "fullName": "Federal Ministry of Power",
+      "website": "https://power.gov.ng",
+      "address": "Federal Secretariat, Abuja",
+      "mandate": "Policy oversight for Nigeria power sector",
+      "vision": "Reliable electricity access for economic growth",
+      "mission": "Develop and coordinate sustainable power infrastructure",
+      "establishedYear": 1975,
+      "legalBasis": "Federal Executive Mandate",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-c584a077cbae",
+      "shortName": "REA",
+      "fullName": "Rural Electrification Agency",
+      "website": "https://rea.gov.ng",
+      "address": "Plot 2237 Cadastral Zone, Wuse Abuja",
+      "mandate": "Expand electricity access to underserved communities",
+      "vision": "Universal electricity access",
+      "mission": "Accelerate rural electrification using grid and off-grid solutions",
+      "establishedYear": 2005,
+      "legalBasis": "Electric Power Sector Reform Act 2005",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-6e2bf5465391",
+      "shortName": "NERC",
+      "fullName": "Nigerian Electricity Regulatory Commission",
+      "website": "https://nerc.gov.ng",
+      "address": "Adamawa Plaza, Plot 1099 First Avenue, Central Business District, Abuja",
+      "mandate": "Regulate the Nigerian electricity supply industry",
+      "vision": "An efficient, sustainable and consumer-focused electricity industry",
+      "mission": "Foster a fair, sustainable and competitive electricity market",
+      "establishedYear": 2005,
+      "legalBasis": "Electric Power Sector Reform Act 2005 / Electricity Act 2023",
+      "dataSource": "NERC 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-a047053ba1e3",
+      "shortName": "TCN",
+      "fullName": "Transmission Company of Nigeria",
+      "website": "https://tcn.org.ng",
+      "address": "Plot 14, Zambezi Crescent, Maitama, Abuja",
+      "mandate": "Operate the national transmission grid and system operator function",
+      "vision": "A world-class electricity transmission grid",
+      "mission": "Provide reliable bulk power transmission across Nigeria",
+      "establishedYear": 2005,
+      "legalBasis": "Electric Power Sector Reform Act 2005",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-b8a4817d91c7",
+      "shortName": "NBET",
+      "fullName": "Nigerian Bulk Electricity Trading Plc",
+      "website": "https://nbet.com.ng",
+      "address": "Plot 974 Olusegun Obasanjo Way, Wuye, Abuja",
+      "mandate": "Bulk purchase and resale of electricity from generators to distributors",
+      "vision": "A credible counterparty for power purchases in Nigeria",
+      "mission": "Facilitate bankable power purchase agreements",
+      "establishedYear": 2010,
+      "legalBasis": "Electric Power Sector Reform Act 2005",
+      "dataSource": "NBET 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-bedc4a01316c",
+      "shortName": "NEMSA",
+      "fullName": "Nigerian Electricity Management Services Agency",
+      "website": "https://nemsa.gov.ng",
+      "address": "Plot 1430 Ahmadu Bello Way, Garki II, Abuja",
+      "mandate": "Enforce technical standards and safety in the NESI",
+      "vision": "Excellence in electrical safety and standards",
+      "mission": "Ensure technical standards across the power sector",
+      "establishedYear": 2015,
+      "legalBasis": "NEMSA Act 2015",
+      "dataSource": "NEMSA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-46440b56de6b",
+      "shortName": "NDPHC",
+      "fullName": "Niger Delta Power Holding Company",
+      "website": "https://ndphc.net",
+      "address": "Plot 1030 Shehu Shagari Way, Maitama, Abuja",
+      "mandate": "Manage NIPP generation, transmission and distribution assets",
+      "vision": "Reliable power infrastructure across Nigeria",
+      "mission": "Develop and operate NIPP assets for the federation",
+      "establishedYear": 2005,
+      "legalBasis": "NIPP Implementation Framework",
+      "dataSource": "NDPHC 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-ba1de185d8fe",
+      "shortName": "NMDPRA",
+      "fullName": "Nigerian Midstream and Downstream Petroleum Regulatory Authority",
+      "website": "https://nmdpra.gov.ng",
+      "address": "Block C, NNPC Towers, Central Business District, Abuja",
+      "mandate": "Regulate midstream and downstream petroleum and gas operations",
+      "vision": "World-class regulator for midstream and downstream petroleum",
+      "mission": "Foster a competitive and safe petroleum midstream and downstream sector",
+      "establishedYear": 2021,
+      "legalBasis": "Petroleum Industry Act 2021",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "ORG-5fb28bc36720",
+      "shortName": "BPE",
+      "fullName": "Bureau of Public Enterprises",
+      "website": "https://bpe.gov.ng",
+      "address": "11 Osun Crescent, Off IBB Way, Maitama, Abuja",
+      "mandate": "Implement federal privatisation and commercialisation programme",
+      "vision": "Efficient public enterprises driving economic growth",
+      "mission": "Restructure and privatise public enterprises",
+      "establishedYear": 1993,
+      "legalBasis": "Public Enterprises (Privatisation and Commercialisation) Act 1999",
+      "dataSource": "BPE 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false
+    }
+  ],
+  "request8_gridConnectedPlants": [
+    {
+      "id": "PLT-e6a182503600",
+      "assetKind": "PLANT",
+      "name": "Egbin",
+      "displayName": "Egbin (Plant)",
+      "operator": "Egbin Power Plc",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_STEAM",
+      "installedMw": 1320,
+      "availableMw": 1000,
+      "actualMw": 930,
+      "state": "Lagos",
+      "lga": "Ikorodu",
+      "latitude": 6.561,
+      "longitude": 3.504,
+      "status": "OPERATING",
+      "paf": 0.76,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-e6a182503600",
+          "refType": "SUBSTATION",
+          "refName": "Egbin (Switching Station)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-edaae7fbc059",
+      "assetKind": "PLANT",
+      "name": "Azura-Edo IPP",
+      "displayName": "Azura-Edo IPP (Plant)",
+      "operator": "Azura Power West Africa",
+      "gencoType": "IPP",
+      "type": "GAS_CCGT",
+      "installedMw": 461,
+      "availableMw": 430,
+      "actualMw": 420,
+      "state": "Edo",
+      "lga": "Ovia North East",
+      "latitude": 6.544,
+      "longitude": 5.936,
+      "status": "OPERATING",
+      "paf": 0.91,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-04a8a2cb8567",
+      "assetKind": "PLANT",
+      "name": "Alaoji NIPP",
+      "displayName": "Alaoji NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 1131,
+      "availableMw": 0,
+      "actualMw": 0,
+      "state": "Abia",
+      "lga": "Osisioma",
+      "latitude": 5.116,
+      "longitude": 7.361,
+      "status": "OUT",
+      "paf": 0.0,
+      "constraintReason": "Gas and operational constraints",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-2ede0dec40ee",
+          "refType": "SUBSTATION",
+          "refName": "Alaoji (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-b8ea2b79f4d3",
+      "assetKind": "PLANT",
+      "name": "Kainji",
+      "displayName": "Kainji (Plant)",
+      "operator": "Mainstream Energy Solutions",
+      "gencoType": "SUCCESSOR",
+      "type": "HYDRO",
+      "installedMw": 760,
+      "availableMw": 540,
+      "actualMw": 480,
+      "state": "Niger",
+      "lga": "Borgu",
+      "latitude": 9.866,
+      "longitude": 4.616,
+      "status": "OPERATING",
+      "paf": 0.71,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-6bafc27a03af",
+      "assetKind": "PLANT",
+      "name": "Jebba",
+      "displayName": "Jebba (Plant)",
+      "operator": "Mainstream Energy Solutions",
+      "gencoType": "SUCCESSOR",
+      "type": "HYDRO",
+      "installedMw": 578,
+      "availableMw": 480,
+      "actualMw": 430,
+      "state": "Niger",
+      "lga": "Mokwa",
+      "latitude": 9.137,
+      "longitude": 4.789,
+      "status": "OPERATING",
+      "paf": 0.83,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-10738601b8f0",
+          "refType": "SUBSTATION",
+          "refName": "Jebba TS (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-4ba3c0e88994",
+      "assetKind": "PLANT",
+      "name": "Shiroro",
+      "displayName": "Shiroro (Plant)",
+      "operator": "North South Power Company",
+      "gencoType": "SUCCESSOR",
+      "type": "HYDRO",
+      "installedMw": 600,
+      "availableMw": 450,
+      "actualMw": 380,
+      "state": "Niger",
+      "lga": "Shiroro",
+      "latitude": 9.974,
+      "longitude": 6.834,
+      "status": "OPERATING",
+      "paf": 0.75,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-9a0e8cc270f1",
+          "refType": "SUBSTATION",
+          "refName": "Shiroro TS (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-24f47e00f609",
+      "assetKind": "PLANT",
+      "name": "Zungeru",
+      "displayName": "Zungeru (Plant)",
+      "operator": "Mainstream Energy Solutions",
+      "gencoType": "FGN",
+      "type": "HYDRO",
+      "installedMw": 700,
+      "availableMw": 500,
+      "actualMw": 420,
+      "state": "Niger",
+      "lga": "Wushishi",
+      "latitude": 9.85,
+      "longitude": 6.07,
+      "status": "OPERATING",
+      "paf": 0.71,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "CAP-bc472e89aca4",
+          "refType": "CAPITAL_PROJECT",
+          "refName": "Zungeru Hydro",
+          "relationship": "CAPEX_PROGRAMME"
+        }
+      ]
+    },
+    {
+      "id": "PLT-e011925e480a",
+      "assetKind": "PLANT",
+      "name": "Sapele Steam",
+      "displayName": "Sapele Steam (Plant)",
+      "operator": "Sapele Power Plc",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_STEAM",
+      "installedMw": 1020,
+      "availableMw": 100,
+      "actualMw": 90,
+      "state": "Delta",
+      "lga": "Ethiope West",
+      "latitude": 5.89,
+      "longitude": 5.692,
+      "status": "PARTIAL",
+      "paf": 0.1,
+      "constraintReason": "Aged steam units, limited gas supply",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-ebe0fa44a551",
+          "refType": "SUBSTATION",
+          "refName": "Sapele (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-78b40eb96f30",
+      "assetKind": "PLANT",
+      "name": "Sapele NIPP",
+      "displayName": "Sapele NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 450,
+      "availableMw": 220,
+      "actualMw": 180,
+      "state": "Delta",
+      "lga": "Ethiope West",
+      "latitude": 5.892,
+      "longitude": 5.694,
+      "status": "PARTIAL",
+      "paf": 0.49,
+      "constraintReason": "Gas constraint",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-ebe0fa44a551",
+          "refType": "SUBSTATION",
+          "refName": "Sapele (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.314
+        }
+      ]
+    },
+    {
+      "id": "PLT-1808c51b8a9e",
+      "assetKind": "PLANT",
+      "name": "Geregu Gas",
+      "displayName": "Geregu Gas (Plant)",
+      "operator": "Geregu Power Plc",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_OCGT",
+      "installedMw": 435,
+      "availableMw": 380,
+      "actualMw": 340,
+      "state": "Kogi",
+      "lga": "Ajaokuta",
+      "latitude": 7.572,
+      "longitude": 6.703,
+      "status": "OPERATING",
+      "paf": 0.87,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-a8b39c54554b",
+      "assetKind": "PLANT",
+      "name": "Geregu NIPP",
+      "displayName": "Geregu NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 434,
+      "availableMw": 380,
+      "actualMw": 320,
+      "state": "Kogi",
+      "lga": "Ajaokuta",
+      "latitude": 7.574,
+      "longitude": 6.704,
+      "status": "OPERATING",
+      "paf": 0.88,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-3fae26ce30cf",
+      "assetKind": "PLANT",
+      "name": "Olorunsogo Gas",
+      "displayName": "Olorunsogo Gas (Plant)",
+      "operator": "Pacific Energy",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_OCGT",
+      "installedMw": 335,
+      "availableMw": 260,
+      "actualMw": 200,
+      "state": "Ogun",
+      "lga": "Ifo",
+      "latitude": 6.965,
+      "longitude": 3.213,
+      "status": "OPERATING",
+      "paf": 0.78,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-ed0173c9333a",
+          "refType": "SUBSTATION",
+          "refName": "Olorunsogo (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-5ef0551d59ee",
+      "assetKind": "PLANT",
+      "name": "Olorunsogo NIPP",
+      "displayName": "Olorunsogo NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 750,
+      "availableMw": 220,
+      "actualMw": 180,
+      "state": "Ogun",
+      "lga": "Ifo",
+      "latitude": 6.967,
+      "longitude": 3.215,
+      "status": "PARTIAL",
+      "paf": 0.29,
+      "constraintReason": "Gas pipeline constraints",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-ed0173c9333a",
+          "refType": "SUBSTATION",
+          "refName": "Olorunsogo (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.313
+        }
+      ]
+    },
+    {
+      "id": "PLT-895cdf5e6bd3",
+      "assetKind": "PLANT",
+      "name": "Omotosho Gas",
+      "displayName": "Omotosho Gas (Plant)",
+      "operator": "Pacific Energy",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_OCGT",
+      "installedMw": 335,
+      "availableMw": 280,
+      "actualMw": 240,
+      "state": "Ondo",
+      "lga": "Okitipupa",
+      "latitude": 6.43,
+      "longitude": 4.825,
+      "status": "OPERATING",
+      "paf": 0.84,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-44c576900b14",
+          "refType": "SUBSTATION",
+          "refName": "Omotosho (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-35c335f583fd",
+      "assetKind": "PLANT",
+      "name": "Omotosho NIPP",
+      "displayName": "Omotosho NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 500,
+      "availableMw": 250,
+      "actualMw": 200,
+      "state": "Ondo",
+      "lga": "Okitipupa",
+      "latitude": 6.432,
+      "longitude": 4.827,
+      "status": "PARTIAL",
+      "paf": 0.5,
+      "constraintReason": "Gas constraint",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-44c576900b14",
+          "refType": "SUBSTATION",
+          "refName": "Omotosho (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.314
+        }
+      ]
+    },
+    {
+      "id": "PLT-f79202c1c6ce",
+      "assetKind": "PLANT",
+      "name": "Afam VI",
+      "displayName": "Afam VI (Plant)",
+      "operator": "Shell/Transcorp",
+      "gencoType": "IPP",
+      "type": "GAS_CCGT",
+      "installedMw": 650,
+      "availableMw": 540,
+      "actualMw": 480,
+      "state": "Rivers",
+      "lga": "Oyigbo",
+      "latitude": 4.926,
+      "longitude": 7.122,
+      "status": "OPERATING",
+      "paf": 0.83,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-1254dc70fb59",
+          "refType": "SUBSTATION",
+          "refName": "Afam (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "PLT-194daa532178",
+      "assetKind": "PLANT",
+      "name": "Afam IV-V",
+      "displayName": "Afam IV-V (Plant)",
+      "operator": "Transcorp Afam",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_OCGT",
+      "installedMw": 726,
+      "availableMw": 80,
+      "actualMw": 60,
+      "state": "Rivers",
+      "lga": "Oyigbo",
+      "latitude": 4.928,
+      "longitude": 7.124,
+      "status": "PARTIAL",
+      "paf": 0.11,
+      "constraintReason": "Aged units, partially decommissioned",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-1254dc70fb59",
+          "refType": "SUBSTATION",
+          "refName": "Afam (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.314
+        }
+      ]
+    },
+    {
+      "id": "PLT-eb6463aab8d0",
+      "assetKind": "PLANT",
+      "name": "Trans Amadi",
+      "displayName": "Trans Amadi (Plant)",
+      "operator": "Transcorp Power",
+      "gencoType": "SUCCESSOR",
+      "type": "GAS_OCGT",
+      "installedMw": 100,
+      "availableMw": 80,
+      "actualMw": 70,
+      "state": "Rivers",
+      "lga": "Port Harcourt",
+      "latitude": 4.819,
+      "longitude": 7.038,
+      "status": "OPERATING",
+      "paf": 0.8,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-278215773ed5",
+      "assetKind": "PLANT",
+      "name": "Ihovbor NIPP",
+      "displayName": "Ihovbor NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 451,
+      "availableMw": 280,
+      "actualMw": 240,
+      "state": "Edo",
+      "lga": "Ikpoba Okha",
+      "latitude": 6.451,
+      "longitude": 5.738,
+      "status": "OPERATING",
+      "paf": 0.62,
+      "constraintReason": "Gas constraint",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-09e7f456bffa",
+      "assetKind": "PLANT",
+      "name": "Gbarain NIPP",
+      "displayName": "Gbarain NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 225,
+      "availableMw": 110,
+      "actualMw": 90,
+      "state": "Bayelsa",
+      "lga": "Yenagoa",
+      "latitude": 4.964,
+      "longitude": 6.305,
+      "status": "PARTIAL",
+      "paf": 0.49,
+      "constraintReason": "Gas supply constraint",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-e9fb4b0aad86",
+      "assetKind": "PLANT",
+      "name": "Calabar NIPP",
+      "displayName": "Calabar NIPP (Plant)",
+      "operator": "NDPHC",
+      "gencoType": "NIPP",
+      "type": "GAS_OCGT",
+      "installedMw": 561,
+      "availableMw": 380,
+      "actualMw": 320,
+      "state": "Cross River",
+      "lga": "Odukpani",
+      "latitude": 5.15,
+      "longitude": 8.288,
+      "status": "OPERATING",
+      "paf": 0.68,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "alsoKnownAs": [
+        "Odukpani NIPP"
+      ],
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-4e68a9987a43",
+      "assetKind": "PLANT",
+      "name": "Okpai",
+      "displayName": "Okpai (Plant)",
+      "operator": "NAOC/NNPC",
+      "gencoType": "IPP",
+      "type": "GAS_CCGT",
+      "installedMw": 480,
+      "availableMw": 380,
+      "actualMw": 320,
+      "state": "Delta",
+      "lga": "Ndokwa East",
+      "latitude": 5.717,
+      "longitude": 6.486,
+      "status": "OPERATING",
+      "paf": 0.79,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-b11a5c04d2f1",
+      "assetKind": "PLANT",
+      "name": "Paras Energy",
+      "displayName": "Paras Energy (Plant)",
+      "operator": "Paras Energy",
+      "gencoType": "IPP",
+      "type": "GAS_OCGT",
+      "installedMw": 60,
+      "availableMw": 50,
+      "actualMw": 45,
+      "state": "Lagos",
+      "lga": "Ibeju-Lekki",
+      "latitude": 6.467,
+      "longitude": 3.91,
+      "status": "OPERATING",
+      "paf": 0.83,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-df303c69cfec",
+      "assetKind": "PLANT",
+      "name": "AES Barge",
+      "displayName": "AES Barge (Plant)",
+      "operator": "AES Nigeria Barge",
+      "gencoType": "IPP",
+      "type": "GAS_OCGT",
+      "installedMw": 270,
+      "availableMw": 0,
+      "actualMw": 0,
+      "state": "Lagos",
+      "lga": "Ikorodu",
+      "latitude": 6.56,
+      "longitude": 3.5,
+      "status": "DECOMMISSIONED",
+      "paf": 0.0,
+      "constraintReason": "Decommissioned barge plant",
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-f46aa0b99814",
+      "assetKind": "PLANT",
+      "name": "Rivers IPP",
+      "displayName": "Rivers IPP (Plant)",
+      "operator": "Rivers State",
+      "gencoType": "IPP",
+      "type": "GAS_OCGT",
+      "installedMw": 180,
+      "availableMw": 120,
+      "actualMw": 100,
+      "state": "Rivers",
+      "lga": "Eleme",
+      "latitude": 4.789,
+      "longitude": 7.116,
+      "status": "OPERATING",
+      "paf": 0.67,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-8b3a24221e8f",
+      "assetKind": "PLANT",
+      "name": "Notore Power",
+      "displayName": "Notore Power (Plant)",
+      "operator": "Notore Chemical Industries",
+      "gencoType": "IPP",
+      "type": "GAS_OCGT",
+      "installedMw": 110,
+      "availableMw": 90,
+      "actualMw": 80,
+      "state": "Rivers",
+      "lga": "Eleme",
+      "latitude": 4.787,
+      "longitude": 7.114,
+      "status": "OPERATING",
+      "paf": 0.82,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-9c5757e98598",
+      "assetKind": "PLANT",
+      "name": "Aba Integrated Power",
+      "displayName": "Aba Integrated Power (Plant)",
+      "operator": "Geometric Power",
+      "gencoType": "IPP",
+      "type": "GAS_OCGT",
+      "installedMw": 188,
+      "availableMw": 140,
+      "actualMw": 120,
+      "state": "Abia",
+      "lga": "Aba South",
+      "latitude": 5.107,
+      "longitude": 7.367,
+      "status": "OPERATING",
+      "paf": 0.74,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-4c9acccc165f",
+      "assetKind": "PLANT",
+      "name": "Mambilla",
+      "displayName": "Mambilla (Plant)",
+      "operator": "FGN",
+      "gencoType": "FGN",
+      "type": "HYDRO",
+      "installedMw": 3050,
+      "availableMw": 0,
+      "actualMw": 0,
+      "state": "Taraba",
+      "lga": "Sardauna",
+      "latitude": 6.72,
+      "longitude": 11.29,
+      "status": "PLANNED",
+      "paf": 0.0,
+      "constraintReason": "EPC review, not yet built",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "SUB-c9d844e700a4",
+          "refType": "SUBSTATION",
+          "refName": "Mambilla TS (Substation)",
+          "relationship": "EVACUATION_SUBSTATION",
+          "distanceKm": 0.0
+        },
+        {
+          "refId": "CAP-8f81bb63ee92",
+          "refType": "CAPITAL_PROJECT",
+          "refName": "Mambilla Hydro Project",
+          "relationship": "CAPEX_PROGRAMME"
+        }
+      ]
+    },
+    {
+      "id": "PLT-eca6afe16052",
+      "assetKind": "PLANT",
+      "name": "Dadin Kowa Hydro",
+      "displayName": "Dadin Kowa Hydro (Plant)",
+      "operator": "Mabon Limited",
+      "gencoType": "IPP",
+      "type": "HYDRO",
+      "installedMw": 40,
+      "availableMw": 30,
+      "actualMw": 25,
+      "state": "Gombe",
+      "lga": "Yamaltu/Deba",
+      "latitude": 10.293,
+      "longitude": 11.491,
+      "status": "OPERATING",
+      "paf": 0.75,
+      "constraintReason": null,
+      "dataSource": "NERC Q1 2025",
+      "sourceAuthorityScore": 10,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "PLT-4e13a4ad143f",
+      "assetKind": "PLANT",
+      "name": "Kashimbila Hydro",
+      "displayName": "Kashimbila Hydro (Plant)",
+      "operator": "FGN",
+      "gencoType": "FGN",
+      "type": "HYDRO",
+      "installedMw": 40,
+      "availableMw": 35,
+      "actualMw": 28,
+      "state": "Taraba",
+      "lga": "Takum",
+      "latitude": 6.991,
+      "longitude": 9.923,
+      "status": "OPERATING",
+      "paf": 0.88,
+      "constraintReason": null,
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "synthetic": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "CAP-2865a75ef873",
+          "refType": "CAPITAL_PROJECT",
+          "refName": "Kashimbila Hydro",
+          "relationship": "CAPEX_PROGRAMME"
+        }
+      ]
+    }
+  ],
+  "request9_tcnSubstations": [
+    {
+      "id": "SUB-57cc62a5d600",
+      "assetKind": "SUBSTATION",
+      "name": "Ikeja West",
+      "displayName": "Ikeja West (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 1200,
+      "state": "Lagos",
+      "latitude": 6.601,
+      "longitude": 3.295,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN / OpenStreetMap 2025",
+      "sourceAuthorityScore": 3,
+      "lowConfidence": true,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-1f2451b14e0c",
+      "assetKind": "SUBSTATION",
+      "name": "Apo",
+      "displayName": "Apo (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 1000,
+      "state": "FCT",
+      "latitude": 8.999,
+      "longitude": 7.45,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN / OpenStreetMap 2025",
+      "sourceAuthorityScore": 3,
+      "lowConfidence": true,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-85690f01417a",
+      "assetKind": "SUBSTATION",
+      "name": "Osogbo",
+      "displayName": "Osogbo (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 750,
+      "state": "Osun",
+      "latitude": 7.771,
+      "longitude": 4.556,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN / OpenStreetMap 2025",
+      "sourceAuthorityScore": 3,
+      "lowConfidence": true,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-a2f4d8c530e6",
+      "assetKind": "SUBSTATION",
+      "name": "Aja",
+      "displayName": "Aja (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Lagos",
+      "latitude": 6.469,
+      "longitude": 3.572,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-329f1e17fbec",
+      "assetKind": "SUBSTATION",
+      "name": "Akangba",
+      "displayName": "Akangba (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 600,
+      "state": "Lagos",
+      "latitude": 6.51,
+      "longitude": 3.351,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-e6a182503600",
+      "assetKind": "SWITCHING",
+      "name": "Egbin",
+      "displayName": "Egbin (Switching Station)",
+      "voltageClass": "330kV",
+      "capacityMva": 1320,
+      "state": "Lagos",
+      "latitude": 6.561,
+      "longitude": 3.504,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-e6a182503600",
+          "refType": "PLANT",
+          "refName": "Egbin (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "SUB-ad17369c88fd",
+      "assetKind": "SUBSTATION",
+      "name": "Benin",
+      "displayName": "Benin (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 900,
+      "state": "Edo",
+      "latitude": 6.341,
+      "longitude": 5.617,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-671132ea7ad6",
+      "assetKind": "SUBSTATION",
+      "name": "Onitsha",
+      "displayName": "Onitsha (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Anambra",
+      "latitude": 6.143,
+      "longitude": 6.802,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-6bb3fd1a7786",
+      "assetKind": "SUBSTATION",
+      "name": "New Haven",
+      "displayName": "New Haven (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Enugu",
+      "latitude": 6.439,
+      "longitude": 7.495,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-2ede0dec40ee",
+      "assetKind": "SUBSTATION",
+      "name": "Alaoji",
+      "displayName": "Alaoji (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Abia",
+      "latitude": 5.116,
+      "longitude": 7.361,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-04a8a2cb8567",
+          "refType": "PLANT",
+          "refName": "Alaoji NIPP (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "SUB-1254dc70fb59",
+      "assetKind": "SUBSTATION",
+      "name": "Afam",
+      "displayName": "Afam (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Rivers",
+      "latitude": 4.926,
+      "longitude": 7.122,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-f79202c1c6ce",
+          "refType": "PLANT",
+          "refName": "Afam VI (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        },
+        {
+          "refId": "PLT-194daa532178",
+          "refType": "PLANT",
+          "refName": "Afam IV-V (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.314
+        }
+      ]
+    },
+    {
+      "id": "SUB-2f80beabedb4",
+      "assetKind": "SUBSTATION",
+      "name": "Port Harcourt Main",
+      "displayName": "Port Harcourt Main (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Rivers",
+      "latitude": 4.819,
+      "longitude": 7.038,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-82838a62ef84",
+      "assetKind": "SUBSTATION",
+      "name": "Calabar",
+      "displayName": "Calabar (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Cross River",
+      "latitude": 4.962,
+      "longitude": 8.331,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-ebe0fa44a551",
+      "assetKind": "SUBSTATION",
+      "name": "Sapele",
+      "displayName": "Sapele (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 750,
+      "state": "Delta",
+      "latitude": 5.89,
+      "longitude": 5.692,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-e011925e480a",
+          "refType": "PLANT",
+          "refName": "Sapele Steam (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        },
+        {
+          "refId": "PLT-78b40eb96f30",
+          "refType": "PLANT",
+          "refName": "Sapele NIPP (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.314
+        }
+      ]
+    },
+    {
+      "id": "SUB-f5a4791c1d40",
+      "assetKind": "SUBSTATION",
+      "name": "Delta (Ughelli)",
+      "displayName": "Delta (Ughelli) (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 900,
+      "state": "Delta",
+      "latitude": 5.493,
+      "longitude": 5.999,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-e6250afb8577",
+      "assetKind": "SUBSTATION",
+      "name": "Aladja",
+      "displayName": "Aladja (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Delta",
+      "latitude": 5.951,
+      "longitude": 5.811,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-b9e82c36eb76",
+      "assetKind": "SUBSTATION",
+      "name": "Ayede",
+      "displayName": "Ayede (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Oyo",
+      "latitude": 7.435,
+      "longitude": 3.876,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-ed0173c9333a",
+      "assetKind": "SUBSTATION",
+      "name": "Olorunsogo",
+      "displayName": "Olorunsogo (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Ogun",
+      "latitude": 6.965,
+      "longitude": 3.213,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-3fae26ce30cf",
+          "refType": "PLANT",
+          "refName": "Olorunsogo Gas (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        },
+        {
+          "refId": "PLT-5ef0551d59ee",
+          "refType": "PLANT",
+          "refName": "Olorunsogo NIPP (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.313
+        }
+      ]
+    },
+    {
+      "id": "SUB-44c576900b14",
+      "assetKind": "SUBSTATION",
+      "name": "Omotosho",
+      "displayName": "Omotosho (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Ondo",
+      "latitude": 6.43,
+      "longitude": 4.825,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-895cdf5e6bd3",
+          "refType": "PLANT",
+          "refName": "Omotosho Gas (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        },
+        {
+          "refId": "PLT-35c335f583fd",
+          "refType": "PLANT",
+          "refName": "Omotosho NIPP (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.314
+        }
+      ]
+    },
+    {
+      "id": "SUB-0b59f912f1c1",
+      "assetKind": "SUBSTATION",
+      "name": "Akure",
+      "displayName": "Akure (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 240,
+      "state": "Ondo",
+      "latitude": 7.25,
+      "longitude": 5.195,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-7d74d808c1f5",
+      "assetKind": "SUBSTATION",
+      "name": "Ilorin",
+      "displayName": "Ilorin (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Kwara",
+      "latitude": 8.498,
+      "longitude": 4.541,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-10738601b8f0",
+      "assetKind": "SUBSTATION",
+      "name": "Jebba TS",
+      "displayName": "Jebba TS (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 750,
+      "state": "Niger",
+      "latitude": 9.137,
+      "longitude": 4.789,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-6bafc27a03af",
+          "refType": "PLANT",
+          "refName": "Jebba (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "SUB-9a0e8cc270f1",
+      "assetKind": "SUBSTATION",
+      "name": "Shiroro TS",
+      "displayName": "Shiroro TS (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Niger",
+      "latitude": 9.974,
+      "longitude": 6.834,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-4ba3c0e88994",
+          "refType": "PLANT",
+          "refName": "Shiroro (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        }
+      ]
+    },
+    {
+      "id": "SUB-50b4647f099c",
+      "assetKind": "SUBSTATION",
+      "name": "Katampe",
+      "displayName": "Katampe (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "FCT",
+      "latitude": 9.083,
+      "longitude": 7.475,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-8872fbc6928e",
+      "assetKind": "SUBSTATION",
+      "name": "Gwagwalada",
+      "displayName": "Gwagwalada (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "FCT",
+      "latitude": 8.943,
+      "longitude": 7.082,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-222137b828b6",
+      "assetKind": "SUBSTATION",
+      "name": "Lokoja",
+      "displayName": "Lokoja (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Kogi",
+      "latitude": 7.797,
+      "longitude": 6.741,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-ceff7fb5b208",
+      "assetKind": "SUBSTATION",
+      "name": "Makurdi",
+      "displayName": "Makurdi (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Benue",
+      "latitude": 7.733,
+      "longitude": 8.521,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-0fd276b1a10d",
+      "assetKind": "SUBSTATION",
+      "name": "Jos",
+      "displayName": "Jos (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Plateau",
+      "latitude": 9.928,
+      "longitude": 8.892,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-c9e19d93e62e",
+      "assetKind": "SUBSTATION",
+      "name": "Gombe",
+      "displayName": "Gombe (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Gombe",
+      "latitude": 10.29,
+      "longitude": 11.171,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-45857c765cc4",
+      "assetKind": "SUBSTATION",
+      "name": "Yola",
+      "displayName": "Yola (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 360,
+      "state": "Adamawa",
+      "latitude": 9.207,
+      "longitude": 12.481,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-097ed1b9806f",
+      "assetKind": "SUBSTATION",
+      "name": "Damaturu",
+      "displayName": "Damaturu (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 240,
+      "state": "Yobe",
+      "latitude": 11.747,
+      "longitude": 11.961,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-33e75efdfef5",
+      "assetKind": "SUBSTATION",
+      "name": "Maiduguri",
+      "displayName": "Maiduguri (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 360,
+      "state": "Borno",
+      "latitude": 11.846,
+      "longitude": 13.16,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-752c8817f528",
+      "assetKind": "SUBSTATION",
+      "name": "Bauchi",
+      "displayName": "Bauchi (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Bauchi",
+      "latitude": 10.314,
+      "longitude": 9.844,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-85f0739bc031",
+      "assetKind": "SUBSTATION",
+      "name": "Kano (Kumbotso)",
+      "displayName": "Kano (Kumbotso) (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 600,
+      "state": "Kano",
+      "latitude": 11.929,
+      "longitude": 8.519,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-b5a2e160adf7",
+      "assetKind": "SUBSTATION",
+      "name": "Dakata",
+      "displayName": "Dakata (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 240,
+      "state": "Kano",
+      "latitude": 12.004,
+      "longitude": 8.527,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-8ef65ae726d9",
+      "assetKind": "SUBSTATION",
+      "name": "Kaduna Mando",
+      "displayName": "Kaduna Mando (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 480,
+      "state": "Kaduna",
+      "latitude": 10.61,
+      "longitude": 7.471,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-25ef27757002",
+      "assetKind": "SUBSTATION",
+      "name": "Zaria",
+      "displayName": "Zaria (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 240,
+      "state": "Kaduna",
+      "latitude": 11.092,
+      "longitude": 7.715,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-22ca5fcae95c",
+      "assetKind": "SUBSTATION",
+      "name": "Sokoto",
+      "displayName": "Sokoto (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 360,
+      "state": "Sokoto",
+      "latitude": 13.06,
+      "longitude": 5.247,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-8bf80d37edbf",
+      "assetKind": "SUBSTATION",
+      "name": "Birnin Kebbi",
+      "displayName": "Birnin Kebbi (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 240,
+      "state": "Kebbi",
+      "latitude": 12.451,
+      "longitude": 4.197,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-eee447a3116e",
+      "assetKind": "SUBSTATION",
+      "name": "Gwiwa",
+      "displayName": "Gwiwa (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 120,
+      "state": "Jigawa",
+      "latitude": 12.692,
+      "longitude": 9.342,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-8dd2b90d4d83",
+      "assetKind": "SUBSTATION",
+      "name": "Funtua",
+      "displayName": "Funtua (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 240,
+      "state": "Katsina",
+      "latitude": 11.522,
+      "longitude": 7.31,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-2e612e6dc457",
+      "assetKind": "SUBSTATION",
+      "name": "Gusau",
+      "displayName": "Gusau (Substation)",
+      "voltageClass": "132kV",
+      "capacityMva": 120,
+      "state": "Zamfara",
+      "latitude": 12.169,
+      "longitude": 6.66,
+      "ownerOrg": "TCN",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "SUB-c9d844e700a4",
+      "assetKind": "SUBSTATION",
+      "name": "Mambilla TS",
+      "displayName": "Mambilla TS (Substation)",
+      "voltageClass": "330kV",
+      "capacityMva": 1500,
+      "state": "Taraba",
+      "latitude": 6.72,
+      "longitude": 11.29,
+      "ownerOrg": "TCN",
+      "dataSource": "FMP 2025",
+      "status": "PLANNED",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-4c9acccc165f",
+          "refType": "PLANT",
+          "refName": "Mambilla (Plant)",
+          "relationship": "GENERATING_PLANT",
+          "distanceKm": 0.0
+        }
+      ]
+    }
+  ],
+  "request10_gasPipelines": [
+    {
+      "id": "PIP-ef73d29065f1",
+      "name": "Escravos-Lagos Pipeline System",
+      "operator": "NGIC",
+      "capacityMmscfd": 1100,
+      "status": "OPERATIONAL",
+      "fromPoint": "Escravos",
+      "toPoint": "Lagos",
+      "lengthKm": 524,
+      "routeCoordinates": [
+        [
+          5.63,
+          6.3
+        ],
+        [
+          3.39,
+          6.45
+        ]
+      ],
+      "notes": "Primary western gas supply pipeline",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-5eadd50825f4",
+      "name": "AKK Pipeline",
+      "operator": "NNPC Gas Infrastructure Company",
+      "capacityMmscfd": 2000,
+      "status": "CONSTRUCTION",
+      "fromPoint": "Ajaokuta",
+      "toPoint": "Kano",
+      "lengthKm": 614,
+      "routeCoordinates": [
+        [
+          6.74,
+          7.08
+        ],
+        [
+          8.52,
+          12.0
+        ]
+      ],
+      "notes": "Expected phased completion after 2025; routes via Kaduna",
+      "dataSource": "NNPC/NMDPRA 2025",
+      "sourceAuthorityScore": 6,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-8bc6fdecd20f",
+      "name": "OB3 Pipeline (Obiafu-Obrikom-Oben)",
+      "operator": "NNPC Gas Infrastructure Company",
+      "capacityMmscfd": 2000,
+      "status": "OPERATIONAL",
+      "fromPoint": "Obiafu/Obrikom",
+      "toPoint": "Oben",
+      "lengthKm": 127,
+      "routeCoordinates": [
+        [
+          6.65,
+          5.46
+        ],
+        [
+          5.95,
+          6.38
+        ]
+      ],
+      "notes": "East-to-west backbone interconnector",
+      "dataSource": "NNPC/NMDPRA 2025",
+      "sourceAuthorityScore": 6,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-7f454b6a9c3c",
+      "name": "Escravos-Warri-Kaduna (ELPS extension)",
+      "operator": "NNPC Gas",
+      "capacityMmscfd": 400,
+      "status": "PLANNED",
+      "fromPoint": "Warri",
+      "toPoint": "Kaduna",
+      "lengthKm": 740,
+      "routeCoordinates": [
+        [
+          5.75,
+          5.52
+        ],
+        [
+          7.44,
+          10.52
+        ]
+      ],
+      "notes": "Northern extension to interconnect with AKK at Kaduna",
+      "dataSource": "NNPC 2025",
+      "sourceAuthorityScore": 5,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-a14009be4cf3",
+      "name": "Aladja-Itakpe Pipeline",
+      "operator": "NGIC",
+      "capacityMmscfd": 250,
+      "status": "OPERATIONAL",
+      "fromPoint": "Aladja",
+      "toPoint": "Itakpe",
+      "lengthKm": 196,
+      "routeCoordinates": [
+        [
+          5.81,
+          5.95
+        ],
+        [
+          6.56,
+          7.62
+        ]
+      ],
+      "notes": "Industrial gas supply to Ajaokuta steel and Itakpe iron ore",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-e511fc6c7e5f",
+      "name": "Imo River-Aba Pipeline",
+      "operator": "Aba Power",
+      "capacityMmscfd": 60,
+      "status": "OPERATIONAL",
+      "fromPoint": "Imo River",
+      "toPoint": "Aba",
+      "lengthKm": 26,
+      "routeCoordinates": [
+        [
+          7.28,
+          5.21
+        ],
+        [
+          7.37,
+          5.11
+        ]
+      ],
+      "notes": "Dedicated supply to Aba Integrated Power",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-f50cd55a06f0",
+      "name": "Alakiri-Obigbo-Ikot Abasi Pipeline",
+      "operator": "NNPC Gas",
+      "capacityMmscfd": 350,
+      "status": "OPERATIONAL",
+      "fromPoint": "Alakiri",
+      "toPoint": "Ikot Abasi",
+      "lengthKm": 99,
+      "routeCoordinates": [
+        [
+          7.05,
+          4.88
+        ],
+        [
+          7.56,
+          4.57
+        ]
+      ],
+      "notes": "Eastern gas distribution loop",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-f2065d0c6046",
+      "name": "Calabar-Ikom-Mfum Pipeline (Trans-West African)",
+      "operator": "WAGPCo",
+      "capacityMmscfd": 170,
+      "status": "PLANNED",
+      "fromPoint": "Calabar",
+      "toPoint": "Mfum",
+      "lengthKm": 230,
+      "routeCoordinates": [
+        [
+          8.32,
+          4.96
+        ],
+        [
+          8.96,
+          5.79
+        ]
+      ],
+      "notes": "Future eastern leg of West African Gas Pipeline",
+      "dataSource": "WAGPCo 2025",
+      "sourceAuthorityScore": 6,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-d487f97a1136",
+      "name": "WAGP (West African Gas Pipeline)",
+      "operator": "WAGPCo",
+      "capacityMmscfd": 460,
+      "status": "OPERATIONAL",
+      "fromPoint": "Lagos (Nigeria)",
+      "toPoint": "Tema (Ghana)",
+      "lengthKm": 678,
+      "routeCoordinates": [
+        [
+          3.39,
+          6.45
+        ],
+        [
+          -0.02,
+          5.62
+        ]
+      ],
+      "notes": "Cross-border pipeline serving Benin, Togo and Ghana",
+      "dataSource": "WAGPCo 2025",
+      "sourceAuthorityScore": 6,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-79c192b9e327",
+      "name": "Ikot Abasi-Calabar Pipeline",
+      "operator": "Frontier Oil",
+      "capacityMmscfd": 100,
+      "status": "OPERATIONAL",
+      "fromPoint": "Ikot Abasi",
+      "toPoint": "Calabar",
+      "lengthKm": 95,
+      "routeCoordinates": [
+        [
+          7.56,
+          4.57
+        ],
+        [
+          8.32,
+          4.96
+        ]
+      ],
+      "notes": "Supplies Calabar NIPP and industrial offtakers",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-afdc5a1eee61",
+      "name": "Oben-Ajaokuta Pipeline",
+      "operator": "NNPC Gas",
+      "capacityMmscfd": 800,
+      "status": "OPERATIONAL",
+      "fromPoint": "Oben",
+      "toPoint": "Ajaokuta",
+      "lengthKm": 196,
+      "routeCoordinates": [
+        [
+          5.95,
+          6.38
+        ],
+        [
+          6.74,
+          7.08
+        ]
+      ],
+      "notes": "Feeds AKK pipeline at Ajaokuta head station",
+      "dataSource": "NNPC 2025",
+      "sourceAuthorityScore": 5,
+      "lowConfidence": false
+    },
+    {
+      "id": "PIP-a556751d5ce3",
+      "name": "Sapele-Aladja Pipeline",
+      "operator": "NGIC",
+      "capacityMmscfd": 150,
+      "status": "OPERATIONAL",
+      "fromPoint": "Sapele",
+      "toPoint": "Aladja",
+      "lengthKm": 36,
+      "routeCoordinates": [
+        [
+          5.69,
+          5.89
+        ],
+        [
+          5.81,
+          5.95
+        ]
+      ],
+      "notes": "Industrial gas spur",
+      "dataSource": "NMDPRA 2025",
+      "sourceAuthorityScore": 9,
+      "lowConfidence": false
+    }
+  ],
+  "request11_capitalProjects": [
+    {
+      "id": "CAP-8f81bb63ee92",
+      "name": "Mambilla Hydro Project",
+      "category": "GENERATION",
+      "status": "EPC Review",
+      "latitude": 6.72,
+      "longitude": 11.29,
+      "capexUsd": 5800000000,
+      "completionPct": 15,
+      "timeline": "2025-2030",
+      "funder": "Federal Government of Nigeria / China Exim",
+      "contractorOrEpc": "CMEC",
+      "notes": "3050MW hydroelectric project",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-4c9acccc165f",
+          "refType": "PLANT",
+          "refName": "Mambilla (Plant)",
+          "relationship": "DELIVERS_ASSET"
+        }
+      ]
+    },
+    {
+      "id": "CAP-bc472e89aca4",
+      "name": "Zungeru Hydro",
+      "category": "GENERATION",
+      "status": "Operational",
+      "latitude": 9.85,
+      "longitude": 6.07,
+      "capexUsd": 1300000000,
+      "completionPct": 100,
+      "timeline": "Completed 2023",
+      "funder": "China Exim Bank",
+      "contractorOrEpc": "Sinohydro",
+      "notes": "700MW hydro station",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-24f47e00f609",
+          "refType": "PLANT",
+          "refName": "Zungeru (Plant)",
+          "relationship": "DELIVERS_ASSET"
+        }
+      ]
+    },
+    {
+      "id": "CAP-1317efa9c098",
+      "name": "Presidential Power Initiative (PPI) Phase 1",
+      "category": "TRANSMISSION",
+      "status": "Implementation",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 2300000000,
+      "completionPct": 35,
+      "timeline": "2021-2026",
+      "funder": "FGN / KfW (Germany)",
+      "contractorOrEpc": "Siemens Energy / FGN Power Company",
+      "notes": "Phase 1 brownfield upgrades to lift end-to-end grid capacity to 7GW",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-9e38bf5e40fd",
+      "name": "PPI Phase 2",
+      "category": "TRANSMISSION",
+      "status": "Procurement",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 1600000000,
+      "completionPct": 5,
+      "timeline": "2026-2028",
+      "funder": "FGN / KfW",
+      "contractorOrEpc": "Siemens Energy / FGN Power Company",
+      "notes": "Targeted 11GW grid capacity",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-51d4631c59a8",
+      "name": "AKK Gas Pipeline",
+      "category": "GAS_INFRASTRUCTURE",
+      "status": "Construction",
+      "latitude": 8.5,
+      "longitude": 9.5,
+      "capexUsd": 2800000000,
+      "completionPct": 60,
+      "timeline": "2020-2026",
+      "funder": "NNPC / China Exim",
+      "contractorOrEpc": "OilServ / China Petroleum Pipeline Bureau",
+      "notes": "614km Ajaokuta-Kaduna-Kano gas pipeline",
+      "dataSource": "NNPC 2025",
+      "sourceAuthorityScore": 5,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-07246af93388",
+      "name": "Distribution Sector Recovery Programme (DSRP)",
+      "category": "DISTRIBUTION",
+      "status": "Active",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 750000000,
+      "completionPct": 25,
+      "timeline": "2024-2027",
+      "funder": "World Bank / FGN",
+      "contractorOrEpc": "Multiple DisCos under PSRP framework",
+      "notes": "DisCo-level technical and commercial loss reduction",
+      "dataSource": "World Bank 2025",
+      "sourceAuthorityScore": 6,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-079f2efcdac8",
+      "name": "DARES Programme",
+      "category": "DISTRIBUTED_RENEWABLE",
+      "status": "Active",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 750000000,
+      "completionPct": 30,
+      "timeline": "2024-2030",
+      "funder": "World Bank / AfDB / AFD / GCF",
+      "contractorOrEpc": "REA",
+      "notes": "Distributed Access through Renewable Energy Scale-up; targeted 17.5 million people",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-ff625b240637",
+      "name": "Nigeria Electrification Project (NEP)",
+      "category": "DISTRIBUTED_RENEWABLE",
+      "status": "Implementation",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 550000000,
+      "completionPct": 70,
+      "timeline": "2018-2026",
+      "funder": "World Bank / AfDB",
+      "contractorOrEpc": "REA",
+      "notes": "Mini-grids, SHS and productive use programmes",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-1e8b3f1e2bf4",
+      "name": "Energising Education Programme (EEP) Phase 2",
+      "category": "DISTRIBUTED_RENEWABLE",
+      "status": "Implementation",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 200000000,
+      "completionPct": 40,
+      "timeline": "2024-2027",
+      "funder": "FGN / REA",
+      "contractorOrEpc": "REA",
+      "notes": "Solar hybrid mini-grids for federal universities and teaching hospitals",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-c4ac002f4e54",
+      "name": "Energising Economies Initiative (EEI)",
+      "category": "DISTRIBUTED_RENEWABLE",
+      "status": "Active",
+      "latitude": 9.05,
+      "longitude": 7.49,
+      "capexUsd": 80000000,
+      "completionPct": 60,
+      "timeline": "2017-2027",
+      "funder": "REA / Private",
+      "contractorOrEpc": "REA / Private developers",
+      "notes": "Markets and economic clusters mini-grid programme",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-a8c0d5964c90",
+      "name": "Nigeria SCADA / EMS Upgrade",
+      "category": "TRANSMISSION",
+      "status": "Implementation",
+      "latitude": 7.77,
+      "longitude": 4.56,
+      "capexUsd": 220000000,
+      "completionPct": 45,
+      "timeline": "2023-2026",
+      "funder": "AFD / FGN",
+      "contractorOrEpc": "TCN / SCADA OEM",
+      "notes": "Modernised SCADA, EMS and communications backbone",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-c01ce5cc0a64",
+      "name": "Kaduna Solar IPP",
+      "category": "GENERATION",
+      "status": "Construction",
+      "latitude": 10.52,
+      "longitude": 7.44,
+      "capexUsd": 250000000,
+      "completionPct": 25,
+      "timeline": "2024-2027",
+      "funder": "Private / DFI",
+      "contractorOrEpc": "Multiple solar IPP consortia",
+      "notes": "Cluster of solar PV plants under PPA framework",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-3e7d647e7e36",
+      "name": "Lagos State Embedded Generation",
+      "category": "GENERATION",
+      "status": "Active",
+      "latitude": 6.52,
+      "longitude": 3.38,
+      "capexUsd": 350000000,
+      "completionPct": 30,
+      "timeline": "2024-2028",
+      "funder": "Lagos State / Private",
+      "contractorOrEpc": "Private IPPs under LASEMRC",
+      "notes": "Embedded generation under Lagos State Electricity Law (post-Electricity Act 2023)",
+      "dataSource": "LASEMRC 2025",
+      "sourceAuthorityScore": 5,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-2865a75ef873",
+      "name": "Kashimbila Hydro",
+      "category": "GENERATION",
+      "status": "Operational",
+      "latitude": 6.99,
+      "longitude": 9.92,
+      "capexUsd": 400000000,
+      "completionPct": 100,
+      "timeline": "Completed 2019",
+      "funder": "FGN",
+      "contractorOrEpc": "Sinohydro",
+      "notes": "40MW hydroelectric project on River Katsina-Ala",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": [
+        {
+          "refId": "PLT-4e13a4ad143f",
+          "refType": "PLANT",
+          "refName": "Kashimbila Hydro (Plant)",
+          "relationship": "DELIVERS_ASSET"
+        }
+      ]
+    },
+    {
+      "id": "CAP-8a93cf53ff80",
+      "name": "Gurara Hydro Phase II",
+      "category": "GENERATION",
+      "status": "Planning",
+      "latitude": 9.5,
+      "longitude": 7.05,
+      "capexUsd": 720000000,
+      "completionPct": 5,
+      "timeline": "2026-2030",
+      "funder": "FGN / DFI",
+      "contractorOrEpc": "TBD",
+      "notes": "360MW hydroelectric expansion",
+      "dataSource": "FMP 2025",
+      "sourceAuthorityScore": 7,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    },
+    {
+      "id": "CAP-6eb275952e57",
+      "name": "Nigeria-Niger 330kV Interconnection",
+      "category": "TRANSMISSION",
+      "status": "Construction",
+      "latitude": 13.06,
+      "longitude": 5.25,
+      "capexUsd": 110000000,
+      "completionPct": 50,
+      "timeline": "2023-2026",
+      "funder": "AfDB / FGN",
+      "contractorOrEpc": "TCN",
+      "notes": "Birnin Kebbi to Niamey interconnection",
+      "dataSource": "TCN 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false,
+      "linkedAssetRefs": []
+    }
+  ],
+  "request12_reaMiniGridProjects": [
+    {
+      "id": "MGR-d75bfcd3bcdd",
+      "name": "Bayero University Solar Hybrid",
+      "capacityKw": 7100,
+      "beneficiaries": 55000,
+      "latitude": 11.98,
+      "longitude": 8.43,
+      "state": "Kano",
+      "lga": "Gwale",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "REA",
+      "funder": "World Bank / AfDB",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-457b8cf85827",
+      "name": "Ariaria Market Integrated Mini-Grid",
+      "capacityKw": 9500,
+      "beneficiaries": 30000,
+      "latitude": 5.116,
+      "longitude": 7.373,
+      "state": "Abia",
+      "lga": "Aba South",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Ariaria Independent Energy",
+      "funder": "REA / World Bank",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-d8e20fba6b23",
+      "name": "University of Maiduguri Solar Hybrid",
+      "capacityKw": 12000,
+      "beneficiaries": 45000,
+      "latitude": 11.847,
+      "longitude": 13.16,
+      "state": "Borno",
+      "lga": "Maiduguri",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-f69033898ee3",
+      "name": "Federal University Gusau Solar Hybrid",
+      "capacityKw": 2800,
+      "beneficiaries": 12000,
+      "latitude": 12.169,
+      "longitude": 6.66,
+      "state": "Zamfara",
+      "lga": "Gusau",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-1cb5a7aa4b12",
+      "name": "Federal University Wukari Solar Hybrid",
+      "capacityKw": 1500,
+      "beneficiaries": 8000,
+      "latitude": 7.852,
+      "longitude": 9.781,
+      "state": "Taraba",
+      "lga": "Wukari",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-0665df62c553",
+      "name": "Federal University Dutse Solar Hybrid",
+      "capacityKw": 2000,
+      "beneficiaries": 10000,
+      "latitude": 11.76,
+      "longitude": 9.343,
+      "state": "Jigawa",
+      "lga": "Dutse",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-0b47a66719a0",
+      "name": "Toto Mini-Grid",
+      "capacityKw": 100,
+      "beneficiaries": 3500,
+      "latitude": 8.567,
+      "longitude": 7.733,
+      "state": "Nasarawa",
+      "lga": "Toto",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2022,
+      "operator": "Havenhill Synergy",
+      "funder": "REA / World Bank",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-7ab283ffb189",
+      "name": "Kigbe Mini-Grid",
+      "capacityKw": 90,
+      "beneficiaries": 2800,
+      "latitude": 8.967,
+      "longitude": 7.35,
+      "state": "FCT",
+      "lga": "Kwali",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2022,
+      "operator": "Rubitec Solar",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-4fd641be472a",
+      "name": "Rokota Mini-Grid",
+      "capacityKw": 80,
+      "beneficiaries": 2200,
+      "latitude": 8.745,
+      "longitude": 6.213,
+      "state": "Niger",
+      "lga": "Lavun",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Nayo Tropical",
+      "funder": "REA / World Bank",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-e8042280f11c",
+      "name": "Onibambu Mini-Grid",
+      "capacityKw": 60,
+      "beneficiaries": 1800,
+      "latitude": 7.871,
+      "longitude": 4.123,
+      "state": "Osun",
+      "lga": "Iwo",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2021,
+      "operator": "Powergen",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-9d98f1aed815",
+      "name": "Gbamu Gbamu Mini-Grid",
+      "capacityKw": 80,
+      "beneficiaries": 2500,
+      "latitude": 7.456,
+      "longitude": 4.301,
+      "state": "Ogun",
+      "lga": "Ijebu East",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2021,
+      "operator": "PowerGen Renewable Energy",
+      "funder": "REA / GIZ",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-d158772f601d",
+      "name": "Akaeze Mini-Grid",
+      "capacityKw": 100,
+      "beneficiaries": 3000,
+      "latitude": 5.901,
+      "longitude": 7.642,
+      "state": "Ebonyi",
+      "lga": "Ivo",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Nayo Tropical",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-178dce136e83",
+      "name": "Egbeke Mini-Grid",
+      "capacityKw": 100,
+      "beneficiaries": 2800,
+      "latitude": 5.073,
+      "longitude": 6.87,
+      "state": "Rivers",
+      "lga": "Etche",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "PowerGen",
+      "funder": "REA / World Bank",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-e18f45e52728",
+      "name": "Isiala Mbano Mini-Grid",
+      "capacityKw": 90,
+      "beneficiaries": 2400,
+      "latitude": 5.713,
+      "longitude": 7.23,
+      "state": "Imo",
+      "lga": "Isiala Mbano",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-7b1346a5f247",
+      "name": "Sabon Gida Mini-Grid",
+      "capacityKw": 75,
+      "beneficiaries": 2100,
+      "latitude": 11.42,
+      "longitude": 7.789,
+      "state": "Kaduna",
+      "lga": "Soba",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Husk Power",
+      "funder": "REA / World Bank",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-99a988ceaf41",
+      "name": "Doruwa Mini-Grid",
+      "capacityKw": 60,
+      "beneficiaries": 1500,
+      "latitude": 11.2,
+      "longitude": 8.1,
+      "state": "Kano",
+      "lga": "Tudun Wada",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Husk Power",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-a04d2162981e",
+      "name": "Wudil Hybrid Mini-Grid",
+      "capacityKw": 120,
+      "beneficiaries": 4000,
+      "latitude": 11.798,
+      "longitude": 8.842,
+      "state": "Kano",
+      "lga": "Wudil",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Husk Power",
+      "funder": "REA / World Bank",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-a67f92f1c9d4",
+      "name": "Funtua Solar Hybrid",
+      "capacityKw": 95,
+      "beneficiaries": 2700,
+      "latitude": 11.522,
+      "longitude": 7.31,
+      "state": "Katsina",
+      "lga": "Funtua",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Husk Power",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-d4c5f5b568d2",
+      "name": "Argungu Mini-Grid",
+      "capacityKw": 75,
+      "beneficiaries": 2100,
+      "latitude": 12.737,
+      "longitude": 4.527,
+      "state": "Kebbi",
+      "lga": "Argungu",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-d57aeeeba118",
+      "name": "Bama Mini-Grid",
+      "capacityKw": 100,
+      "beneficiaries": 2800,
+      "latitude": 11.519,
+      "longitude": 13.69,
+      "state": "Borno",
+      "lga": "Bama",
+      "programme": "NEP",
+      "status": "Construction",
+      "completionYear": 2026,
+      "operator": "TBD",
+      "funder": "REA / EU",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-e5b08cb07c99",
+      "name": "Damboa Mini-Grid",
+      "capacityKw": 80,
+      "beneficiaries": 2200,
+      "latitude": 11.155,
+      "longitude": 12.749,
+      "state": "Borno",
+      "lga": "Damboa",
+      "programme": "NEP",
+      "status": "Construction",
+      "completionYear": 2026,
+      "operator": "TBD",
+      "funder": "REA / EU",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-933fe31447e4",
+      "name": "Gembu Mini-Grid",
+      "capacityKw": 100,
+      "beneficiaries": 3000,
+      "latitude": 6.726,
+      "longitude": 11.282,
+      "state": "Taraba",
+      "lga": "Sardauna",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-ff27a0ffbfb4",
+      "name": "Zing Mini-Grid",
+      "capacityKw": 60,
+      "beneficiaries": 1800,
+      "latitude": 9.273,
+      "longitude": 11.77,
+      "state": "Adamawa",
+      "lga": "Zing",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-5b6bec8b9e18",
+      "name": "Numan Mini-Grid",
+      "capacityKw": 80,
+      "beneficiaries": 2400,
+      "latitude": 9.461,
+      "longitude": 11.989,
+      "state": "Adamawa",
+      "lga": "Numan",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-b38ab0764041",
+      "name": "Pankshin Mini-Grid",
+      "capacityKw": 75,
+      "beneficiaries": 2100,
+      "latitude": 9.342,
+      "longitude": 9.443,
+      "state": "Plateau",
+      "lga": "Pankshin",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "PowerGen",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-02815e0abaed",
+      "name": "Otukpo Mini-Grid",
+      "capacityKw": 90,
+      "beneficiaries": 2500,
+      "latitude": 7.19,
+      "longitude": 8.131,
+      "state": "Benue",
+      "lga": "Otukpo",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-f7ea21da1afb",
+      "name": "Kontagora Mini-Grid",
+      "capacityKw": 85,
+      "beneficiaries": 2300,
+      "latitude": 10.402,
+      "longitude": 5.471,
+      "state": "Niger",
+      "lga": "Kontagora",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-20a28d4d7b09",
+      "name": "Idah Mini-Grid",
+      "capacityKw": 70,
+      "beneficiaries": 2000,
+      "latitude": 7.111,
+      "longitude": 6.737,
+      "state": "Kogi",
+      "lga": "Idah",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "Privately operated",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-5818bf4d0256",
+      "name": "Ohafia Mini-Grid",
+      "capacityKw": 80,
+      "beneficiaries": 2200,
+      "latitude": 5.62,
+      "longitude": 7.84,
+      "state": "Abia",
+      "lga": "Ohafia",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "PowerGen",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-409d644c8913",
+      "name": "Nsukka Solar Hybrid",
+      "capacityKw": 7500,
+      "beneficiaries": 40000,
+      "latitude": 6.857,
+      "longitude": 7.395,
+      "state": "Enugu",
+      "lga": "Nsukka",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-7b5edb7a1295",
+      "name": "FUNAAB Solar Hybrid",
+      "capacityKw": 2400,
+      "beneficiaries": 14000,
+      "latitude": 7.225,
+      "longitude": 3.435,
+      "state": "Ogun",
+      "lga": "Odeda",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2022,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-c896565379c3",
+      "name": "Bayelsa Medical University Hybrid",
+      "capacityKw": 3300,
+      "beneficiaries": 18000,
+      "latitude": 4.928,
+      "longitude": 6.275,
+      "state": "Bayelsa",
+      "lga": "Yenagoa",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-d2e9f441eb0e",
+      "name": "Federal University Otuoke Hybrid",
+      "capacityKw": 2700,
+      "beneficiaries": 11000,
+      "latitude": 4.789,
+      "longitude": 6.288,
+      "state": "Bayelsa",
+      "lga": "Ogbia",
+      "programme": "EEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "REA",
+      "funder": "FGN / REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-5b275dbd38be",
+      "name": "Sumaila Mini-Grid",
+      "capacityKw": 90,
+      "beneficiaries": 2700,
+      "latitude": 11.561,
+      "longitude": 8.937,
+      "state": "Kano",
+      "lga": "Sumaila",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2023,
+      "operator": "Husk Power",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    },
+    {
+      "id": "MGR-f48ad81c3e56",
+      "name": "Karu Mini-Grid",
+      "capacityKw": 90,
+      "beneficiaries": 2600,
+      "latitude": 8.972,
+      "longitude": 7.505,
+      "state": "Nasarawa",
+      "lga": "Karu",
+      "programme": "NEP",
+      "status": "Operational",
+      "completionYear": 2024,
+      "operator": "PowerGen",
+      "funder": "REA",
+      "dataSource": "REA 2025",
+      "sourceAuthorityScore": 8,
+      "lowConfidence": false
+    }
+  ],
+  "meta": {
+    "note": "Minister of Power War Room production seed dataset. v2.0.",
+    "version": "2.0-warroom",
+    "generated": "2026-05-09",
+    "scoringScheme": {
+      "tier1_authoritative": "NERC, NMDPRA, NUPRC, NEMSA (8-10)",
+      "tier2_federalOperators": "TCN, REA, NBET (8)",
+      "tier3_federalMinistry": "FMP, NDPHC, BPE (7)",
+      "tier4_DFI": "World Bank, AfDB project registers (6)",
+      "tier5_privateOperator": "DisCo websites, NNPC, LASEMRC (4-5)",
+      "tier6_thirdParty": "OpenStreetMap, crowdsourced (1-3) - LOW CONFIDENCE"
+    },
+    "lowConfidenceThreshold": 3,
+    "canonicalNameMap": {
+      "Odukpani NIPP": "Calabar NIPP"
+    },
+    "mergeAuditLog": [
+      {
+        "table": "gridConnectedPlants",
+        "action": "MERGE",
+        "kept": "Calabar NIPP",
+        "merged": [
+          "Odukpani NIPP"
+        ],
+        "reason": "Same physical NDPHC NIPP plant (561MW, Cross River, Odukpani LGA). Canonical name per NERC Q1 2025.",
+        "preservedAs": "alsoKnownAs"
+      },
+      {
+        "table": "tcnSubstations",
+        "action": "DROP",
+        "removed": "Kaduna (Kumbotso 2)",
+        "reason": "Misnamed duplicate of Kaduna Mando 330kV. Kumbotso is in Kano, not Kaduna."
+      },
+      {
+        "table": "tcnSubstations",
+        "action": "DROP",
+        "removed": "Damaturu - Maiduguri Loop",
+        "reason": "Was a transmission line entry mistakenly placed in substations. Belongs in transmissionLines table."
+      }
+    ],
+    "sources": [
+      "NERC Q1 2025 Report",
+      "TCN Operational Structure 2025",
+      "REA Project Register 2025",
+      "NMDPRA Infrastructure Data 2025",
+      "DisCo Websites 2025",
+      "FMP 2025",
+      "NDPHC 2025",
+      "World Bank / AfDB project registers"
+    ],
+    "recordCounts": {
+      "request1_nercForumOffices": 11,
+      "request2_nemsaInspectorateOffices": 12,
+      "request3_tcnRegions": {
+        "regions": 12,
+        "controlCentres": 8
+      },
+      "request4_reaZonalOffices": 6,
+      "request5_discoCustomerCare": 11,
+      "request6_sectorGlossary": 40,
+      "request7_organisationProfiles": 9,
+      "request8_gridConnectedPlants": 30,
+      "request9_tcnSubstations": 43,
+      "request10_gasPipelines": 12,
+      "request11_capitalProjects": 16,
+      "request12_reaMiniGridProjects": 35
+    },
+    "reviewQueueSummary": {
+      "LOW_CONFIDENCE_SOURCE": {
+        "MEDIUM": 3
+      },
+      "COORDINATE_CLUSTER": {
+        "HIGH": 7
+      }
+    }
+  }
+}
