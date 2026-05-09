@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Popover, PopoverContent, PopoverTrigger, PopoverClose } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight, Users } from "lucide-react";
+import { ChevronDown, ChevronRight, UserCheck } from "lucide-react";
 
 interface GencoOrg { id?: string; name?: string }
 
@@ -32,13 +32,90 @@ interface ApiPage<T> {
 
 function statusBadge(status: string) {
   switch (status?.toUpperCase()) {
+    case "OPERATING":
     case "OPERATIONAL":
-      return <Badge className="bg-primary text-primary-foreground">OPERATIONAL</Badge>;
+      return <Badge className="bg-green-700 text-white border-0">OPERATING</Badge>;
     case "PARTIAL":
-      return <Badge variant="outline" className="border-primary text-primary">PARTIAL</Badge>;
+      return <Badge variant="outline" className="border-amber-500 text-amber-500">PARTIAL</Badge>;
+    case "CONSTRAINED":
+      return <Badge variant="outline" className="border-primary text-primary">CONSTRAINED</Badge>;
+    case "MAINTENANCE":
+      return <Badge variant="outline" className="border-indigo-400 text-indigo-400">MAINTENANCE</Badge>;
     default:
-      return <Badge variant="destructive">{status || "OFFLINE"}</Badge>;
+      return <Badge variant="destructive">{status || "OUT"}</Badge>;
   }
+}
+
+interface EscalationStep {
+  role: string;
+  org: string;
+  instrument?: string;
+}
+
+function buildEscalation(gencoName?: string): EscalationStep[] {
+  return [
+    { role: "MD / CEO",                          org: gencoName ?? "GenCo",              instrument: "Generation Licence; PPA with NBET" },
+    { role: "Director-General (Generation Dept.)", org: "NERC",                           instrument: "MYTO Order; Grid Code §6" },
+    { role: "MD / CEO",                          org: "NBET",                            instrument: "Vesting Contract; BLCO Agreement" },
+    { role: "Permanent Secretary",               org: "Federal Ministry of Power",       instrument: "Policy Directive; FEC Resolution" },
+    { role: "Hon. Minister of Power",            org: "Federal Republic of Nigeria",     instrument: "Ministerial Order; Presidential Direction" },
+  ];
+}
+
+function AccountabilityPopover({ plant }: { plant: PlantItem }) {
+  const chain = buildEscalation(plant.genco?.name);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className="text-muted-foreground hover:text-primary transition-colors"
+          title="Accountability chain"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <UserCheck className="w-4 h-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-80 bg-popover text-popover-foreground border-border text-sm p-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
+          <span className="font-bold uppercase tracking-wide text-xs text-primary">Accountability Chain</span>
+          <PopoverClose className="text-muted-foreground hover:text-foreground transition-colors text-lg leading-none" aria-label="Close">
+            ×
+          </PopoverClose>
+        </div>
+
+        <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+          {plant.name}
+        </div>
+
+        <ol className="space-y-2">
+          {chain.map((step, i) => (
+            <li key={i} className="flex gap-2.5">
+              <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-primary/15 border border-primary/30 text-primary text-[9px] font-bold flex items-center justify-center">
+                {i + 1}
+              </span>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-foreground leading-tight">{step.role}</div>
+                <div className="text-[10px] text-muted-foreground">{step.org}</div>
+                {step.instrument && (
+                  <div className="text-[9px] text-muted-foreground/70 italic mt-0.5 leading-tight">{step.instrument}</div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-3 pt-2 border-t border-border">
+          <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold mb-0.5">Authority Instruments</div>
+          <div className="text-[10px] text-muted-foreground">
+            Generation Licence · PPA with NBET · Nigerian Grid Code · MYTO Order
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 export function GenerationTable() {
@@ -98,7 +175,11 @@ export function GenerationTable() {
                         ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
                         : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
                     </TableCell>
-                    <TableCell className="font-medium">{plant.name}</TableCell>
+                    <TableCell className="font-medium">
+                      <span className="flex items-center gap-2">
+                        {plant.name}
+                      </span>
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{plant.type}</TableCell>
                     <TableCell>{plant.state}</TableCell>
                     <TableCell className="text-right font-mono">
@@ -115,35 +196,7 @@ export function GenerationTable() {
                     </TableCell>
                     <TableCell>{statusBadge(plant.status)}</TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button className="text-muted-foreground hover:text-foreground transition-colors" title="Accountability">
-                            <Users className="w-4 h-4" />
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-64 bg-popover text-popover-foreground border-border text-sm p-3">
-                          <div className="flex items-center justify-between border-b border-border pb-2 mb-2">
-                            <span className="font-bold uppercase tracking-wide text-xs">Accountability</span>
-                            <PopoverClose className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Close">
-                              ×
-                            </PopoverClose>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">GenCo</span>
-                              <span className="font-medium">{plant.genco?.name ?? "Unknown"}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Regulator</span>
-                              <span className="font-medium">NERC (Gen Dept)</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Escalation</span>
-                              <span className="font-medium">Minister of Power</span>
-                            </div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                      <AccountabilityPopover plant={plant} />
                     </TableCell>
                   </TableRow>
 
@@ -152,17 +205,15 @@ export function GenerationTable() {
                       <TableCell colSpan={10} className="py-3">
                         <div className="pl-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                           <div>
+                            <div className="text-muted-foreground uppercase tracking-wider mb-1">Operator</div>
+                            <div className="font-medium">{plant.genco?.name ?? "N/A"}</div>
+                          </div>
+                          <div>
                             <div className="text-muted-foreground uppercase tracking-wider mb-1">Commissioning</div>
                             <div className="font-mono">
                               {plant.commissioningDate
                                 ? new Date(plant.commissioningDate).getFullYear()
                                 : "N/A"}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-muted-foreground uppercase tracking-wider mb-1">Coordinates</div>
-                            <div className="font-mono">
-                              {plant.latitude}, {plant.longitude}
                             </div>
                           </div>
                           <div>

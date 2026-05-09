@@ -3,6 +3,8 @@ import { KpiRow } from "@/components/dashboard/kpi-row";
 import { LiveAlerts } from "@/components/dashboard/live-alerts";
 import { FrequencyGauge } from "@/components/dashboard/frequency-gauge";
 import { ComplaintsPanel } from "@/components/dashboard/complaints-panel";
+import { SankeyPanel } from "@/components/dashboard/sankey-panel";
+import { GasScorecard } from "@/components/dashboard/gas-scorecard";
 import { CollapsiblePanel } from "@/components/ui/collapsible-panel";
 import { useAuth } from "@/lib/auth";
 import { Link } from "react-router-dom";
@@ -10,10 +12,10 @@ import { Map, BarChart3, GitBranch, MessageSquareWarning, ArrowRight } from "luc
 
 function QuickNav() {
   const links = [
-    { to: "/map", icon: <Map className="w-5 h-5" />, label: "Generation Map", desc: "Live plant status & grid overlay" },
-    { to: "/rankings", icon: <BarChart3 className="w-5 h-5" />, label: "DisCo Rankings", desc: "ATC&C loss league table" },
-    { to: "/value-chain", icon: <GitBranch className="w-5 h-5" />, label: "Value Chain", desc: "Stakeholder accountability map" },
-    { to: "/complaints", icon: <MessageSquareWarning className="w-5 h-5" />, label: "Complaints", desc: "Live complaint feed & SLA tracker" },
+    { to: "/map",       icon: <Map className="w-5 h-5" />,                  label: "Generation Map",  desc: "Live plant status & grid overlay" },
+    { to: "/rankings",  icon: <BarChart3 className="w-5 h-5" />,             label: "DisCo Rankings",  desc: "ATC&C loss league table" },
+    { to: "/staff/complaints", icon: <MessageSquareWarning className="w-5 h-5" />, label: "Complaints", desc: "Live complaint feed & SLA tracker" },
+    { to: "/value-chain", icon: <GitBranch className="w-5 h-5" />,           label: "Value Chain",     desc: "Stakeholder accountability map" },
   ];
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -64,9 +66,19 @@ export default function Dashboard() {
         </CollapsiblePanel>
 
         {hasFullAccess && (
-          <CollapsiblePanel id="dash-frequency" title="Grid Frequency — Nigerian National Grid" defaultExpanded>
-            <FrequencyGauge />
-          </CollapsiblePanel>
+          <>
+            <CollapsiblePanel id="dash-frequency" title="Grid Frequency — Nigerian National Grid" defaultExpanded>
+              <FrequencyGauge />
+            </CollapsiblePanel>
+
+            <CollapsiblePanel id="dash-sankey" title="Energy Value Chain — Physical & Financial Flow" defaultExpanded>
+              <SankeyPanel />
+            </CollapsiblePanel>
+
+            <CollapsiblePanel id="dash-gas" title="Gas-to-Power Scorecard">
+              <GasScorecard />
+            </CollapsiblePanel>
+          </>
         )}
 
         <CollapsiblePanel id="dash-complaints" title="Customer Service & Complaints" defaultExpanded>

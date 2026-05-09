@@ -1,0 +1,171 @@
+# War Room — v0 Fix-Up Prompt
+
+Apply the following fixes to the existing build. Do not rebuild — these are targeted patches. Each section ends with an acceptance test you must verify before moving on.
+
+---
+
+## Fix 1 — Plant marker colour-coding
+
+**The bug:** All generation plant markers on the map render as translucent grey circles. The legend promises Operating=green, Partial=amber, Constrained=orange, Out=red. The status colour is not being applied to the marker fill.
+
+**Fix:** In the Leaflet map component, when rendering each plant's `circleMarker`, set `fillColor` based on `plant.status`:
+- `OPERATING` → `#2E7D32` (green)
+- `PARTIAL` → `#ED6C02` (amber)
+- `CONSTRAINED` → `#E85426` (brand orange — this matches the legend's "Constrained" swatch)
+- `OUT` / `MAINTENANCE` → `#C62828` (red)
+
+Set `fillOpacity: 0.85`, `color: 'white'` (border), `weight: 1.5`. Marker radius scales with `installedMw` using `6 + Math.sqrt(installedMw) / 8` (caps at ~25px for the largest plants).
+
+**Acceptance:** Open Generation Map. Egbin (Lagos, OPERATING at ~46% PAF) renders green; Olorunsogo NIPP (gas-constrained) renders orange; Alaoji NIPP (zero output Sep 2025) renders red. At least four distinct colours visible across plant markers.
+
+---
+
+## Fix 2 — Legend overlapping the layer toggles
+
+**The bug:** The floating legend box (Plant Status / ATC&C Loss / 330kV Line / Gas Pipeline) is occluding the layer-toggle column underneath it. Labels for Generation Plants, Transmission Corridors, Gas Pipeline Routes, DisCo Substations are half-hidden.
+
+**Fix:** Move the layer toggles out of the floating overlay entirely. Render them as a horizontal pill-button row immediately below the GEOSPATIAL OVERVIEW header, above the map canvas. Each toggle is a small button with a coloured dot indicating its layer colour, the layer name, and an active/inactive state. Toggles wrap to a second row on narrow screens. The legend stays in the bottom-left corner of the map and now describes only what's visible (status colours, line styles).
+
+CSS reference for the toggle row:
+```
+.map-controls { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 14px; border-bottom: 1px solid #2A2A2A; }
+.layer-toggle { background: #1A1A1A; border: 1px solid #2A2A2A; color: #B0B0B0; padding: 5px 10px; font-size: 10px; text-transform: uppercase; cursor: pointer; }
+.layer-toggle.active { background: #E85426; color: white; border-color: #E85426; }
+.layer-toggle .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+```
+
+**Acceptance:** All ten layer toggles (Generation Plants, Transmission Corridors, Substations, Gas Pipelines Operational/Construction/Proposed, DisCo Heat, Capital Projects, Mini-Grids, Diversion Opportunities, Stakeholder Locations) visible and clickable above the map, no overlap with the legend. Active toggles render orange; inactive render grey. Click any toggle and the corresponding layer appears/disappears.
+
+---
+
+## Fix 3 — Live state indicator confusion
+
+**The bug:** The map shows "CONNECTING…" at the top-centre while simultaneously the panel header reads "LIVE · Press F for fullscreen". Two conflicting signals about live state.
+
+**Fix:** Single source of truth. The SSE client should track `connectionState: 'connecting' | 'live' | 'reconnecting' | 'offline'` and render one indicator only, in the panel header.
+
+Render rules:
+- `connecting` (initial only): pulse animation, label "Connecting…"
+- `live`: solid green dot, label "Live · {timestamp of last message}"
+- `reconnecting`: amber pulse, label "Reconnecting…"
+- `offline`: red, label "Offline · last update {time}"
+
+Remove the centre-of-map "CONNECTING…" overlay entirely. If SSE never connects in dev (because the worker isn't running), label honestly as "Offline" rather than perpetually "Connecting". Add a `?mock=1` query param the agent can use to inject simulated frequency updates for demos when the live worker isn't available — and in that mode the indicator shows "Demo mode · simulated data" in amber, never "Live".
+
+**Acceptance:** No "CONNECTING…" overlay on the map. Header shows exactly one indicator that reflects the actual connection state. Killing the API server changes the indicator to "Offline" within 5 seconds.
+
+---
+
+## Fix 4 — Restore the classification banner
+
+**The bug:** The "RESTRICTED — Minister's War Room — Do Not Distribute" classification banner from v0.4 is missing. For a federal system handling enforcement statuses and FGN subsidy figures, this is mandatory.
+
+**Fix:** Add a thin top strip above the main header bar, full viewport width, brand orange `#E85426` background, white text, 11px Arial bold, letter-spacing 2px, centred. Text: "RESTRICTED — MINISTER'S WAR ROOM — DO NOT DISTRIBUTE". Height ~24px. Sticks to the top during scroll.
+
+This banner appears on every authenticated page (Dashboard, Generation Map, DisCo Rankings, Value Chain, Complaints admin views). It does NOT appear on the public citizen routes (`/complaints/file`, `/complaints/track`, `/complaints/satisfaction/*`, `/login`).
+
+**Acceptance:** Log in as MINISTRY_STAFF. Banner visible on every page. Log out and view `/complaints/file`. Banner absent.
+
+---
+
+## Fix 5 — Verify the Dashboard page has the v0.4 panels
+
+**The bug uncertain:** The Generation Map page is one of five nav items (Dashboard, Generation Map, DisCo Rankings, Value Chain, Complaints). The IA looks deliberately decomposed from v0.4's single overview. Need to confirm the Dashboard page actually carries the headline panels.
+
+**Required on the Dashboard page (route `/`):**
+- KPI row: 4 cards — Available Generation (5,367 MW), Hourly Generation (4,771 MWh/h), ATC&C Loss (39.61%), Metering Rate (46.98%). Pull from `/api/v1/sector/kpis`. Always visible, never collapsible. Each card shows source label "NERC Q1 2025".
+- Frequency gauge — live from SSE, 49.0–51.0 Hz coloured band.
+- Sankey — dual-axis (Electrons top, Naira bottom) with Q1 2025 figures.
+- Gas-to-Power stranded capacity scorecard.
+- Live Alerts panel — alerts feed with severity badges (CRITICAL/HIGH/INFO).
+- Customer Service & Complaints summary card linking to the Complaints page.
+
+If any of these are missing on the Dashboard, add them. Each is collapsible (chevron in the panel head) except KPI cards.
+
+**Acceptance:** Open `/`. All six panels render. KPI cards show NERC Q1'25 figures with source labels. Click any panel header → it collapses/expands.
+
+---
+
+## Fix 6 — Verify accountability popovers work
+
+**The bug uncertain:** v0.4 spec called for inline 👤 accountability badges on every parent row (plants, transmission lines, DisCos, settlement rows). Need to confirm they're rendering.
+
+**Required:** On the Generation Plants table at the bottom of the Generation Map page, every plant row has a 👤 badge after the plant name. Click → popover with operator (role title only — no personal names), regulator, escalation chain (4-5 numbered steps), authority instrument. Same applies to:
+- DisCo Rankings page → 👤 on every DisCo row.
+- Value Chain page → integrated already; verify it renders.
+- Settlement (wherever it lives — likely Dashboard or DisCo Rankings) → 👤 on every settlement row.
+- Transmission lines → 👤 on every line.
+
+Hard rule: **role titles only, never personal names** in popovers, stakeholder cards, or escalation steps. Use "MD/CEO, TCN" not a name. If the agent has seeded any personal names anywhere in the database, strip them now.
+
+**Acceptance:** On Generation Plants table, click 👤 next to Egbin → popover shows "MD, Egbin Power Plc · Sahara Power Group (privatised core)" as operator, "Vice Chair, NERC + NBET MD" as regulator, 4-step escalation chain ending at "Hon. Min. of Power", and "Generation Licence; PPA with NBET; Grid Code" as authority instrument. No human names appear anywhere in the popover.
+
+---
+
+## Fix 7 — Reorder the nav
+
+**The bug:** Generation Map is currently the second nav item but Dashboard should be first since it's the overview. Move Dashboard to the top, then Generation Map, then DisCo Rankings, then Complaints, then Value Chain.
+
+**Recommended order:**
+1. Dashboard (default landing — the v0.4 overview)
+2. Generation Map (geospatial drill-down)
+3. DisCo Rankings (operational performance)
+4. Complaints (customer escalation)
+5. Value Chain (institutional accountability)
+
+Make Dashboard the default landing route — `/` should render the Dashboard, not the Generation Map.
+
+**Acceptance:** Log in. Default landing is the Dashboard with KPI row visible. Nav order matches the list above.
+
+---
+
+## Fix 8 — Confirm seed data volumes
+
+**Possible bug:** The map shows ~14 plant markers, suggesting the agent seeded only the named-list minimum, not the full 28 grid-connected plants per NERC Q1'25.
+
+**Required volumes (per the prompt's seed table):**
+- Plants: 28+ (all NERC grid-connected) plus ~50 captive/embedded
+- Substations: 600+
+- Feeders: 3,000–5,000 across 11 DisCos
+- Mini-grids: 250+
+- Complaints: 1,500+
+
+Run a quick database count query and confirm. If volumes are short, re-run the seed script (it should be idempotent — upsert by name/slug, not insert) to top up to target volumes.
+
+**Acceptance:** `SELECT COUNT(*) FROM "Plant"` returns ≥ 28. `SELECT COUNT(*) FROM "Substation"` returns ≥ 600. `SELECT COUNT(*) FROM "Feeder"` returns ≥ 3,000. `SELECT COUNT(*) FROM "Complaint"` returns ≥ 1,500.
+
+---
+
+## Fix 9 — Confirm auth gating actually works
+
+**Critical bug if present:** The current screenshot is on a public Replit preview URL. If the dashboard renders without login, the three-tier auth model failed.
+
+**Verify by testing:**
+- Open the dashboard URL in an incognito window. You should land on `/login`, not the Dashboard.
+- Try to call `GET /api/v1/sector/kpis` from `curl` without a JWT. Should return 401.
+- Register a citizen account, log in, try to call `GET /api/v1/sector/kpis`. Should return 403 with `{ error: { code: "STAFF_ONLY" } }`.
+- Create a MINISTRY_STAFF account through the admin app, log in, call the same endpoint. Should return 200 with KPI data.
+
+If any of these fail, auth middleware is missing or misconfigured. Add the `requireAuth` middleware to every Tier 2 route and `requireStaff` to filter out CITIZEN role.
+
+**Acceptance:** All four tests above pass.
+
+---
+
+## Fix 10 — Remove the temporary preview banner from production builds
+
+**The bug (cosmetic):** The blue Replit "temporary development preview" banner is fine in dev but not for any demo or screenshot.
+
+**Fix:** Configure the production build (or `?demo=1` mode) to suppress the Replit preview banner. This is a Replit publishing concern — publish the app under the Replit deployment so it serves from a stable URL without the dev banner. Document the deployment URL in the README.
+
+**Acceptance:** The deployment URL serves the dashboard without the dev preview banner.
+
+---
+
+## Order to apply these fixes
+
+Do them in order: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Fix 9 (auth) is critical — if auth is genuinely broken, do that first regardless of position. Fixes 1, 2, 3, 4 are visual issues anyone can see in 30 seconds. Fixes 5, 6, 8 require more digging. Fix 7 is trivial. Fix 10 is post-build hygiene.
+
+After each fix, run the acceptance test for that fix before moving on. If the test fails, fix it before continuing — do not stack incomplete patches.
+
+When all ten are complete, return a summary: "Fixed 1–10. Acceptance tests passing." If any test fails, list which and why.

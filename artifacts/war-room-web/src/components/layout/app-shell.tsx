@@ -41,16 +41,16 @@ const NAV_ITEMS: NavItem[] = [
     roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
   },
   {
+    path: "/staff/complaints",
+    label: "Complaints",
+    icon: <MessageSquareWarning className="w-4 h-4" />,
+    // all staff roles can access complaints
+  },
+  {
     path: "/value-chain",
     label: "Value Chain",
     icon: <GitBranch className="w-4 h-4" />,
     roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
-  },
-  {
-    path: "/staff/complaints",
-    label: "Complaints",
-    icon: <MessageSquareWarning className="w-4 h-4" />,
-    // all staff can access complaints
   },
 ];
 
@@ -154,12 +154,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background flex flex-col">
       <ClassificationBanner />
 
-      <div className="flex flex-1 pt-10">
+      <div className="flex flex-1 pt-6">
         {/* Desktop sidebar */}
         <div className="hidden md:flex">{Sidebar}</div>
 
         {/* Mobile top bar */}
-        <div className="md:hidden fixed top-10 left-0 right-0 z-40 bg-card border-b border-border px-4 py-2 flex items-center justify-between">
+        <div className="md:hidden fixed top-6 left-0 right-0 z-40 bg-card border-b border-border px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/ministry-logo.png" alt="" className="h-6 w-6 rounded-full object-cover" />
             <span className="text-xs font-bold uppercase tracking-widest text-foreground">War Room</span>
