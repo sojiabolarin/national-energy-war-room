@@ -85,7 +85,7 @@ export function ComplaintsPanel({ isDiscoAgent = false }: ComplaintsPanelProps) 
   const queryClient = useQueryClient();
 
   const { data: rawStats, isLoading: statsLoading } = useGetComplaintStats({
-    query: { enabled: !isDiscoAgent },
+    query: { queryKey: ["getComplaintStats"], enabled: !isDiscoAgent },
   });
   const { data: rawComplaints, isLoading: compLoading } = useAdminListComplaints(
     { pageSize: 100 },

@@ -50,17 +50,17 @@ interface TariffOrder {
 }
 
 function useTariffOrders() {
-  const { token } = useAuth();
+  const { accessToken } = useAuth();
   return useQuery<TariffOrder[]>({
     queryKey: ["tariff-orders"],
     queryFn: async () => {
       const r = await fetch(`${API}/api/v1/admin/regulatory/tariff-orders`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       const j = await r.json();
       return j.data ?? [];
     },
-    enabled: !!token,
+    enabled: !!accessToken,
   });
 }
 

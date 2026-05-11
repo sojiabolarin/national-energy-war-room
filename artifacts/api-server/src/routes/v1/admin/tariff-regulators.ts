@@ -29,7 +29,7 @@ router.get("/tariff-orders", async (req: AuthenticatedRequest, res: Response) =>
 
 router.get("/tariff-orders/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const order = await prisma.tariffOrder.findUnique({ where: { id: req.params["id"] } });
+    const order = await prisma.tariffOrder.findUnique({ where: { id: String(req.params["id"]) } });
     if (!order) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
     res.json({ data: order });
   } catch {
@@ -58,7 +58,7 @@ router.get("/state-regulators", async (req: AuthenticatedRequest, res: Response)
 
 router.get("/state-regulators/:id", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const reg = await prisma.stateRegulator.findUnique({ where: { id: req.params["id"] } });
+    const reg = await prisma.stateRegulator.findUnique({ where: { id: String(req.params["id"]) } });
     if (!reg) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
     res.json({ data: reg });
   } catch {
@@ -111,14 +111,14 @@ router.get("/dispatch-history/plant/:plantId", async (req: AuthenticatedRequest,
 
     const rows = await prisma.dispatchHistory.findMany({
       where: {
-        plantId: req.params["plantId"],
+        plantId: String(req.params["plantId"]),
         ...(Object.keys(dateFilter).length ? { date: dateFilter } : {}),
       },
       orderBy: { date: "asc" },
     });
 
     if (!rows.length) {
-      const plant = await prisma.plant.findUnique({ where: { id: req.params["plantId"] }, select: { id: true, name: true } });
+      const plant = await prisma.plant.findUnique({ where: { id: String(req.params["plantId"]) }, select: { id: true, name: true } });
       if (!plant) { res.status(404).json({ error: { code: "NOT_FOUND" } }); return; }
     }
 

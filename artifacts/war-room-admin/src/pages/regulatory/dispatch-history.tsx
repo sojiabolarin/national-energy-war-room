@@ -86,7 +86,7 @@ const PLANT_NAMES = [
 ];
 
 function useDispatch(plantName: string, outageOnly: boolean, page: number) {
-  const { token } = useAuth();
+  const { accessToken } = useAuth();
   return useQuery<DispatchResponse>({
     queryKey: ["dispatch-history", plantName, outageOnly, page],
     queryFn: async () => {
@@ -94,11 +94,11 @@ function useDispatch(plantName: string, outageOnly: boolean, page: number) {
       if (plantName && plantName !== "All Plants") params.set("plantName", plantName);
       if (outageOnly) params.set("outageOnly", "true");
       const r = await fetch(`${API}/api/v1/admin/regulatory/dispatch-history?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       return r.json();
     },
-    enabled: !!token,
+    enabled: !!accessToken,
   });
 }
 

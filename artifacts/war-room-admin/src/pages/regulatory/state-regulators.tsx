@@ -44,17 +44,17 @@ interface StateRegulator {
 }
 
 function useStateRegulators() {
-  const { token } = useAuth();
+  const { accessToken } = useAuth();
   return useQuery<StateRegulator[]>({
     queryKey: ["state-regulators"],
     queryFn: async () => {
       const r = await fetch(`${API}/api/v1/admin/regulatory/state-regulators`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       const j = await r.json();
       return j.data ?? [];
     },
-    enabled: !!token,
+    enabled: !!accessToken,
   });
 }
 
