@@ -21,8 +21,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Building, Eye, ExternalLink, CalendarCheck } from "lucide-react";
 
-const API = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 interface StateRegulator {
   id: string;
   externalId: string | null;
@@ -48,7 +46,7 @@ function useStateRegulators() {
   return useQuery<StateRegulator[]>({
     queryKey: ["state-regulators"],
     queryFn: async () => {
-      const r = await fetch(`${API}/api/v1/admin/regulatory/state-regulators`, {
+      const r = await fetch(`/api/v1/admin/regulatory/state-regulators`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const j = await r.json();

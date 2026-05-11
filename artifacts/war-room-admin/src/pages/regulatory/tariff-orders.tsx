@@ -21,8 +21,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Eye } from "lucide-react";
 
-const API = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 interface BandEntry {
   band: string;
   minHoursPerDay: number;
@@ -54,7 +52,7 @@ function useTariffOrders() {
   return useQuery<TariffOrder[]>({
     queryKey: ["tariff-orders"],
     queryFn: async () => {
-      const r = await fetch(`${API}/api/v1/admin/regulatory/tariff-orders`, {
+      const r = await fetch(`/api/v1/admin/regulatory/tariff-orders`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const j = await r.json();

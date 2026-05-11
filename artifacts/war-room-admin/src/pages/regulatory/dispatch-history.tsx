@@ -22,8 +22,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, AlertTriangle, TrendingUp, Zap } from "lucide-react";
 
-const API = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 interface DispatchRecord {
   id: string;
   plantId: string;
@@ -93,7 +91,7 @@ function useDispatch(plantName: string, outageOnly: boolean, page: number) {
       const params = new URLSearchParams({ page: String(page), pageSize: "50" });
       if (plantName && plantName !== "All Plants") params.set("plantName", plantName);
       if (outageOnly) params.set("outageOnly", "true");
-      const r = await fetch(`${API}/api/v1/admin/regulatory/dispatch-history?${params}`, {
+      const r = await fetch(`/api/v1/admin/regulatory/dispatch-history?${params}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       return r.json();
