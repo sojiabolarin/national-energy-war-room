@@ -76,10 +76,9 @@ function plantColor(status?: string): string {
   return PLANT_STATUS_COLORS[status?.toUpperCase() ?? ""] ?? BRAND_DARK;
 }
 
-// Marker radius scales with installed capacity: min 6, max 25
 function plantRadius(installedMw: string | number | undefined): number {
   const mw = Math.max(0, Number(installedMw ?? 50));
-  return Math.min(25, 6 + Math.sqrt(mw) / 8);
+  return 6 + Math.sqrt(mw) / 8;
 }
 
 // Choropleth colour by ATC&C loss %
@@ -483,7 +482,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
                 key={plant.id ?? idx}
                 center={[lat, lng]}
                 radius={r}
-                pathOptions={{ color, fillColor: color, fillOpacity: 0.85, weight: 1.5 }}
+                pathOptions={{ color: "white", fillColor: color, fillOpacity: 0.85, weight: 1.5 }}
               >
                 <Popup>
                   <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
