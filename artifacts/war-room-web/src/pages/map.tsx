@@ -1,10 +1,6 @@
 import { useState, useCallback } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { MapPanel } from "@/components/dashboard/map-panel";
-import { GenerationTable } from "@/components/dashboard/generation-table";
-import { TransmissionTable } from "@/components/dashboard/transmission-table";
-import { GasScorecard } from "@/components/dashboard/gas-scorecard";
-import { CollapsiblePanel } from "@/components/ui/collapsible-panel";
 import { RequireFullAccess } from "@/components/layout/protected-route";
 
 type ConnState = "connecting" | "live" | "reconnecting" | "offline";
@@ -48,7 +44,7 @@ function LiveIndicator({ state }: { state: ConnState }) {
   );
 }
 
-export default function GenerationMapPage() {
+export default function MapPage() {
   const [connState, setConnState] = useState<ConnState>("connecting");
 
   const handleConnectionState = useCallback((s: ConnState) => {
@@ -61,10 +57,10 @@ export default function GenerationMapPage() {
         <div className="space-y-6">
           <div className="border-b border-border pb-4">
             <h1 className="text-lg font-bold uppercase tracking-widest text-foreground">
-              Generation Map
+              Map
             </h1>
             <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-0.5 font-mono">
-              Live plant status · Transmission corridors · Gas pipelines
+              Geo-first reference · Toggleable layers · Press F for fullscreen
             </p>
           </div>
 
@@ -78,18 +74,6 @@ export default function GenerationMapPage() {
             </div>
             <MapPanel onConnectionState={handleConnectionState} />
           </div>
-
-          <CollapsiblePanel id="gen-plants" title="Generation Plants" defaultExpanded>
-            <GenerationTable />
-          </CollapsiblePanel>
-
-          <CollapsiblePanel id="gen-transmission" title="Transmission Lines">
-            <TransmissionTable />
-          </CollapsiblePanel>
-
-          <CollapsiblePanel id="gen-gas" title="Gas-to-Power Scorecard">
-            <GasScorecard />
-          </CollapsiblePanel>
         </div>
       </RequireFullAccess>
     </AppShell>

@@ -12,7 +12,7 @@ import TransmissionPage from "@/pages/transmission";
 import SettlementPage from "@/pages/settlement";
 import GasToPowerPage from "@/pages/gas-to-power";
 import CapitalProjectsPage from "@/pages/capital-projects";
-import GenerationMapPage from "@/pages/generation-map";
+import MapPage from "@/pages/map";
 import DistributionPage from "@/pages/distribution";
 import ValueChainPage from "@/pages/value-chain-page";
 import ComplaintsOverviewPage from "@/pages/complaints-overview";
@@ -47,7 +47,7 @@ function AppRoutes() {
       <Route path="/settlement" element={<ProtectedRoute><SettlementPage /></ProtectedRoute>} />
       <Route path="/gas" element={<ProtectedRoute><GasToPowerPage /></ProtectedRoute>} />
       <Route path="/capital-projects" element={<ProtectedRoute><CapitalProjectsPage /></ProtectedRoute>} />
-      <Route path="/map" element={<ProtectedRoute><GenerationMapPage /></ProtectedRoute>} />
+      <Route path="/map" element={<ProtectedRoute><MapPage /></ProtectedRoute>} />
       <Route path="/distribution" element={<ProtectedRoute><DistributionPage /></ProtectedRoute>} />
       <Route path="/rankings" element={<ProtectedRoute><DistributionPage /></ProtectedRoute>} />
       <Route path="/value-chain" element={<ProtectedRoute><ValueChainPage /></ProtectedRoute>} />
