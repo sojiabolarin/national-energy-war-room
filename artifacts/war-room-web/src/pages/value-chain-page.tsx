@@ -1,8 +1,6 @@
 import { AppShell } from "@/components/layout/app-shell";
-import { SankeyPanel } from "@/components/dashboard/sankey-panel";
 import { ValueChain } from "@/components/dashboard/value-chain";
 import { StakeholderMatrix } from "@/components/dashboard/stakeholder-matrix";
-import { CapitalProjects } from "@/components/dashboard/capital-projects";
 import { CollapsiblePanel } from "@/components/ui/collapsible-panel";
 import { RequireFullAccess } from "@/components/layout/protected-route";
 
@@ -16,24 +14,16 @@ export default function ValueChainPage() {
               Value Chain
             </h1>
             <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-0.5 font-mono">
-              Energy & financial flow · Stakeholder accountability · Capital projects
+              Stakeholder accountability across the energy value chain
             </p>
           </div>
-
-          <CollapsiblePanel id="vc-sankey" title="Energy & Financial Flow (Sankey)" defaultExpanded>
-            <SankeyPanel />
-          </CollapsiblePanel>
 
           <CollapsiblePanel id="vc-chain" title="Value Chain Accountability" defaultExpanded>
             <ValueChain />
           </CollapsiblePanel>
 
-          <CollapsiblePanel id="vc-matrix" title="Stakeholder & Escalation Matrix">
+          <CollapsiblePanel id="vc-matrix" title="Stakeholder & Escalation Matrix" defaultExpanded>
             <StakeholderMatrix />
-          </CollapsiblePanel>
-
-          <CollapsiblePanel id="vc-projects" title="Capital Projects">
-            <CapitalProjects />
           </CollapsiblePanel>
         </div>
       </RequireFullAccess>
