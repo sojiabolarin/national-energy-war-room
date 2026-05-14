@@ -5,7 +5,12 @@ import { ClassificationBanner } from "./classification-banner";
 import {
   LayoutDashboard,
   Map,
+  Zap,
+  Cable,
   BarChart3,
+  Banknote,
+  Flame,
+  Building2,
   GitBranch,
   MessageSquareWarning,
   LogOut,
@@ -21,37 +26,19 @@ interface NavItem {
   roles?: string[];
 }
 
+const FULL_ACCESS = ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"];
+
 const NAV_ITEMS: NavItem[] = [
-  {
-    path: "/",
-    label: "Dashboard",
-    icon: <LayoutDashboard className="w-4 h-4" />,
-    roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
-  },
-  {
-    path: "/map",
-    label: "Generation Map",
-    icon: <Map className="w-4 h-4" />,
-    roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
-  },
-  {
-    path: "/rankings",
-    label: "DisCo Rankings",
-    icon: <BarChart3 className="w-4 h-4" />,
-    roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
-  },
-  {
-    path: "/staff/complaints",
-    label: "Complaints",
-    icon: <MessageSquareWarning className="w-4 h-4" />,
-    // all staff roles can access complaints
-  },
-  {
-    path: "/value-chain",
-    label: "Value Chain",
-    icon: <GitBranch className="w-4 h-4" />,
-    roles: ["MINISTER", "MINISTRY_STAFF", "NERC_VIEWER", "ADMIN"],
-  },
+  { path: "/",                 label: "Dashboard",        icon: <LayoutDashboard className="w-4 h-4" />, roles: FULL_ACCESS },
+  { path: "/generation",       label: "Generation",       icon: <Zap className="w-4 h-4" />,             roles: FULL_ACCESS },
+  { path: "/transmission",     label: "Transmission",     icon: <Cable className="w-4 h-4" />,           roles: FULL_ACCESS },
+  { path: "/distribution",     label: "Distribution",     icon: <BarChart3 className="w-4 h-4" />,       roles: FULL_ACCESS },
+  { path: "/settlement",       label: "Settlement",       icon: <Banknote className="w-4 h-4" />,        roles: FULL_ACCESS },
+  { path: "/gas",              label: "Gas-to-Power",     icon: <Flame className="w-4 h-4" />,           roles: FULL_ACCESS },
+  { path: "/capital-projects", label: "Capital Projects", icon: <Building2 className="w-4 h-4" />,       roles: FULL_ACCESS },
+  { path: "/staff/complaints", label: "Complaints",       icon: <MessageSquareWarning className="w-4 h-4" /> /* all staff roles */ },
+  { path: "/value-chain",      label: "Value Chain",      icon: <GitBranch className="w-4 h-4" />,       roles: FULL_ACCESS },
+  { path: "/map",              label: "Map",              icon: <Map className="w-4 h-4" />,             roles: FULL_ACCESS },
 ];
 
 function roleBadge(role?: string): string {
