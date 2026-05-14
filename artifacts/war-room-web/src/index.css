@@ -91,3 +91,10 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Dark-mode tile basemap. Scoped to tile <img> elements only so SVG
+   markers in .leaflet-overlay-pane and popups in .leaflet-popup-pane
+   render in their native colours. */
+.leaflet-tile-pane img {
+  filter: grayscale(100%) invert(100%) hue-rotate(180deg) brightness(85%) contrast(115%);
+}

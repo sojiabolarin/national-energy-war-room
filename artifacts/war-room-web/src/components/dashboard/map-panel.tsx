@@ -381,7 +381,6 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
           center={[9.082, 8.675]}
           zoom={6}
           className="w-full h-full z-0"
-          style={{ filter: "grayscale(100%) invert(100%) hue-rotate(180deg) brightness(85%) contrast(115%)" }}
         >
           <InvalidateSize trigger={[isFullscreen]} />
           <TileLayer
@@ -407,7 +406,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
               pathOptions={{ color: BRAND_PRIMARY, fillColor: "#F4F4F4", fillOpacity: 1, weight: 2 }}
             >
               <Popup>
-                <div style={{ filter: "invert(100%)" }}>
+                <div>
                   <div className="font-bold text-sm">{sub.name} Substation</div>
                   <div className="text-xs">{sub.kv} kV</div>
                 </div>
@@ -431,7 +430,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
                   pathOptions={pathOptions}
                 >
                   <Popup>
-                    <div style={{ filter: "invert(100%)" }}>
+                    <div>
                       <div className="font-bold text-sm">{pipe.label}</div>
                       <div className="text-xs">Status: {pipe.status}</div>
                     </div>
@@ -458,7 +457,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
                 pathOptions={{ color, fillColor: color, fillOpacity: 0.28, weight: 2 }}
               >
                 <Popup>
-                  <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
+                  <div className="text-sm p-1">
                     <div className="font-bold mb-1">{disco.name} DisCo</div>
                     <div className="text-xs opacity-80">{disco.operatorOrg?.name ?? ""}</div>
                     <div className="text-xs opacity-80">Hours/Day: {Number(disco.hoursOfSupplyDaily ?? 0).toFixed(1)} h</div>
@@ -485,7 +484,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
                 pathOptions={{ color: "white", fillColor: color, fillOpacity: 0.85, weight: 1.5 }}
               >
                 <Popup>
-                  <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
+                  <div className="text-sm p-1">
                     <div className="font-bold mb-1">{plant.name ?? "Unknown"}</div>
                     <div className="text-xs opacity-80">Type: {plant.type ?? "N/A"}</div>
                     <div className="text-xs opacity-80">State: {plant.state ?? "N/A"}</div>
@@ -514,7 +513,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
                 pathOptions={{ color: alertColor(alert.severity), fillColor: alertColor(alert.severity), fillOpacity: 0.5, weight: 2, dashArray: "4 3" }}
               >
                 <Popup>
-                  <div className="text-sm p-1" style={{ filter: "invert(100%)" }}>
+                  <div className="text-sm p-1">
                     <div className="font-bold mb-1">{alert.title ?? "Grid Alert"}</div>
                     <div className="text-xs opacity-80">Severity: {alert.severity ?? "N/A"}</div>
                     <div className="text-xs opacity-80 mt-1">{alert.message ?? ""}</div>
@@ -533,7 +532,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
               pathOptions={{ color: BRAND_PARTIAL, fillColor: BRAND_PARTIAL, fillOpacity: 0.7, weight: 2 }}
             >
               <Popup>
-                <div style={{ filter: "invert(100%)" }}>
+                <div>
                   <div className="font-bold text-sm">{site.name}</div>
                   <div className="text-xs">Capital Project</div>
                 </div>
@@ -550,7 +549,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
               pathOptions={{ color: "#6366f1", fillColor: "#6366f1", fillOpacity: 0.7, weight: 1.5 }}
             >
               <Popup>
-                <div style={{ filter: "invert(100%)" }}>
+                <div>
                   <div className="font-bold text-sm">{site.name}</div>
                   <div className="text-xs">Mini-Grid Cluster</div>
                 </div>
@@ -567,7 +566,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
               pathOptions={{ color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.6, weight: 2 }}
             >
               <Popup>
-                <div style={{ filter: "invert(100%)" }}>
+                <div>
                   <div className="font-bold text-sm">{site.name}</div>
                   <div className="text-xs">Diversion Opportunity</div>
                 </div>
@@ -584,7 +583,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
               pathOptions={{ color: "#a3a3a3", fillColor: "#a3a3a3", fillOpacity: 0.8, weight: 1.5 }}
             >
               <Popup>
-                <div style={{ filter: "invert(100%)" }}>
+                <div>
                   <div className="font-bold text-sm">{site.name}</div>
                   <div className="text-xs">{site.org}</div>
                 </div>
@@ -605,7 +604,7 @@ export function MapPanel({ onConnectionState }: MapPanelProps) {
               pathOptions={{ color: BRAND_PRIMARY, fillColor: BRAND_PRIMARY, fillOpacity: 0.06, weight: 1, dashArray: "2 4" }}
             >
               <Popup>
-                <div style={{ filter: "invert(100%)" }}>
+                <div>
                   <div className="font-bold">{hub.label} — Frequency Zone</div>
                   <div className="text-xs">Nominal: 50.0 Hz</div>
                 </div>
