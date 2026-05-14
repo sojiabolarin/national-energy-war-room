@@ -9,6 +9,7 @@ import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
 import GenerationPage from "@/pages/generation";
 import TransmissionPage from "@/pages/transmission";
+import SettlementPage from "@/pages/settlement";
 import GenerationMapPage from "@/pages/generation-map";
 import DiscoRankingsPage from "@/pages/disco-rankings";
 import ValueChainPage from "@/pages/value-chain-page";
@@ -41,6 +42,7 @@ function AppRoutes() {
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/generation" element={<ProtectedRoute><GenerationPage /></ProtectedRoute>} />
       <Route path="/transmission" element={<ProtectedRoute><TransmissionPage /></ProtectedRoute>} />
+      <Route path="/settlement" element={<ProtectedRoute><SettlementPage /></ProtectedRoute>} />
       <Route path="/map" element={<ProtectedRoute><GenerationMapPage /></ProtectedRoute>} />
       <Route path="/rankings" element={<ProtectedRoute><DiscoRankingsPage /></ProtectedRoute>} />
       <Route path="/value-chain" element={<ProtectedRoute><ValueChainPage /></ProtectedRoute>} />
