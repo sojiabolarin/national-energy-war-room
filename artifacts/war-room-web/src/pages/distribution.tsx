@@ -1,6 +1,5 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { DistributionTable } from "@/components/dashboard/distribution-table";
-import { SettlementTable } from "@/components/dashboard/settlement-table";
 import { CollapsiblePanel } from "@/components/ui/collapsible-panel";
 import { RequireFullAccess } from "@/components/layout/protected-route";
 import { useGetDiscos } from "@workspace/api-client-react";
@@ -73,28 +72,24 @@ function LeaguePodium() {
   );
 }
 
-export default function DiscoRankingsPage() {
+export default function DistributionPage() {
   return (
     <AppShell>
       <RequireFullAccess>
         <div className="space-y-6">
           <div className="border-b border-border pb-4">
             <h1 className="text-lg font-bold uppercase tracking-widest text-foreground">
-              DisCo Rankings
+              Distribution
             </h1>
             <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-0.5 font-mono">
-              NERC Q1 2025 · ATC&C loss league table · Enforcement status
+              DisCo focus · ATC&amp;C league table · Service-band compliance · Metering rollout
             </p>
           </div>
 
           <LeaguePodium />
 
-          <CollapsiblePanel id="rankings-discos" title="Distribution Companies — Full Table" defaultExpanded>
+          <CollapsiblePanel id="dist-discos" title="Distribution Companies — Full Table" defaultExpanded>
             <DistributionTable />
-          </CollapsiblePanel>
-
-          <CollapsiblePanel id="rankings-settlements" title="Settlement Invoices">
-            <SettlementTable />
           </CollapsiblePanel>
         </div>
       </RequireFullAccess>
