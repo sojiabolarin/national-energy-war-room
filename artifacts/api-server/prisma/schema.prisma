@@ -397,6 +397,8 @@ model DisCo {
   registeredOffice      String?
   latitude              Decimal?    @db.Decimal(10, 7)
   longitude             Decimal?    @db.Decimal(10, 7)
+  territoryGeom         Json?
+  geomQuality           String?
   atccLossPct           Decimal?    @db.Decimal(5, 2)
   collectionEffPct      Decimal?    @db.Decimal(5, 2)
   billingEffPct         Decimal?    @db.Decimal(5, 2)
@@ -481,6 +483,7 @@ model DiversionOpportunity {
   indicativeCapex   Decimal? @db.Decimal(15, 2)
   note              String?
   priority          Int      @default(3)
+  geometry          Json?
   createdBy         String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -500,6 +503,7 @@ model CapitalProject {
   sponsorOrgId         String?
   latitude             Decimal?        @db.Decimal(10, 7)
   longitude            Decimal?        @db.Decimal(10, 7)
+  geometry             Json?
   timeline             String?
   capexUsd             Decimal?        @db.Decimal(15, 2)
   completionPct        Decimal?        @db.Decimal(5, 2)
@@ -538,6 +542,8 @@ model MiniGrid {
   completionYear       Int?
   funder               String?
   operatorName         String?
+  verifiedAt           DateTime?
+  dataClass            String?
   sourceAuthorityScore Int?
   lowConfidence        Boolean           @default(false)
   dataSource           String?
@@ -828,6 +834,8 @@ model ForumOffice {
   address              String?
   email                String?
   phone                String?
+  latitude             Decimal?  @db.Decimal(10, 7)
+  longitude            Decimal?  @db.Decimal(10, 7)
   verifiedAt           DateTime?
   sourceAuthorityScore Int?
   lowConfidence        Boolean   @default(false)
@@ -844,6 +852,8 @@ model NemsaFieldOffice {
   address              String?
   email                String?
   phone                String?
+  latitude             Decimal?  @db.Decimal(10, 7)
+  longitude            Decimal?  @db.Decimal(10, 7)
   verifiedAt           DateTime?
   sourceAuthorityScore Int?
   lowConfidence        Boolean   @default(false)
