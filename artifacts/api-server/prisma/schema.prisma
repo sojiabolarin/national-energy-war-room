@@ -346,19 +346,27 @@ model Substation {
   longitude            Decimal? @db.Decimal(10, 7)
   state                String?
   ownerOrgId           String?
+  tcnRegionId          String?
   sourceAuthorityScore Int?
   lowConfidence        Boolean  @default(false)
   dataSource           String?
+  source               String?
+  dataClass            String?
+  verifiedAt           DateTime?
+  geomQuality          String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   createdBy            String?
   updatedBy            String?
 
   ownerOrg         Organisation?         @relation(fields: [ownerOrgId], references: [id])
+  tcnRegion        TcnRegion?            @relation(fields: [tcnRegionId], references: [id])
   fromLines        TransmissionLine[]    @relation("FromSubstation")
   toLines          TransmissionLine[]    @relation("ToSubstation")
 
   @@index([ownerOrgId])
+  @@index([tcnRegionId])
+  @@index([dataClass])
   deletedAt DateTime?
 }
 
@@ -874,6 +882,8 @@ model TcnRegion {
   dataSource           String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+
+  substations Substation[]
 }
 
 model TcnControlCentre {
