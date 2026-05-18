@@ -522,6 +522,9 @@ model CapitalProject {
   contractorOrEpc      String?
   notes                String?
   sourceRef            String?
+  source               String?
+  dataClass            String?
+  verifiedAt           DateTime?
   sourceAuthorityScore Int?
   lowConfidence        Boolean         @default(false)
   dataSource           String?
@@ -534,6 +537,7 @@ model CapitalProject {
 
   @@index([category])
   @@index([status])
+  @@index([dataClass])
   deletedAt DateTime?
 }
 
