@@ -347,6 +347,7 @@ model Substation {
   state                String?
   ownerOrgId           String?
   tcnRegionId          String?
+  tcnRocId             String?
   sourceAuthorityScore Int?
   lowConfidence        Boolean  @default(false)
   dataSource           String?
@@ -361,11 +362,13 @@ model Substation {
 
   ownerOrg         Organisation?         @relation(fields: [ownerOrgId], references: [id])
   tcnRegion        TcnRegion?            @relation(fields: [tcnRegionId], references: [id])
+  tcnRoc           TcnROC?               @relation(fields: [tcnRocId], references: [id])
   fromLines        TransmissionLine[]    @relation("FromSubstation")
   toLines          TransmissionLine[]    @relation("ToSubstation")
 
   @@index([ownerOrgId])
   @@index([tcnRegionId])
+  @@index([tcnRocId])
   @@index([dataClass])
   deletedAt DateTime?
 }
@@ -893,13 +896,41 @@ model TcnControlCentre {
   name                 String
   location             String?
   address              String?
+  latitude             Decimal? @db.Decimal(10, 7)
+  longitude            Decimal? @db.Decimal(10, 7)
   coverageStates       Json?
   contactNumber        String?
+  notes                String?
+  deprecatedAt         DateTime?
   sourceAuthorityScore Int?
   lowConfidence        Boolean  @default(false)
   dataSource           String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+
+  childRocs TcnROC[]
+}
+
+model TcnROC {
+  id                  String   @id @default(uuid())
+  externalId          String?  @unique
+  name                String   @unique
+  rccId               String
+  latitude            Decimal? @db.Decimal(10, 7)
+  longitude           Decimal? @db.Decimal(10, 7)
+  statesCovered       Json?
+  headquartersAddress String?
+  notes               String?
+  source              String?
+  dataClass           String?
+  verifiedAt          DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  rcc         TcnControlCentre @relation(fields: [rccId], references: [id])
+  substations Substation[]
+
+  @@index([rccId])
 }
 
 model ReaZonalOffice {
